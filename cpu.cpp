@@ -162,14 +162,57 @@ void cpu_execute(struct CPU *cpu, const struct ROM *rom, bool dump,
       cpu->pc++;
     }
 
-		// LD A, (BC)
-		else if (rom->data[cpu->pc] == 0x0A) {
-			if (dump)
-				printf("LOAD A, (BC)\n");
+    // LD A, (BC)
+    else if (rom->data[cpu->pc] == 0x0A) {
+      if (dump)
+        printf("LOAD A, (BC)\n");
 
-			cpu->registers[a] = cpu->mem[(cpu->registers[b] << 8) | cpu->registers[c]];
-			cpu->pc++;
-		}
+      cpu->registers[a] =
+          cpu->mem[(cpu->registers[b] << 8) | cpu->registers[c]];
+
+      cpu->pc++;
+    }
+
+    // DEC BC
+    else if (rom->data[cpu->pc] == 0x0B) {
+      if (dump)
+        printf("DEC BC\n");
+
+      cpu->registers[b]--;
+      cpu->registers[c]--;
+
+      cpu->pc++;
+    }
+
+    // INC C
+    else if (rom->data[cpu->pc] == 0x0C) {
+      if (dump)
+        printf("INC C\n");
+
+      cpu->registers[c]++;
+
+      cpu->pc++;
+    }
+
+    // DEC C
+    else if (rom->data[cpu->pc] == 0x0D) {
+      if (dump)
+        printf("INC C\n");
+
+      cpu->registers[c]--;
+
+      cpu->pc++;
+    }
+
+    // LD C, d8
+    else if (rom->data[cpu->pc] == 0x0E) {
+      if (dump)
+        printf("LD C, %02X\n", rom->data[cpu->pc + 1]);
+
+      cpu->registers[c] = rom->data[cpu->pc + 1];
+
+      cpu->pc += 2;
+    }
 
     else {
       if (dump)
