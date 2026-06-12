@@ -315,6 +315,28 @@ void cpu_execute(struct CPU *cpu, const struct ROM *rom, bool dump,
       cpu->pc += 2 + rom->data[cpu->pc + 1];
     }
 
+    // ADD HL, DE
+    else if (rom->data[cpu->pc] == 0x19) {
+      if (dump)
+        printf("ADD HL, DE\n");
+
+      cpu->registers[h] += cpu->registers[d];
+      cpu->registers[l] += cpu->registers[e];
+
+      cpu->pc++;
+    }
+
+    // LD A, (DE)
+    else if (rom->data[cpu->pc] == 0x1A) {
+      if (dump)
+        printf("LOAD A, (DE)\n");
+
+      cpu->registers[a] =
+          cpu->mem[(cpu->registers[d] << 8) | cpu->registers[e]];
+
+      cpu->pc++;
+    }
+
     else {
       if (dump)
         printf("Invalid opcode: 0x%02X\n", rom->data[cpu->pc]);
