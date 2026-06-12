@@ -74,6 +74,7 @@ void cpu_execute(struct CPU *cpu, const struct ROM *rom, bool dump,
         printf("LD BC, %02X%02X\n", rom->data[cpu->pc + 1],
                rom->data[cpu->pc + 2]);
 
+      // C and B are reversed due to endianness
       cpu->registers[c] = rom->data[cpu->pc + 1];
       cpu->registers[b] = rom->data[cpu->pc + 2];
       cpu->pc += 3;
@@ -84,7 +85,7 @@ void cpu_execute(struct CPU *cpu, const struct ROM *rom, bool dump,
       if (dump)
         printf("LD (BC), A\n");
 
-      cpu->mem[(cpu->registers[b] << 8) | cpu->registers[c]] = a;
+      cpu->mem[(cpu->registers[c] << 8) | cpu->registers[b]] = a;
       cpu->pc++;
     }
 
@@ -127,10 +128,10 @@ void cpu_execute(struct CPU *cpu, const struct ROM *rom, bool dump,
       cpu->pc += 2;
     }
 
-    // RCLA
+    // RLCA
     else if (rom->data[cpu->pc] == 0x07) {
       if (dump)
-        printf("RCLA\n");
+        printf("RLCA\n");
 
       cpu->registers[a] =
           (cpu->registers[a] << 1) | ((cpu->registers[a] >> 7) & 1);
@@ -145,8 +146,8 @@ void cpu_execute(struct CPU *cpu, const struct ROM *rom, bool dump,
         printf("LD %02X%02X\n, SP\n", rom->data[cpu->pc + 1],
                rom->data[cpu->pc + 2]);
 
-      cpu->mem[cpu->pc + 1] = (cpu->sp & 0xFF);
       cpu->mem[cpu->pc + 2] = (cpu->sp);
+      cpu->mem[cpu->pc + 1] = (cpu->sp & 0xFF);
 
       cpu->pc += 3;
     }
@@ -212,6 +213,106 @@ void cpu_execute(struct CPU *cpu, const struct ROM *rom, bool dump,
       cpu->registers[c] = rom->data[cpu->pc + 1];
 
       cpu->pc += 2;
+    }
+
+    // RRCA
+    else if (rom->data[cpu->pc] == 0x0F) {
+      if (dump)
+        printf("RRCA\n");
+
+      cpu->registers[a] =
+          (cpu->registers[a] >> 1) | ((cpu->registers[a] << 7) & 1);
+      cpu->registers[c] = cpu->registers[a] & (1 >> 0);
+
+      cpu->pc++;
+    }
+
+    // STOP
+    else if (rom->data[cpu->pc] == 0x10) {
+      if (dump)
+        printf("STOP\n");
+
+      cpu->halt = true;
+      cpu->pc++;
+    }
+
+    // LD DE,u16
+    else if (rom->data[cpu->pc] == 0x11) {
+      if (dump)
+        printf("LD DE, %02X%02X\n", rom->data[cpu->pc + 1],
+               rom->data[cpu->pc + 2]);
+
+      cpu->registers[e] = rom->data[cpu->pc + 1];
+      cpu->registers[d] = rom->data[cpu->pc + 2];
+      cpu->pc += 3;
+    }
+
+    // LD (DE), A
+    else if (rom->data[cpu->pc] == 0x12) {
+      if (dump)
+        printf("LD (DE), A\n");
+
+      cpu->mem[(cpu->registers[d] << 8) | cpu->registers[e]] = a;
+      cpu->pc++;
+    }
+
+    // INC DE
+    else if (rom->data[cpu->pc] == 0x13) {
+      if (dump)
+        printf("INC DE\n");
+
+      cpu->registers[d]++;
+      cpu->registers[e]++;
+
+      cpu->pc++;
+    }
+
+    // INC D
+    else if (rom->data[cpu->pc] == 0x14) {
+      if (dump)
+        printf("INC D\n");
+
+      cpu->registers[d]++;
+      cpu->pc++;
+    }
+
+    // DEC D
+    else if (rom->data[cpu->pc] == 0x15) {
+      if (dump)
+        printf("DEC D\n");
+
+      cpu->registers[d]--;
+      cpu->pc++;
+    }
+
+    // LD D, d8
+    else if (rom->data[cpu->pc] == 0x16) {
+      if (dump)
+        printf("LD D, %02X\n", rom->data[cpu->pc + 1]);
+
+      cpu->registers[d] = rom->data[cpu->pc + 1];
+
+      cpu->pc += 2;
+    }
+
+    // RLA
+    else if (rom->data[cpu->pc] == 0x17) {
+      if (dump)
+        printf("RLA\n");
+
+      cpu->registers[a] =
+          (cpu->registers[a] << 1) | ((cpu->registers[a] >> 7) & 1);
+      cpu->registers[c] = cpu->registers[a] & (1 << 0);
+
+      cpu->pc++;
+    }
+
+    // JR i8
+    else if (rom->data[cpu->pc] == 0x18) {
+      if (dump)
+        printf("JR %02X\n", rom->data[cpu->pc + 1]);
+
+      cpu->pc += 2 + rom->data[cpu->pc + 1];
     }
 
     else {
