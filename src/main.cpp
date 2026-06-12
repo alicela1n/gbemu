@@ -10,7 +10,7 @@ int main(int argc, char **argv) {
   printf("main(): CPU initialized\n");
 
   const size_t dummy_rom_size = 5;
-  const uint8_t dummy_rom_data[dummy_rom_size] = {0x01, 0x04, 0xAD, 0x03, 0x04};
+  const uint8_t dummy_rom_data[dummy_rom_size] = {0x11, 0x04, 0xAD, 0x03, 0x04};
   ROM rom;
 
   printf("main(): Creating dummy rom to pass to CPU\n");

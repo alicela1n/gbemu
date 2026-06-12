@@ -1,3 +1,4 @@
 emu
 *.o
 .DS_Store
+build
