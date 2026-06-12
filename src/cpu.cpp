@@ -198,7 +198,7 @@ void cpu_execute(struct CPU *cpu, const struct ROM *rom, bool dump,
     // DEC C
     else if (rom->data[cpu->pc] == 0x0D) {
       if (dump)
-        printf("INC C\n");
+        printf("DEC C\n");
 
       cpu->registers[c]--;
 
@@ -337,7 +337,58 @@ void cpu_execute(struct CPU *cpu, const struct ROM *rom, bool dump,
       cpu->pc++;
     }
 
-    else {
+    // DEC DE
+    else if (rom->data[cpu->pc] == 0x1B) {
+      if (dump)
+        printf("DEC DE\n");
+
+      cpu->registers[d]--;
+      cpu->registers[e]--;
+
+      cpu->pc++;
+    }
+
+    // INC E
+    else if (rom->data[cpu->pc] == 0x1C) {
+      if (dump)
+        printf("INC E\n");
+
+      cpu->registers[e]++;
+
+      cpu->pc++;
+    }
+
+    // DEC E
+    else if (rom->data[cpu->pc] == 0x1D) {
+      if (dump)
+        printf("DEC E\n");
+
+      cpu->registers[e]--;
+
+      cpu->pc++;
+    }
+
+    // LD E, d8
+    else if (rom->data[cpu->pc] == 0x1E) {
+      if (dump)
+        printf("LD E, %02X\n", rom->data[cpu->pc + 1]);
+
+      cpu->registers[e] = rom->data[cpu->pc + 1];
+
+      cpu->pc += 2;
+    }
+
+    // RRA
+    else if (rom->data[cpu->pc] == 0x1F) {
+      if (dump)
+        printf("RRA\n");
+
+      cpu->registers[a] =
+          (cpu->registers[a] >> 1) | ((cpu->registers[a] << 7) & 1);
+      cpu->registers[c] = cpu->registers[a] & (1 >> 0);
+
+      cpu->pc++;
+    } else {
       if (dump)
         printf("Invalid opcode: 0x%02X\n", rom->data[cpu->pc]);
     }
