@@ -397,7 +397,7 @@ void cpu_execute(struct CPU *cpu, const struct ROM *rom, bool dump,
       if (dump)
         printf("JP NZ, %02X\n", rom->data[cpu->pc + 1]);
 
-      if (cpu->registers[f] != flag_z)
+      if (cpu->registers[f] != (cpu->registers[f] & flag_z))
         cpu->pc += 2 + rom->data[cpu->pc + 1];
       else
         cpu->pc += 2;
@@ -471,9 +471,10 @@ void cpu_execute(struct CPU *cpu, const struct ROM *rom, bool dump,
       if (dump)
         printf("DAA\n");
 
-      if (cpu->registers[a] > 0x09 || cpu->registers[c] == flag_h) {
+      if (cpu->registers[a] > 0x09 || cpu->registers[f] & flag_h) {
         cpu->registers[a] += 0x06;
-      } else if (cpu->registers[a] > 0x99 || cpu->registers[c] == flag_c) {
+      } else if (cpu->registers[a] > 0x99 ||
+                 cpu->registers[c] == (cpu->registers[f] & flag_c)) {
         cpu->registers[a] += 0x60;
       }
 
@@ -485,7 +486,7 @@ void cpu_execute(struct CPU *cpu, const struct ROM *rom, bool dump,
       if (dump)
         printf("JP NZ, %02X\n", rom->data[cpu->pc + 1]);
 
-      if (cpu->registers[f] == flag_z)
+      if (cpu->registers[f] == (cpu->registers[f] & flag_z))
         cpu->pc += 2 + rom->data[cpu->pc + 1];
       else
         cpu->pc += 2;
@@ -568,7 +569,7 @@ void cpu_execute(struct CPU *cpu, const struct ROM *rom, bool dump,
       if (dump)
         printf("JR NZ, %02X\n", rom->data[cpu->pc + 1]);
 
-      if (cpu->registers[f] != flag_c)
+      if (cpu->registers[f] != (cpu->registers[f] & flag_c))
         cpu->pc += 2 + rom->data[cpu->pc + 1];
       else
         cpu->pc += 2;
@@ -642,7 +643,7 @@ void cpu_execute(struct CPU *cpu, const struct ROM *rom, bool dump,
       if (dump)
         printf("SCF\n");
 
-      cpu->registers[f] = flag_c;
+      cpu->registers[f] = cpu->registers[f] & flag_c;
 
       cpu->pc += 1;
     }
@@ -652,7 +653,7 @@ void cpu_execute(struct CPU *cpu, const struct ROM *rom, bool dump,
       if (dump)
         printf("JP NZ, %02X\n", rom->data[cpu->pc + 1]);
 
-      if (cpu->registers[f] == flag_c)
+      if (cpu->registers[f] == (cpu->registers[f] & flag_c))
         cpu->pc += 2 + rom->data[cpu->pc + 1];
       else
         cpu->pc += 2;
@@ -720,9 +721,23 @@ void cpu_execute(struct CPU *cpu, const struct ROM *rom, bool dump,
       cpu->pc += 2;
     }
 
+    // SCF
+    else if (rom->data[cpu->pc] == 0x3F) {
+      if (dump)
+        printf("SCF\n");
+
+      if (cpu->registers[f] & flag_c)
+        cpu->registers[f] = cpu->registers[f] & (~flag_c);
+      else if (cpu->registers[f] & (~flag_c))
+        cpu->registers[f] = cpu->registers[f] & flag_c;
+      cpu->pc++;
+    }
+
     else {
       if (dump)
         printf("Invalid opcode: 0x%02X\n", rom->data[cpu->pc]);
+
+      cpu->halt = true;
     }
 
     if (print_regs) {
