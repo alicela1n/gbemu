@@ -1171,6 +1171,157 @@ void cpu_execute(struct CPU *cpu, const struct ROM *rom, bool dump,
       cpu->pc++;
     }
 
+    // LD (HL), B
+    else if (rom->data[cpu->pc] == 0x70) {
+      if (dump)
+        printf("LD (HL), B\n");
+
+      cpu->mem[(cpu->registers[l] << 8) | cpu->registers[h]] =
+          cpu->registers[b];
+      cpu->pc++;
+    }
+
+    // LD (HL), C
+    else if (rom->data[cpu->pc] == 0x71) {
+      if (dump)
+        printf("LD (HL), C\n");
+
+      cpu->mem[(cpu->registers[l] << 8) | cpu->registers[h]] =
+          cpu->registers[c];
+      cpu->pc++;
+    }
+
+    // LD (HL), D
+    else if (rom->data[cpu->pc] == 0x72) {
+      if (dump)
+        printf("LD (HL), D\n");
+
+      cpu->mem[(cpu->registers[l] << 8) | cpu->registers[h]] =
+          cpu->registers[d];
+      cpu->pc++;
+    }
+
+    // LD (HL), E
+    else if (rom->data[cpu->pc] == 0x73) {
+      if (dump)
+        printf("LD (HL), E\n");
+
+      cpu->mem[(cpu->registers[l] << 8) | cpu->registers[h]] =
+          cpu->registers[e];
+      cpu->pc++;
+    }
+
+    // LD (HL), H
+    else if (rom->data[cpu->pc] == 0x74) {
+      if (dump)
+        printf("LD (HL), H\n");
+
+      cpu->mem[(cpu->registers[l] << 8) | cpu->registers[h]] =
+          cpu->registers[h];
+      cpu->pc++;
+    }
+
+    // LD (HL), L
+    else if (rom->data[cpu->pc] == 0x75) {
+      if (dump)
+        printf("LD (HL), L\n");
+
+      cpu->mem[(cpu->registers[l] << 8) | cpu->registers[h]] =
+          cpu->registers[l];
+      cpu->pc++;
+    }
+
+    // HALT
+    else if (rom->data[cpu->pc] == 0x76) {
+      if (dump)
+        printf("HALT\n");
+
+      cpu->halt = true;
+    }
+
+    // LD (HL), A
+    else if (rom->data[cpu->pc] == 0x77) {
+      if (dump)
+        printf("LD (HL), A\n");
+
+      cpu->mem[(cpu->registers[l] << 8) | cpu->registers[h]] =
+          cpu->registers[a];
+      cpu->pc++;
+    }
+
+    // LD A, B
+    else if (rom->data[cpu->pc] == 0x78) {
+      if (dump)
+        printf("LD A, B\n");
+
+      cpu->registers[a] = cpu->registers[b];
+      cpu->pc++;
+    }
+
+    // LD A, C
+    else if (rom->data[cpu->pc] == 0x79) {
+      if (dump)
+        printf("LD A, C\n");
+
+      cpu->registers[c] = cpu->registers[b];
+      cpu->pc++;
+    }
+
+    // LD A, D
+    else if (rom->data[cpu->pc] == 0x7A) {
+      if (dump)
+        printf("LD A, D\n");
+
+      cpu->registers[d] = cpu->registers[a];
+      cpu->pc++;
+    }
+
+    // LD A, E
+    else if (rom->data[cpu->pc] == 0x7B) {
+      if (dump)
+        printf("LD A, E\n");
+
+      cpu->registers[e] = cpu->registers[a];
+      cpu->pc++;
+    }
+
+    // LD A, H
+    else if (rom->data[cpu->pc] == 0x7C) {
+      if (dump)
+        printf("LD A, H\n");
+
+      cpu->registers[a] = cpu->registers[h];
+      cpu->pc++;
+    }
+
+    // LD A, L
+    else if (rom->data[cpu->pc] == 0x7D) {
+      if (dump)
+        printf("LD A, L\n");
+
+      cpu->registers[a] = cpu->registers[l];
+      cpu->pc++;
+    }
+
+    // LD A, (HL)
+    else if (rom->data[cpu->pc] == 0x7E) {
+      if (dump)
+        printf("LD H, (HL)\n");
+
+      cpu->registers[h] =
+          cpu->mem[(cpu->registers[l] << 8) | cpu->registers[h]];
+      cpu->pc++;
+    }
+
+    // LD A, A
+    else if (rom->data[cpu->pc] == 0x7F) {
+      if (dump)
+        printf("LD A, A\n");
+
+      cpu->registers[a] = cpu->registers[a];
+      cpu->pc++;
+    }
+
     else {
       if (dump)
         printf("Invalid opcode: 0x%02X\n", rom->data[cpu->pc]);
