@@ -509,7 +509,7 @@ void cpu_execute(struct CPU *cpu, const struct ROM *rom, bool dump,
         printf("LOAD A, (HL+)\n");
 
       cpu->registers[a] =
-          cpu->mem[(cpu->registers[h] << 8) | cpu->registers[l]]++;
+          cpu->mem[(cpu->registers[l] << 8) | cpu->registers[h]]++;
 
       cpu->pc++;
     }
@@ -592,7 +592,7 @@ void cpu_execute(struct CPU *cpu, const struct ROM *rom, bool dump,
       if (dump)
         printf("LD (HL+), A\n");
 
-      cpu->mem[(cpu->registers[h] << 8) | cpu->registers[l]] =
+      cpu->mem[(cpu->registers[l] << 8) | cpu->registers[h]] =
           cpu->registers[a];
       cpu->registers[h]--;
       cpu->registers[l]--;
@@ -676,7 +676,7 @@ void cpu_execute(struct CPU *cpu, const struct ROM *rom, bool dump,
         printf("LD A, (HL-)\n");
 
       cpu->registers[a] =
-          cpu->mem[(cpu->registers[h] << 8) | cpu->registers[l]]--;
+          cpu->mem[(cpu->registers[l] << 8) | cpu->registers[h]]--;
 
       cpu->pc++;
     }
@@ -793,7 +793,7 @@ void cpu_execute(struct CPU *cpu, const struct ROM *rom, bool dump,
         printf("LD B, (HL)\n");
 
       cpu->registers[b] =
-          cpu->mem[(cpu->registers[h] << 8) | cpu->registers[l]];
+          cpu->mem[(cpu->registers[l] << 8) | cpu->registers[h]];
       cpu->pc++;
     }
 
@@ -866,7 +866,7 @@ void cpu_execute(struct CPU *cpu, const struct ROM *rom, bool dump,
         printf("LD C, (HL)\n");
 
       cpu->registers[c] =
-          cpu->mem[(cpu->registers[h] << 8) | cpu->registers[l]];
+          cpu->mem[(cpu->registers[l] << 8) | cpu->registers[h]];
       cpu->pc++;
     }
 
@@ -939,7 +939,7 @@ void cpu_execute(struct CPU *cpu, const struct ROM *rom, bool dump,
         printf("LD D, (HL)\n");
 
       cpu->registers[d] =
-          cpu->mem[(cpu->registers[h] << 8) | cpu->registers[l]];
+          cpu->mem[(cpu->registers[l] << 8) | cpu->registers[h]];
       cpu->pc++;
     }
 
@@ -958,6 +958,216 @@ void cpu_execute(struct CPU *cpu, const struct ROM *rom, bool dump,
         printf("LD E, B\n");
 
       cpu->registers[e] = cpu->registers[b];
+      cpu->pc++;
+    }
+
+    // LD E, C
+    else if (rom->data[cpu->pc] == 0x59) {
+      if (dump)
+        printf("LD E, C\n");
+
+      cpu->registers[e] = cpu->registers[c];
+      cpu->pc++;
+    }
+
+    // LD E, D
+    else if (rom->data[cpu->pc] == 0x5A) {
+      if (dump)
+        printf("LD E, D\n");
+
+      cpu->registers[e] = cpu->registers[d];
+      cpu->pc++;
+    }
+
+    // LD E, E
+    else if (rom->data[cpu->pc] == 0x5B) {
+      if (dump)
+        printf("LD E, E\n");
+
+      cpu->registers[e] = cpu->registers[e];
+      cpu->pc++;
+    }
+
+    // LD E, H
+    else if (rom->data[cpu->pc] == 0x5C) {
+      if (dump)
+        printf("LD E, H\n");
+
+      cpu->registers[e] = cpu->registers[h];
+      cpu->pc++;
+    }
+
+    // LD E, L
+    else if (rom->data[cpu->pc] == 0x5D) {
+      if (dump)
+        printf("LD E, L\n");
+
+      cpu->registers[e] = cpu->registers[l];
+      cpu->pc++;
+    }
+
+    // LD E, (HL)
+    else if (rom->data[cpu->pc] == 0x5E) {
+      if (dump)
+        printf("LD E, (HL)\n");
+
+      cpu->registers[e] =
+          cpu->mem[(cpu->registers[l] << 8) | cpu->registers[h]];
+      cpu->pc++;
+    }
+
+    // LD E, A
+    else if (rom->data[cpu->pc] == 0x5D) {
+      if (dump)
+        printf("LD E, A\n");
+
+      cpu->registers[e] = cpu->registers[a];
+      cpu->pc++;
+    }
+
+    // LD H, B
+    else if (rom->data[cpu->pc] == 0x60) {
+      if (dump)
+        printf("LD H, B\n");
+
+      cpu->registers[h] = cpu->registers[b];
+      cpu->pc++;
+    }
+
+    // LD H, C
+    else if (rom->data[cpu->pc] == 0x61) {
+      if (dump)
+        printf("LD H, C\n");
+
+      cpu->registers[h] = cpu->registers[c];
+      cpu->pc++;
+    }
+
+    // LD H, D
+    else if (rom->data[cpu->pc] == 0x62) {
+      if (dump)
+        printf("LD H, D\n");
+
+      cpu->registers[h] = cpu->registers[d];
+      cpu->pc++;
+    }
+
+    // LD H, E
+    else if (rom->data[cpu->pc] == 0x63) {
+      if (dump)
+        printf("LD H, E\n");
+
+      cpu->registers[h] = cpu->registers[e];
+      cpu->pc++;
+    }
+
+    // LD H, H
+    else if (rom->data[cpu->pc] == 0x64) {
+      if (dump)
+        printf("LD H, H\n");
+
+      cpu->registers[h] = cpu->registers[h];
+      cpu->pc++;
+    }
+
+    // LD H, L
+    else if (rom->data[cpu->pc] == 0x65) {
+      if (dump)
+        printf("LD H, L\n");
+
+      cpu->registers[h] = cpu->registers[l];
+      cpu->pc++;
+    }
+
+    // LD H, (HL)
+    else if (rom->data[cpu->pc] == 0x66) {
+      if (dump)
+        printf("LD H, (HL)\n");
+
+      cpu->registers[h] =
+          cpu->mem[(cpu->registers[l] << 8) | cpu->registers[h]];
+      cpu->pc++;
+    }
+
+    // LD H, A
+    else if (rom->data[cpu->pc] == 0x67) {
+      if (dump)
+        printf("LD H, A\n");
+
+      cpu->registers[h] = cpu->registers[a];
+      cpu->pc++;
+    }
+
+    // LD L, B
+    else if (rom->data[cpu->pc] == 0x68) {
+      if (dump)
+        printf("LD L, B\n");
+
+      cpu->registers[l] = cpu->registers[b];
+      cpu->pc++;
+    }
+
+    // LD L, C
+    else if (rom->data[cpu->pc] == 0x69) {
+      if (dump)
+        printf("LD L, C\n");
+
+      cpu->registers[l] = cpu->registers[c];
+      cpu->pc++;
+    }
+
+    // LD L, D
+    else if (rom->data[cpu->pc] == 0x6A) {
+      if (dump)
+        printf("LD L, D\n");
+
+      cpu->registers[l] = cpu->registers[d];
+      cpu->pc++;
+    }
+
+    // LD L, E
+    else if (rom->data[cpu->pc] == 0x6B) {
+      if (dump)
+        printf("LD L, E\n");
+
+      cpu->registers[l] = cpu->registers[e];
+      cpu->pc++;
+    }
+
+    // LD L, H
+    else if (rom->data[cpu->pc] == 0x6C) {
+      if (dump)
+        printf("LD L, H\n");
+
+      cpu->registers[l] = cpu->registers[h];
+      cpu->pc++;
+    }
+
+    // LD L, L
+    else if (rom->data[cpu->pc] == 0x6D) {
+      if (dump)
+        printf("LD L, L\n");
+
+      cpu->registers[l] = cpu->registers[l];
+      cpu->pc++;
+    }
+
+    // LD L, (HL)
+    else if (rom->data[cpu->pc] == 0x6E) {
+      if (dump)
+        printf("LD L, (HL)\n");
+
+      cpu->registers[l] =
+          cpu->mem[(cpu->registers[l] << 8) | cpu->registers[h]];
+      cpu->pc++;
+    }
+
+    // LD L, A
+    else if (rom->data[cpu->pc] == 0x6F) {
+      if (dump)
+        printf("LD L, A\n");
+
+      cpu->registers[l] = cpu->registers[a];
       cpu->pc++;
     }
 
