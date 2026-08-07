@@ -1509,6 +1509,16 @@ void cpu_execute(struct CPU *cpu, const struct ROM *rom, bool dump,
       cpu->pc++;
     }
 
+    // ADC A, A
+    else if (rom->data[cpu->pc] == 0x8F) {
+      if (dump)
+        printf("ADC A, A\n");
+
+      cpu_adc8(cpu, &cpu->registers[a], &cpu->registers[a]);
+
+      cpu->pc++;
+    }
+
     else {
       if (dump)
         printf("Invalid opcode: 0x%02X\n", rom->data[cpu->pc]);
