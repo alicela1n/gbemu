@@ -1356,6 +1356,56 @@ void cpu_execute(struct CPU *cpu, const struct ROM *rom, bool dump,
       cpu->pc++;
     }
 
+    // ADD A, C
+    else if (rom->data[cpu->pc] == 0x81) {
+      if (dump)
+        printf("ADD A, C\n");
+
+      cpu_add8(cpu, &cpu->registers[a], &cpu->registers[c]);
+
+      cpu->pc++;
+    }
+
+    // ADD A, D
+    else if (rom->data[cpu->pc] == 0x82) {
+      if (dump)
+        printf("ADD A, D\n");
+
+      cpu_add8(cpu, &cpu->registers[a], &cpu->registers[d]);
+
+      cpu->pc++;
+    }
+
+    // ADD A, E
+    else if (rom->data[cpu->pc] == 0x83) {
+      if (dump)
+        printf("ADD A, E\n");
+
+      cpu_add8(cpu, &cpu->registers[a], &cpu->registers[e]);
+
+      cpu->pc++;
+    }
+
+    // ADD A, H
+    else if (rom->data[cpu->pc] == 0x84) {
+      if (dump)
+        printf("ADD A, H\n");
+
+      cpu_add8(cpu, &cpu->registers[a], &cpu->registers[h]);
+
+      cpu->pc++;
+    }
+
+    // ADD A, L
+    else if (rom->data[cpu->pc] == 0x85) {
+      if (dump)
+        printf("ADD A, L\n");
+
+      cpu_add8(cpu, &cpu->registers[a], &cpu->registers[l]);
+
+      cpu->pc++;
+    }
+
     else {
       if (dump)
         printf("Invalid opcode: 0x%02X\n", rom->data[cpu->pc]);
