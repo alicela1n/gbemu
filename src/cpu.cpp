@@ -1440,9 +1440,71 @@ void cpu_execute(struct CPU *cpu, const struct ROM *rom, bool dump,
     // ADC A, B
     else if (rom->data[cpu->pc] == 0x88) {
       if (dump)
-        printf("ADC A, L\n");
+        printf("ADC A, B\n");
 
       cpu_adc8(cpu, &cpu->registers[a], &cpu->registers[b]);
+
+      cpu->pc++;
+    }
+
+    // ADC A, C
+    else if (rom->data[cpu->pc] == 0x89) {
+      if (dump)
+        printf("ADC A, C\n");
+
+      cpu_adc8(cpu, &cpu->registers[a], &cpu->registers[c]);
+
+      cpu->pc++;
+    }
+
+    // ADC A, D
+    else if (rom->data[cpu->pc] == 0x8A) {
+      if (dump)
+        printf("ADC A, D\n");
+
+      cpu_adc8(cpu, &cpu->registers[a], &cpu->registers[d]);
+
+      cpu->pc++;
+    }
+
+    // ADC A, E
+    else if (rom->data[cpu->pc] == 0x8B) {
+      if (dump)
+        printf("ADC A, E\n");
+
+      cpu_adc8(cpu, &cpu->registers[a], &cpu->registers[e]);
+
+      cpu->pc++;
+    }
+
+    // ADC A, H
+    else if (rom->data[cpu->pc] == 0x8C) {
+      if (dump)
+        printf("ADC A, H\n");
+
+      cpu_adc8(cpu, &cpu->registers[a], &cpu->registers[h]);
+
+      cpu->pc++;
+    }
+
+    // ADC A, L
+    else if (rom->data[cpu->pc] == 0x8D) {
+      if (dump)
+        printf("ADC A, L\n");
+
+      cpu_adc8(cpu, &cpu->registers[a], &cpu->registers[l]);
+
+      cpu->pc++;
+    }
+
+    // ADC A, (HL)
+    else if (rom->data[cpu->pc] == 0x8E) {
+      if (dump)
+        printf("ADC A, (HL)\n");
+
+      cpu_adc8(
+          cpu, &cpu->registers[a],
+          (uint8_t *)&(cpu->mem[(cpu->registers[l] << 8) | cpu->registers[h]]));
 
       cpu->pc++;
     }
