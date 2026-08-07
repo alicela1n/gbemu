@@ -36,6 +36,30 @@ void cpu_toggle_halt(struct CPU *cpu) {
     cpu->halt = false;
 }
 
+/* cpu_add8(): 8-bit adding function which deals with carries and stuff,
+ *             takes in two variables a and b, and stores the result in a.
+ */
+void cpu_add8(struct CPU *cpu, uint8_t *a, uint8_t *b) {
+  /*printf("%i\n", *a);
+  printf("%i\n", *b); */
+  *a = *a + *b;
+
+  if ((*a & 0x0F) + (*b & 0x0F) == 0x10)
+    cpu->registers[f] = (cpu->registers[f] | (1 << flag_h));
+  else
+    cpu->registers[f] = (cpu->registers[f] & ~(1 << flag_h));
+
+  if (*a > 0xFF)
+    cpu->registers[f] = (cpu->registers[f] | (1 << flag_c));
+  else
+    cpu->registers[f] = (cpu->registers[f] & ~(1 << flag_c));
+
+  if (*a == 0)
+    cpu->registers[f] = (cpu->registers[f] | (1 << flag_z));
+  else
+    cpu->registers[f] = (cpu->registers[f] & ~(1 << flag_z));
+}
+
 /* cpu_execute(): What this does is decode each opcode and translate it into an
  * instruction to be cpu_execute by the virtual CPU. Optional dump flag for
  * disassembly upon execution.
@@ -158,8 +182,8 @@ void cpu_execute(struct CPU *cpu, const struct ROM *rom, bool dump,
       if (dump)
         printf("ADD HL, BC\n");
 
-      cpu->registers[h] += cpu->registers[b];
-      cpu->registers[l] += cpu->registers[c];
+      cpu_add8(cpu, &cpu->registers[h], &cpu->registers[b]);
+      cpu_add8(cpu, &cpu->registers[l], &cpu->registers[c]);
 
       cpu->pc++;
     }
@@ -322,8 +346,8 @@ void cpu_execute(struct CPU *cpu, const struct ROM *rom, bool dump,
       if (dump)
         printf("ADD HL, DE\n");
 
-      cpu->registers[h] += cpu->registers[d];
-      cpu->registers[l] += cpu->registers[e];
+      cpu_add8(cpu, &cpu->registers[h], &cpu->registers[d]);
+      cpu_add8(cpu, &cpu->registers[l], &cpu->registers[e]);
 
       cpu->pc++;
     }
@@ -397,7 +421,7 @@ void cpu_execute(struct CPU *cpu, const struct ROM *rom, bool dump,
       if (dump)
         printf("JP NZ, %02X\n", rom->data[cpu->pc + 1]);
 
-      if (cpu->registers[f] != (cpu->registers[f] | flag_z))
+      if (cpu->registers[f] != (cpu->registers[f] & (1 << flag_z)))
         cpu->pc += 2 + rom->data[cpu->pc + 1];
       else
         cpu->pc += 2;
@@ -471,10 +495,10 @@ void cpu_execute(struct CPU *cpu, const struct ROM *rom, bool dump,
       if (dump)
         printf("DAA\n");
 
-      if (cpu->registers[a] > 0x09 || cpu->registers[f] & flag_h) {
+      if (cpu->registers[a] > 0x09 || cpu->registers[f] & (1 << flag_h)) {
         cpu->registers[a] += 0x06;
       } else if (cpu->registers[a] > 0x99 ||
-                 cpu->registers[c] == (cpu->registers[f] | flag_c)) {
+                 cpu->registers[c] == (cpu->registers[f] & (1 << flag_c))) {
         cpu->registers[a] += 0x60;
       }
 
@@ -497,8 +521,8 @@ void cpu_execute(struct CPU *cpu, const struct ROM *rom, bool dump,
       if (dump)
         printf("ADD HL, DE\n");
 
-      cpu->registers[h] += cpu->registers[h];
-      cpu->registers[l] += cpu->registers[l];
+      cpu_add8(cpu, &cpu->registers[h], &cpu->registers[h]);
+      cpu_add8(cpu, &cpu->registers[l], &cpu->registers[l]);
 
       cpu->pc++;
     }
@@ -643,7 +667,7 @@ void cpu_execute(struct CPU *cpu, const struct ROM *rom, bool dump,
       if (dump)
         printf("SCF\n");
 
-      cpu->registers[f] = cpu->registers[f] & flag_c;
+      cpu->registers[f] = (cpu->registers[f] | (1 << flag_c));
 
       cpu->pc += 1;
     }
@@ -653,7 +677,7 @@ void cpu_execute(struct CPU *cpu, const struct ROM *rom, bool dump,
       if (dump)
         printf("JR C, %02X\n", rom->data[cpu->pc + 1]);
 
-      if (cpu->registers[f] == (cpu->registers[f] & flag_c))
+      if (cpu->registers[f] == (cpu->registers[f] & (1 << flag_c)))
         cpu->pc += 2 + rom->data[cpu->pc + 1];
       else
         cpu->pc += 2;
@@ -729,7 +753,7 @@ void cpu_execute(struct CPU *cpu, const struct ROM *rom, bool dump,
       if (cpu->registers[f] & flag_c)
         cpu->registers[f] = cpu->registers[f] & (~flag_c);
       else if (cpu->registers[f] & (~flag_c))
-        cpu->registers[f] = cpu->registers[f] & flag_c;
+        cpu->registers[f] = (cpu->registers[f] | (1 << flag_c));
       cpu->pc++;
     }
 
@@ -1319,6 +1343,16 @@ void cpu_execute(struct CPU *cpu, const struct ROM *rom, bool dump,
         printf("LD A, A\n");
 
       cpu->registers[a] = cpu->registers[a];
+      cpu->pc++;
+    }
+
+    // ADD A, B
+    else if (rom->data[cpu->pc] == 0x80) {
+      if (dump)
+        printf("ADD A, B\n");
+
+      cpu_add8(cpu, &cpu->registers[a], &cpu->registers[b]);
+
       cpu->pc++;
     }
 
