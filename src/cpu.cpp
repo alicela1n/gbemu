@@ -60,6 +60,15 @@ void cpu_add8(struct CPU *cpu, uint8_t *a, uint8_t *b) {
     cpu->registers[f] = (cpu->registers[f] & ~(1 << flag_z));
 }
 
+/* cpu_adc8(): Same as cpu_add() but adds the carry
+ */
+void cpu_adc8(struct CPU *cpu, uint8_t *a, uint8_t *b) {
+  if (cpu->registers[f] == (cpu->registers[f] & (1 << flag_c)))
+    (*b)++;
+
+  cpu_add8(cpu, a, b);
+}
+
 /* cpu_execute(): What this does is decode each opcode and translate it into an
  * instruction to be cpu_execute by the virtual CPU. Optional dump flag for
  * disassembly upon execution.
@@ -1414,6 +1423,26 @@ void cpu_execute(struct CPU *cpu, const struct ROM *rom, bool dump,
       cpu_add8(
           cpu, &cpu->registers[a],
           (uint8_t *)&(cpu->mem[(cpu->registers[l] << 8) | cpu->registers[h]]));
+
+      cpu->pc++;
+    }
+
+    // ADD A, B
+    else if (rom->data[cpu->pc] == 0x87) {
+      if (dump)
+        printf("ADD A, B\n");
+
+      cpu_add8(cpu, &cpu->registers[a], &cpu->registers[a]);
+
+      cpu->pc++;
+    }
+
+    // ADC A, B
+    else if (rom->data[cpu->pc] == 0x88) {
+      if (dump)
+        printf("ADC A, L\n");
+
+      cpu_adc8(cpu, &cpu->registers[a], &cpu->registers[b]);
 
       cpu->pc++;
     }
