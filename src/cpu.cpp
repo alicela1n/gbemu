@@ -1406,6 +1406,18 @@ void cpu_execute(struct CPU *cpu, const struct ROM *rom, bool dump,
       cpu->pc++;
     }
 
+    // ADD A, (HL)
+    else if (rom->data[cpu->pc] == 0x86) {
+      if (dump)
+        printf("ADD A, (HL)\n");
+
+      cpu_add8(
+          cpu, &cpu->registers[a],
+          (uint8_t *)&(cpu->mem[(cpu->registers[l] << 8) | cpu->registers[h]]));
+
+      cpu->pc++;
+    }
+
     else {
       if (dump)
         printf("Invalid opcode: 0x%02X\n", rom->data[cpu->pc]);
