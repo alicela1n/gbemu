@@ -69,6 +69,50 @@ void cpu_adc8(struct CPU *cpu, uint8_t *a, uint8_t *b) {
   cpu_add8(cpu, a, b);
 }
 
+void cpu_sub8(struct CPU *cpu, uint8_t *a, uint8_t *b) {
+  /*printf("%i\n", *a);
+  printf("%i\n", *b); */
+  *a = *b - *a;
+
+  if ((*a & 0x0F) + (*b & 0x0F) == 0x10)
+    cpu->registers[f] = (cpu->registers[f] | (1 << flag_h));
+  else
+    cpu->registers[f] = (cpu->registers[f] & ~(1 << flag_h));
+
+  if (*a > 0xFF)
+    cpu->registers[f] = (cpu->registers[f] | (1 << flag_c));
+  else
+    cpu->registers[f] = (cpu->registers[f] & ~(1 << flag_c));
+
+  if (*a == 0)
+    cpu->registers[f] = (cpu->registers[f] | (1 << flag_z));
+  else
+    cpu->registers[f] = (cpu->registers[f] & ~(1 << flag_z));
+}
+
+/* cpu_sbc8(): Same as cpu_sub8() but adds the carry to the value being
+ * subtracted
+ */
+void cpu_sbc8(struct CPU *cpu, uint8_t *a, uint8_t *b) {
+  if (cpu->registers[f] == (cpu->registers[f] & (1 << flag_c)))
+    (*b)++;
+
+  cpu_sbc8(cpu, a, b);
+}
+
+/* cpu_and(): AND operation
+ */
+void cpu_and(struct CPU *cpu, uint8_t *a, uint8_t *b) {
+  *a = *a & *b;
+  if (*a == 0)
+    cpu->registers[f] = (cpu->registers[f] | (1 << flag_z));
+  else
+    cpu->registers[f] = (cpu->registers[f] & ~(1 << flag_z));
+
+  // Set half carry flag?
+  cpu->registers[f] = (cpu->registers[f] | (1 << flag_h));
+}
+
 /* cpu_execute(): What this does is decode each opcode and translate it into an
  * instruction to be cpu_execute by the virtual CPU. Optional dump flag for
  * disassembly upon execution.
@@ -1515,6 +1559,252 @@ void cpu_execute(struct CPU *cpu, const struct ROM *rom, bool dump,
         printf("ADC A, A\n");
 
       cpu_adc8(cpu, &cpu->registers[a], &cpu->registers[a]);
+
+      cpu->pc++;
+    }
+
+    // SUB A, B
+    else if (rom->data[cpu->pc] == 0x90) {
+      if (dump)
+        printf("SUB A, B\n");
+
+      cpu_sub8(cpu, &cpu->registers[a], &cpu->registers[b]);
+
+      cpu->pc++;
+    }
+
+    // SUB A, C
+    else if (rom->data[cpu->pc] == 0x91) {
+      if (dump)
+        printf("SUB A, C\n");
+
+      cpu_sub8(cpu, &cpu->registers[a], &cpu->registers[c]);
+
+      cpu->pc++;
+    }
+
+    // SUB A, D
+    else if (rom->data[cpu->pc] == 0x92) {
+      if (dump)
+        printf("SUB A, D\n");
+
+      cpu_sub8(cpu, &cpu->registers[a], &cpu->registers[d]);
+
+      cpu->pc++;
+    }
+
+    // SUB A, E
+    else if (rom->data[cpu->pc] == 0x93) {
+      if (dump)
+        printf("SUB A, E\n");
+
+      cpu_sub8(cpu, &cpu->registers[a], &cpu->registers[e]);
+
+      cpu->pc++;
+    }
+
+    // SUB A, H
+    else if (rom->data[cpu->pc] == 0x94) {
+      if (dump)
+        printf("SUB A, H\n");
+
+      cpu_sub8(cpu, &cpu->registers[a], &cpu->registers[h]);
+
+      cpu->pc++;
+    }
+
+    // SUB A, L
+    else if (rom->data[cpu->pc] == 0x95) {
+      if (dump)
+        printf("SUB A, L\n");
+
+      cpu_sub8(cpu, &cpu->registers[a], &cpu->registers[l]);
+
+      cpu->pc++;
+    }
+
+    // SUB A, L
+    else if (rom->data[cpu->pc] == 0x95) {
+      if (dump)
+        printf("SUB A, L\n");
+
+      cpu_sub8(cpu, &cpu->registers[a], &cpu->registers[l]);
+
+      cpu->pc++;
+    }
+
+    // SUB A, (HL)
+    else if (rom->data[cpu->pc] == 0x96) {
+      if (dump)
+        printf("SUB A, (HL)\n");
+
+      cpu_sub8(
+          cpu, &cpu->registers[a],
+          (uint8_t *)&(cpu->mem[(cpu->registers[l] << 8) | cpu->registers[h]]));
+
+      cpu->pc++;
+    }
+
+    // SUB A, A
+    else if (rom->data[cpu->pc] == 0x97) {
+      if (dump)
+        printf("SUB A, A\n");
+
+      cpu_sub8(cpu, &cpu->registers[a], &cpu->registers[a]);
+
+      cpu->pc++;
+    }
+
+    // SBC A, B
+    else if (rom->data[cpu->pc] == 0x98) {
+      if (dump)
+        printf("SBC A, B\n");
+
+      cpu_sbc8(cpu, &cpu->registers[a], &cpu->registers[b]);
+
+      cpu->pc++;
+    }
+
+    // SBC A, C
+    else if (rom->data[cpu->pc] == 0x99) {
+      if (dump)
+        printf("SBC A, C\n");
+
+      cpu_sbc8(cpu, &cpu->registers[a], &cpu->registers[c]);
+
+      cpu->pc++;
+    }
+
+    // SBC A, D
+    else if (rom->data[cpu->pc] == 0x9A) {
+      if (dump)
+        printf("SBC A, D\n");
+
+      cpu_sbc8(cpu, &cpu->registers[a], &cpu->registers[d]);
+
+      cpu->pc++;
+    }
+
+    // SBC A, E
+    else if (rom->data[cpu->pc] == 0x9B) {
+      if (dump)
+        printf("SBC A, E\n");
+
+      cpu_sbc8(cpu, &cpu->registers[a], &cpu->registers[e]);
+
+      cpu->pc++;
+    }
+
+    // SBC A, H
+    else if (rom->data[cpu->pc] == 0x9C) {
+      if (dump)
+        printf("SBC A, C\n");
+
+      cpu_sbc8(cpu, &cpu->registers[a], &cpu->registers[c]);
+
+      cpu->pc++;
+    }
+
+    // SBC A, L
+    else if (rom->data[cpu->pc] == 0x9D) {
+      if (dump)
+        printf("SBC A, L\n");
+
+      cpu_sbc8(cpu, &cpu->registers[a], &cpu->registers[l]);
+
+      cpu->pc++;
+    }
+
+    // SBC A, (HL)
+    else if (rom->data[cpu->pc] == 0x9E) {
+      if (dump)
+        printf("SBC A, (HL)\n");
+
+      cpu_sbc8(
+          cpu, &cpu->registers[a],
+          (uint8_t *)&(cpu->mem[(cpu->registers[l] << 8) | cpu->registers[h]]));
+
+      cpu->pc++;
+    }
+
+    // SBC A, A
+    else if (rom->data[cpu->pc] == 0x9F) {
+      if (dump)
+        printf("SBC A, A\n");
+
+      cpu_sbc8(cpu, &cpu->registers[a], &cpu->registers[a]);
+
+      cpu->pc++;
+    }
+
+    // AND A, B
+    else if (rom->data[cpu->pc] == 0xA0) {
+      if (dump)
+        printf("AND A, B\n");
+
+      cpu_and(cpu, &cpu->registers[a], &cpu->registers[b]);
+
+      cpu->pc++;
+    }
+
+    // AND A, C
+    else if (rom->data[cpu->pc] == 0xA1) {
+      if (dump)
+        printf("AND A, C\n");
+
+      cpu_and(cpu, &cpu->registers[a], &cpu->registers[c]);
+
+      cpu->pc++;
+    }
+
+    // AND A, D
+    else if (rom->data[cpu->pc] == 0xA2) {
+      if (dump)
+        printf("AND A, D\n");
+
+      cpu_and(cpu, &cpu->registers[a], &cpu->registers[d]);
+
+      cpu->pc++;
+    }
+
+    // AND A, E
+    else if (rom->data[cpu->pc] == 0xA3) {
+      if (dump)
+        printf("AND A, E\n");
+
+      cpu_and(cpu, &cpu->registers[a], &cpu->registers[e]);
+
+      cpu->pc++;
+    }
+
+    // AND A, H
+    else if (rom->data[cpu->pc] == 0xA4) {
+      if (dump)
+        printf("AND A, H\n");
+
+      cpu_and(cpu, &cpu->registers[a], &cpu->registers[h]);
+
+      cpu->pc++;
+    }
+
+    // AND A, L
+    else if (rom->data[cpu->pc] == 0xA5) {
+      if (dump)
+        printf("AND A, L\n");
+
+      cpu_and(cpu, &cpu->registers[a], &cpu->registers[l]);
+
+      cpu->pc++;
+    }
+
+    // AND A, (HL)
+    else if (rom->data[cpu->pc] == 0xA6) {
+      if (dump)
+        printf("AND A, (HL)\n");
+
+      cpu_and(
+          cpu, &cpu->registers[a],
+          (uint8_t *)&(cpu->mem[(cpu->registers[l] << 8) | cpu->registers[h]]));
 
       cpu->pc++;
     }
