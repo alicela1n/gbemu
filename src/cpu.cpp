@@ -113,6 +113,26 @@ void cpu_and(struct CPU *cpu, uint8_t *a, uint8_t *b) {
   cpu->registers[f] = (cpu->registers[f] | (1 << flag_h));
 }
 
+/* cpu_xor(): XOR operation
+ */
+void cpu_xor(struct CPU *cpu, uint8_t *a, uint8_t *b) {
+  *a = *a ^ *b;
+  if (*a == 0)
+    cpu->registers[f] = (cpu->registers[f] | (1 << flag_z));
+  else
+    cpu->registers[f] = (cpu->registers[f] & ~(1 << flag_z));
+}
+
+/* cpu_or(): OR operation
+ */
+void cpu_or(struct CPU *cpu, uint8_t *a, uint8_t *b) {
+  *a = *a | *b;
+  if (*a == 0)
+    cpu->registers[f] = (cpu->registers[f] | (1 << flag_z));
+  else
+    cpu->registers[f] = (cpu->registers[f] & ~(1 << flag_z));
+}
+
 /* cpu_execute(): What this does is decode each opcode and translate it into an
  * instruction to be cpu_execute by the virtual CPU. Optional dump flag for
  * disassembly upon execution.
@@ -1805,6 +1825,118 @@ void cpu_execute(struct CPU *cpu, const struct ROM *rom, bool dump,
       cpu_and(
           cpu, &cpu->registers[a],
           (uint8_t *)&(cpu->mem[(cpu->registers[l] << 8) | cpu->registers[h]]));
+
+      cpu->pc++;
+    }
+
+    // AND A, A
+    else if (rom->data[cpu->pc] == 0xA7) {
+      if (dump)
+        printf("AND A, A\n");
+
+      cpu_and(cpu, &cpu->registers[a], &cpu->registers[a]);
+
+      cpu->pc++;
+    }
+
+    // XOR A, B
+    else if (rom->data[cpu->pc] == 0xA8) {
+      if (dump)
+        printf("XOR A, B\n");
+
+      cpu_xor(cpu, &cpu->registers[a], &cpu->registers[b]);
+
+      cpu->pc++;
+    }
+
+    // XOR A, C
+    else if (rom->data[cpu->pc] == 0xA9) {
+      if (dump)
+        printf("XOR A, C\n");
+
+      cpu_xor(cpu, &cpu->registers[a], &cpu->registers[c]);
+
+      cpu->pc++;
+    }
+
+    // XOR A, D
+    else if (rom->data[cpu->pc] == 0xAA) {
+      if (dump)
+        printf("XOR A, D\n");
+
+      cpu_xor(cpu, &cpu->registers[a], &cpu->registers[d]);
+
+      cpu->pc++;
+    }
+
+    // XOR A, E
+    else if (rom->data[cpu->pc] == 0xAB) {
+      if (dump)
+        printf("XOR A, E\n");
+
+      cpu_xor(cpu, &cpu->registers[a], &cpu->registers[e]);
+
+      cpu->pc++;
+    }
+
+    // XOR A, H
+    else if (rom->data[cpu->pc] == 0xAC) {
+      if (dump)
+        printf("XOR A, H\n");
+
+      cpu_xor(cpu, &cpu->registers[a], &cpu->registers[h]);
+
+      cpu->pc++;
+    }
+
+    // XOR A, L
+    else if (rom->data[cpu->pc] == 0xAD) {
+      if (dump)
+        printf("XOR A, H\n");
+
+      cpu_xor(cpu, &cpu->registers[a], &cpu->registers[l]);
+
+      cpu->pc++;
+    }
+
+    // XOR A, (HL)
+    else if (rom->data[cpu->pc] == 0xAE) {
+      if (dump)
+        printf("XOR A, (HL)\n");
+
+      cpu_xor(
+          cpu, &cpu->registers[a],
+          (uint8_t *)&(cpu->mem[(cpu->registers[l] << 8) | cpu->registers[h]]));
+
+      cpu->pc++;
+    }
+
+    // XOR A, A
+    else if (rom->data[cpu->pc] == 0xAF) {
+      if (dump)
+        printf("XOR A, A\n");
+
+      cpu_xor(cpu, &cpu->registers[a], &cpu->registers[a]);
+
+      cpu->pc++;
+    }
+
+    // OR A, B
+    else if (rom->data[cpu->pc] == 0xB0) {
+      if (dump)
+        printf("OR A, B\n");
+
+      cpu_or(cpu, &cpu->registers[a], &cpu->registers[b]);
+
+      cpu->pc++;
+    }
+
+    // OR A, C
+    else if (rom->data[cpu->pc] == 0xB1) {
+      if (dump)
+        printf("OR A, C\n");
+
+      cpu_or(cpu, &cpu->registers[a], &cpu->registers[c]);
 
       cpu->pc++;
     }
