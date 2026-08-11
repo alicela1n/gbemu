@@ -100,6 +100,13 @@ void cpu_sbc8(struct CPU *cpu, uint8_t *a, uint8_t *b) {
   cpu_sbc8(cpu, a, b);
 }
 
+/* cpu_cp8(): Same as cpu_sub8(): except it doesn't modify the accumulator
+ */
+void cpu_cp8(struct CPU *cpu, uint8_t *a, uint8_t *b) {
+  uint8_t tmp = *a; // Temporary variable to use instead of accumulator
+  cpu_sub8(cpu, &tmp, b);
+}
+
 /* cpu_and(): AND operation
  */
 void cpu_and(struct CPU *cpu, uint8_t *a, uint8_t *b) {
@@ -1937,6 +1944,150 @@ void cpu_execute(struct CPU *cpu, const struct ROM *rom, bool dump,
         printf("OR A, C\n");
 
       cpu_or(cpu, &cpu->registers[a], &cpu->registers[c]);
+
+      cpu->pc++;
+    }
+
+    // OR A, D
+    else if (rom->data[cpu->pc] == 0xB2) {
+      if (dump)
+        printf("OR A, D\n");
+
+      cpu_or(cpu, &cpu->registers[a], &cpu->registers[d]);
+
+      cpu->pc++;
+    }
+
+    // OR A, E
+    else if (rom->data[cpu->pc] == 0xB3) {
+      if (dump)
+        printf("OR A, E\n");
+
+      cpu_or(cpu, &cpu->registers[a], &cpu->registers[e]);
+
+      cpu->pc++;
+    }
+
+    // OR A, H
+    else if (rom->data[cpu->pc] == 0xB4) {
+      if (dump)
+        printf("OR A, H\n");
+
+      cpu_or(cpu, &cpu->registers[a], &cpu->registers[h]);
+
+      cpu->pc++;
+    }
+
+    // OR A, L
+    else if (rom->data[cpu->pc] == 0xB5) {
+      if (dump)
+        printf("OR A, L\n");
+
+      cpu_or(cpu, &cpu->registers[a], &cpu->registers[l]);
+
+      cpu->pc++;
+    }
+
+    // OR A, (HL)
+    else if (rom->data[cpu->pc] == 0xB6) {
+      if (dump)
+        printf("OR A, (HL)\n");
+
+      cpu_or(
+          cpu, &cpu->registers[a],
+          (uint8_t *)&(cpu->mem[(cpu->registers[l] << 8) | cpu->registers[h]]));
+
+      cpu->pc++;
+    }
+
+    // OR A, A
+    else if (rom->data[cpu->pc] == 0xB7) {
+      if (dump)
+        printf("OR A, A\n");
+
+      cpu_or(cpu, &cpu->registers[a], &cpu->registers[a]);
+
+      cpu->pc++;
+    }
+
+    // CP A, B
+    else if (rom->data[cpu->pc] == 0xB8) {
+      if (dump)
+        printf("CP A, B\n");
+
+      cpu_cp8(cpu, &cpu->registers[a], &cpu->registers[b]);
+
+      cpu->pc++;
+    }
+
+    // CP A, C
+    else if (rom->data[cpu->pc] == 0xB9) {
+      if (dump)
+        printf("CP A, C\n");
+
+      cpu_cp8(cpu, &cpu->registers[a], &cpu->registers[c]);
+
+      cpu->pc++;
+    }
+
+    // CP A, D
+    else if (rom->data[cpu->pc] == 0xBA) {
+      if (dump)
+        printf("CP A, D\n");
+
+      cpu_cp8(cpu, &cpu->registers[a], &cpu->registers[d]);
+
+      cpu->pc++;
+    }
+
+    // CP A, E
+    else if (rom->data[cpu->pc] == 0xBB) {
+      if (dump)
+        printf("CP A, E\n");
+
+      cpu_cp8(cpu, &cpu->registers[a], &cpu->registers[e]);
+
+      cpu->pc++;
+    }
+
+    // CP A, H
+    else if (rom->data[cpu->pc] == 0xBC) {
+      if (dump)
+        printf("CP A, H\n");
+
+      cpu_cp8(cpu, &cpu->registers[a], &cpu->registers[h]);
+
+      cpu->pc++;
+    }
+
+    // CP A, L
+    else if (rom->data[cpu->pc] == 0xBD) {
+      if (dump)
+        printf("CP A, L\n");
+
+      cpu_cp8(cpu, &cpu->registers[a], &cpu->registers[l]);
+
+      cpu->pc++;
+    }
+
+    // CP A, (HL)
+    else if (rom->data[cpu->pc] == 0xBE) {
+      if (dump)
+        printf("CP A, (HL)\n");
+
+      cpu_cp8(
+          cpu, &cpu->registers[a],
+          (uint8_t *)&(cpu->mem[(cpu->registers[l] << 8) | cpu->registers[h]]));
+
+      cpu->pc++;
+    }
+
+    // CP A, A
+    else if (rom->data[cpu->pc] == 0xBF) {
+      if (dump)
+        printf("CP A, A\n");
+
+      cpu_cp8(cpu, &cpu->registers[a], &cpu->registers[a]);
 
       cpu->pc++;
     }
