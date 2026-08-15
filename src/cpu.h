@@ -2,6 +2,7 @@
 #define CPU_H
 
 #include <stdint.h>
+#include <stdio.h>
 #include <string.h>
 #include <unistd.h>
 
@@ -44,7 +45,7 @@ struct CPU {
   uint16_t if_r;
   uint32_t ime_r;
 
-  uint8_t mem[0x10000];
+  uint8_t mem[0xFFFF];
 
   uint32_t cycles;
 
@@ -56,7 +57,6 @@ struct CPU {
 
 void cpu_init(struct CPU *cpu);
 void cpu_toggle_halt(struct CPU *cpu);
-void cpu_execute(struct CPU *cpu, const struct ROM *rom, bool dump,
-                 bool print_regs);
+void cpu_execute(struct CPU *cpu, bool dump, bool print_regs);
 
 #endif
