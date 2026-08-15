@@ -1,4 +1,6 @@
 #include "cpu.h"
+#include "memory.h"
+#include "rom.h"
 
 /* cpu_init(): Initialize CPU
  */
@@ -34,6 +36,18 @@ void cpu_toggle_halt(struct CPU *cpu) {
   else
     cpu->halt = false;
 }
+
+/* cpu_ld_reg8(): Load data (b) into a register (a), 8 bit
+ */
+void cpu_ld_reg8(struct CPU *cpu, uint8_t *a, uint8_t b) { *a = b; }
+
+/* cpu_ld_mem8(): Load data (a) into memory at addr
+ */
+void cpu_ld_mem8(struct CPU *cpu, uint16_t addr, uint8_t a) {
+  write_memory8(cpu, a, addr);
+}
+
+void cpu_ld_reg16(struct CPU *cpu, uint8_t *a, uint16_t *data) {}
 
 /* cpu_add8(): 8-bit adding function which deals with carries and stuff,
  *             takes in two variables a and b, and stores the result in a.
@@ -153,13 +167,20 @@ void cpu_push(struct CPU *cpu, uint8_t *a, uint8_t *b) {
   cpu->sp -= 2;
 }
 
-void cpu_call(struct CPU *cpu, uint8_t *a, uint8_t *b) {}
+/* cpu_call(): Calls from an address
+ */
+void cpu_call(struct CPU *cpu, uint16_t addr) {
+  uint8_t high = (cpu->pc >> 8) & 0xFF;
+  uint8_t low = cpu->pc & 0xFF;
+  cpu_push(cpu, &high, &low);
+  cpu->pc = addr;
+}
 
 /* cpu_execute(): What this does is decode each opcode and translate it into
  * an instruction to be cpu_execute by the virtual CPU. Optional dump flag
  * for disassembly upon execution.
  */
-void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
+void cpu_execute(struct CPU *cpu, struct ROM *rom, bool dump, bool print_regs) {
   while (!cpu->halt) {
     if (print_regs) {
       printf("cpu_execute(): --Begin--\n");
@@ -193,6 +214,10 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
                cpu->mem[cpu->pc + 2]);
 
       // C and B are reversed due to endianness
+      cpu_ld_reg8(cpu, &cpu->registers[c],
+                  read_memory8(cpu, rom, (cpu->pc + 1)));
+      cpu_ld_reg8(cpu, &cpu->registers[b], cpu->mem[cpu->pc + 2]);
+
       cpu->registers[c] = cpu->mem[cpu->pc + 1];
       cpu->registers[b] = cpu->mem[cpu->pc + 2];
       cpu->pc += 3;
@@ -2146,6 +2171,37 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
                (cpu->mem[cpu->pc + 2] << 4 | cpu->mem[cpu->pc + 1]));
 
       cpu->pc += 3 + (cpu->mem[cpu->pc + 2] << 4 | cpu->mem[cpu->pc + 1]);
+    }
+
+    // CALL NZ, u16
+    else if (cpu->mem[cpu->pc] == 0xC4) {
+      if (dump)
+        printf("CALL NZ, %02X\n",
+               (cpu->mem[cpu->pc + 2] << 4 | cpu->mem[cpu->pc + 1]));
+
+      if (cpu->registers[f] != (cpu->registers[f] & (1 << flag_z)))
+        cpu_call(cpu, (cpu->mem[cpu->pc + 2] << 4 | cpu->mem[cpu->pc + 1]));
+      else
+        cpu->pc += 3;
+    }
+
+    // PUSH BC
+    else if (cpu->mem[cpu->pc] == 0xC5) {
+      if (dump)
+        printf("PUSH BC\n");
+
+      cpu_push(cpu, &cpu->registers[a], &cpu->registers[b]);
+      cpu->pc++;
+    }
+
+    // ADD A, u8
+    else if (cpu->mem[cpu->pc] == 0xC6) {
+      if (dump)
+        printf("ADD A, u8\n");
+
+      cpu_add8(cpu, &cpu->registers[a], &cpu->mem[cpu->pc + 1]);
+
+      cpu->pc++;
     }
 
     else {

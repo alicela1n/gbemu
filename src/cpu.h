@@ -1,6 +1,7 @@
 #ifndef CPU_H
 #define CPU_H
 
+#include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
@@ -55,8 +56,10 @@ struct CPU {
   bool ime_pending;
 };
 
+struct ROM;
+
 void cpu_init(struct CPU *cpu);
 void cpu_toggle_halt(struct CPU *cpu);
-void cpu_execute(struct CPU *cpu, bool dump, bool print_regs);
+void cpu_execute(struct CPU *cpu, struct ROM *rom, bool dump, bool print_regs);
 
 #endif

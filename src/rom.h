@@ -1,19 +1,19 @@
 #ifndef ROM_H
 #define ROM_H
 
-#include <cstdint>
-#include <cstdio>
-#include <cstdlib>
-#include <fstream>
-#include <iostream>
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
-#include <vector>
 
 struct ROM {
   uint8_t *data;
   size_t size;
 
-  std::string title;
+  char *title;
+  size_t title_size;
 
   bool cgb_flag;
   bool cgb_only;
@@ -23,7 +23,8 @@ struct ROM {
 };
 
 bool validate_rom(const uint8_t *rom, size_t rom_size, bool dump);
-std::string get_title(const uint8_t *rom, size_t rom_size);
+void get_title(const uint8_t *rom, size_t rom_size, char *title,
+               size_t *title_size);
 bool cgb_flag(const uint8_t *rom, size_t rom_size, bool *cgb_only);
 uint32_t get_cartridge_rom_size(const uint8_t *rom, size_t rom_size);
 uint32_t get_cartridge_ram_size(const uint8_t *rom, size_t rom_size);

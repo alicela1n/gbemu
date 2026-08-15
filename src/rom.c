@@ -54,27 +54,17 @@ bool validate_rom(const uint8_t *rom, size_t rom_size, bool dump) {
 /* get_title(): Return the title from the rom and return it as a string,
  *              on GameBoy roms the title is located at 0x134 to 0x143.
  */
-std::string get_title(const uint8_t *rom, size_t rom_size) {
-  try {
-    if (rom_size < (32 * 1024))
-      throw std::out_of_range("Out of range");
-  }
-
-  catch (std::out_of_range e) {
-    std::cerr << "Invalid ROM size: " << e.what() << "\n";
-  }
-
+void get_title(const uint8_t *rom, size_t rom_size, char *title,
+               size_t *title_size) {
   const uint8_t *title_offset = rom + 0x134;
   const uint8_t *title_end_offset = rom + 0x143;
   ptrdiff_t title_offset_diff = title_end_offset - title_offset;
 
-  std::string title = "";
-
   for (int i = 0; i < title_offset_diff; i++) {
-    title += title_offset[i];
+    title[i] += title_offset[i];
   }
 
-  return title;
+  *title_size = title_offset_diff;
 }
 
 /* cgb_flag(): Return the CGB flag which tells you if the game supports the
@@ -83,14 +73,6 @@ std::string get_title(const uint8_t *rom, size_t rom_size) {
  * only supports GBC.
  */
 bool cgb_flag(const uint8_t *rom, size_t rom_size, bool *cgb_only) {
-  try {
-    if (rom_size < (32 * 1024))
-      throw std::out_of_range("Out of range");
-  }
-
-  catch (std::out_of_range e) {
-    std::cerr << "Invalid ROM size: " << e.what() << "\n";
-  }
   const uint8_t *cgb_flag_offset = rom + 0x143;
 
   if (*cgb_flag_offset == 0x80 || *cgb_flag_offset == 0xC0) {
@@ -109,15 +91,6 @@ bool cgb_flag(const uint8_t *rom, size_t rom_size, bool *cgb_only) {
  * (1 << 0x148).
  */
 uint32_t get_cartridge_rom_size(const uint8_t *rom, size_t rom_size) {
-  try {
-    if (rom_size < (32 * 1024))
-      throw std::out_of_range("Out of range");
-  }
-
-  catch (std::out_of_range e) {
-    std::cerr << "Invalid ROM size: " << e.what() << "\n";
-  }
-
   uint16_t cartridge_rom_size;
   const uint8_t *cartridge_rom_size_offset = rom + 0x148;
 
@@ -130,15 +103,6 @@ uint32_t get_cartridge_rom_size(const uint8_t *rom, size_t rom_size) {
  * get it.
  */
 uint32_t get_cartridge_ram_size(const uint8_t *rom, size_t rom_size) {
-  try {
-    if (rom_size < (32 * 1024))
-      throw std::out_of_range("Out of range");
-  }
-
-  catch (std::out_of_range e) {
-    std::cerr << "Invalid ROM size: " << e.what() << "\n";
-  }
-
   uint32_t cartridge_ram_size;
   const uint8_t *cartridge_ram_size_offset = rom + 0x149;
 
@@ -200,7 +164,7 @@ int load_rom(FILE *fp, struct ROM *rom) {
     return 1;
   }
 
-  rom->title = get_title(rom->data, rom->size);
+  get_title(rom->data, rom->size, rom->title, &rom->title_size);
   rom->cgb_flag = cgb_flag(rom->data, rom->size, &rom->cgb_only);
   rom->cartridge_ram_size = get_cartridge_ram_size(rom->data, rom->size);
   rom->cartridge_rom_size = get_cartridge_rom_size(rom->data, rom->size);

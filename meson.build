@@ -1,9 +1,10 @@
-project('gbemu', 'cpp',
+project('gbemu', 'c',
   version : '0.1',
   default_options : ['warning_level=3'])
 
 executable('gbemu',
-           'src/main.cpp',
-           'src/cpu.cpp',
-           'src/rom.cpp',
+           'src/main.c',
+           'src/cpu.c',
+           'src/rom.c',
+           'src/memory.c',
            install : true)
