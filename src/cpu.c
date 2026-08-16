@@ -316,8 +316,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
 
       cpu_ld_reg8(
           cpu, &cpu->registers[a],
-          read_memory8(cpu,
-                       cpu->mem[(cpu->registers[b] << 8) | cpu->registers[c]]));
+          read_memory8(cpu, (cpu->registers[b] << 8) | cpu->registers[c]));
 
       cpu->pc++;
     }
@@ -484,8 +483,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
 
       cpu_ld_reg8(
           cpu, &cpu->registers[a],
-          read_memory8(
-              cpu, (cpu->mem[(cpu->registers[d] << 8) | cpu->registers[e]])));
+          read_memory8(cpu, (cpu->registers[d] << 8) | cpu->registers[e]));
 
       cpu->pc++;
     }
@@ -662,8 +660,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
 
       cpu_ld_reg8(
           cpu, &cpu->registers[a],
-          read_memory8(
-              cpu, (cpu->mem[(cpu->registers[l] << 8) | cpu->registers[h]]++)));
+          read_memory8(cpu, ((cpu->registers[l] << 8) | cpu->registers[h]++)));
 
       cpu->pc++;
     }
@@ -829,8 +826,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
 
       cpu_ld_reg8(
           cpu, &cpu->registers[a],
-          read_memory8(
-              cpu, (cpu->mem[(cpu->registers[l] << 8) | cpu->registers[h]]--)));
+          read_memory8(cpu, ((cpu->registers[l] << 8) | cpu->registers[h]--)));
 
       cpu->pc++;
     }
@@ -1470,8 +1466,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
 
       cpu_ld_reg8(
           cpu, &cpu->registers[h],
-          read_memory8(
-              cpu, (cpu->mem[(cpu->registers[l] << 8) | cpu->registers[h]])));
+          read_memory8(cpu, ((cpu->registers[l] << 8) | cpu->registers[h])));
       cpu->pc++;
     }
 
@@ -1630,9 +1625,8 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
       if (dump)
         printf("ADC A, (HL)\n");
 
-      cpu_adc8(
-          cpu, &cpu->registers[a],
-          (uint8_t *)&(cpu->mem[(cpu->registers[l] << 8) | cpu->registers[h]]));
+      cpu_adc8(cpu, &cpu->registers[a],
+               mem_ptr8(cpu, (cpu->registers[l] << 8) | cpu->registers[h]));
 
       cpu->pc++;
     }
@@ -1803,9 +1797,8 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
       if (dump)
         printf("SBC A, (HL)\n");
 
-      cpu_sbc8(
-          cpu, &cpu->registers[a],
-          (uint8_t *)&(cpu->mem[(cpu->registers[l] << 8) | cpu->registers[h]]));
+      cpu_sbc8(cpu, &cpu->registers[a],
+               mem_ptr8(cpu, (cpu->registers[l] << 8) | cpu->registers[h]));
 
       cpu->pc++;
     }
@@ -1885,9 +1878,8 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
       if (dump)
         printf("AND A, (HL)\n");
 
-      cpu_and(
-          cpu, &cpu->registers[a],
-          (uint8_t *)&(cpu->mem[(cpu->registers[l] << 8) | cpu->registers[h]]));
+      cpu_and(cpu, &cpu->registers[a],
+              mem_ptr8(cpu, (cpu->registers[l] << 8) | cpu->registers[h]));
 
       cpu->pc++;
     }
@@ -1967,9 +1959,8 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
       if (dump)
         printf("XOR A, (HL)\n");
 
-      cpu_xor(
-          cpu, &cpu->registers[a],
-          (uint8_t *)&(cpu->mem[(cpu->registers[l] << 8) | cpu->registers[h]]));
+      cpu_xor(cpu, &cpu->registers[a],
+              mem_ptr8(cpu, (cpu->registers[l] << 8) | cpu->registers[h]));
 
       cpu->pc++;
     }
@@ -2049,9 +2040,8 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
       if (dump)
         printf("OR A, (HL)\n");
 
-      cpu_or(
-          cpu, &cpu->registers[a],
-          (uint8_t *)&(cpu->mem[(cpu->registers[l] << 8) | cpu->registers[h]]));
+      cpu_or(cpu, &cpu->registers[a],
+             mem_ptr8(cpu, (cpu->registers[l] << 8) | cpu->registers[h]));
 
       cpu->pc++;
     }
@@ -2131,9 +2121,8 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
       if (dump)
         printf("CP A, (HL)\n");
 
-      cpu_cp8(
-          cpu, &cpu->registers[a],
-          (uint8_t *)&(cpu->mem[(cpu->registers[l] << 8) | cpu->registers[h]]));
+      cpu_cp8(cpu, &cpu->registers[a],
+              mem_ptr8(cpu, (cpu->registers[l] << 8) | cpu->registers[h]));
 
       cpu->pc++;
     }
@@ -2153,7 +2142,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
       if (dump)
         printf("RET NZ\n");
       if ((cpu->registers[f] & ~(1 << flag_z))) {
-        cpu->pc = cpu->mem[cpu->sp++];
+        cpu->pc = read_memory8(cpu, cpu->sp++);
 
       } else {
         cpu->pc++;
