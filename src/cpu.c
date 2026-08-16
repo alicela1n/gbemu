@@ -188,7 +188,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
   while (!cpu->halt) {
     if (print_regs) {
       printf("cpu_execute(): --Begin--\n");
-      printf("cpu_execute(): cpu->mem[cpu->pc]: 0x%02X\n", cpu->mem[cpu->pc]);
+      printf("cpu_execute(): read_memory8(cpu, cpu->pc): 0x%02X\n", read_memory8(cpu, cpu->pc));
       printf("cpu_execute(): 8 bit registers a-l\n");
       printf("cpu_execute(): a: 0x%02X\n", cpu->registers[a]);
       printf("cpu_execute(): b: 0x%02X\n", cpu->registers[b]);
@@ -205,14 +205,14 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // NOP
-    if (cpu->mem[cpu->pc] == 0x00) {
+    if (read_memory8(cpu, cpu->pc) == 0x00) {
       if (dump)
         printf("NOP\n");
       cpu->pc++;
     }
 
     // LD BC, d16
-    else if (cpu->mem[cpu->pc] == 0x01) {
+    else if (read_memory8(cpu, cpu->pc) == 0x01) {
       if (dump)
         printf("LD BC, %02X%02X\n", cpu->mem[cpu->pc + 1],
                cpu->mem[cpu->pc + 2]);
@@ -225,7 +225,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // LD (BC), A
-    else if (cpu->mem[cpu->pc] == 0x02) {
+    else if (read_memory8(cpu, cpu->pc) == 0x02) {
       if (dump)
         printf("LD (BC), A\n");
 
@@ -236,7 +236,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // INC BC
-    else if (cpu->mem[cpu->pc] == 0x03) {
+    else if (read_memory8(cpu, cpu->pc) == 0x03) {
       if (dump)
         printf("INC BC\n");
 
@@ -247,7 +247,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // INC B
-    else if (cpu->mem[cpu->pc] == 0x04) {
+    else if (read_memory8(cpu, cpu->pc) == 0x04) {
       if (dump)
         printf("INC B\n");
 
@@ -256,7 +256,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // DEC B
-    else if (cpu->mem[cpu->pc] == 0x05) {
+    else if (read_memory8(cpu, cpu->pc) == 0x05) {
       if (dump)
         printf("DEC B\n");
 
@@ -265,7 +265,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // LD B, d8
-    else if (cpu->mem[cpu->pc] == 0x06) {
+    else if (read_memory8(cpu, cpu->pc) == 0x06) {
       if (dump)
         printf("LD B, %02X\n", cpu->mem[cpu->pc + 1]);
 
@@ -275,7 +275,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // RLCA
-    else if (cpu->mem[cpu->pc] == 0x07) {
+    else if (read_memory8(cpu, cpu->pc) == 0x07) {
       if (dump)
         printf("RLCA\n");
 
@@ -287,7 +287,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // LD (a16), SP
-    else if (cpu->mem[cpu->pc] == 0x08) {
+    else if (read_memory8(cpu, cpu->pc) == 0x08) {
       if (dump)
         printf("LD %02X%02X\n, SP\n", cpu->mem[cpu->pc + 1],
                cpu->mem[cpu->pc + 2]);
@@ -298,7 +298,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // ADD HL, BC
-    else if (cpu->mem[cpu->pc] == 0x09) {
+    else if (read_memory8(cpu, cpu->pc) == 0x09) {
       if (dump)
         printf("ADD HL, BC\n");
 
@@ -309,7 +309,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // LD A, (BC)
-    else if (cpu->mem[cpu->pc] == 0x0A) {
+    else if (read_memory8(cpu, cpu->pc) == 0x0A) {
       if (dump)
         printf("LD A, (BC)\n");
 
@@ -322,7 +322,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // DEC BC
-    else if (cpu->mem[cpu->pc] == 0x0B) {
+    else if (read_memory8(cpu, cpu->pc) == 0x0B) {
       if (dump)
         printf("DEC BC\n");
 
@@ -333,7 +333,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // INC C
-    else if (cpu->mem[cpu->pc] == 0x0C) {
+    else if (read_memory8(cpu, cpu->pc) == 0x0C) {
       if (dump)
         printf("INC C\n");
 
@@ -343,7 +343,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // DEC C
-    else if (cpu->mem[cpu->pc] == 0x0D) {
+    else if (read_memory8(cpu, cpu->pc) == 0x0D) {
       if (dump)
         printf("DEC C\n");
 
@@ -353,7 +353,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // LD C, d8
-    else if (cpu->mem[cpu->pc] == 0x0E) {
+    else if (read_memory8(cpu, cpu->pc) == 0x0E) {
       if (dump)
         printf("LD C, %02X\n", cpu->mem[cpu->pc + 1]);
 
@@ -364,7 +364,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // RRCA
-    else if (cpu->mem[cpu->pc] == 0x0F) {
+    else if (read_memory8(cpu, cpu->pc) == 0x0F) {
       if (dump)
         printf("RRCA\n");
 
@@ -376,7 +376,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // STOP
-    else if (cpu->mem[cpu->pc] == 0x10) {
+    else if (read_memory8(cpu, cpu->pc) == 0x10) {
       if (dump)
         printf("STOP\n");
 
@@ -385,7 +385,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // LD DE,u16
-    else if (cpu->mem[cpu->pc] == 0x11) {
+    else if (read_memory8(cpu, cpu->pc) == 0x11) {
       if (dump)
         printf("LD DE, %02X%02X\n", cpu->mem[cpu->pc + 1],
                cpu->mem[cpu->pc + 2]);
@@ -396,7 +396,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // LD (DE), A
-    else if (cpu->mem[cpu->pc] == 0x12) {
+    else if (read_memory8(cpu, cpu->pc) == 0x12) {
       if (dump)
         printf("LD (DE), A\n");
 
@@ -407,7 +407,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // INC DE
-    else if (cpu->mem[cpu->pc] == 0x13) {
+    else if (read_memory8(cpu, cpu->pc) == 0x13) {
       if (dump)
         printf("INC DE\n");
 
@@ -418,7 +418,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // INC D
-    else if (cpu->mem[cpu->pc] == 0x14) {
+    else if (read_memory8(cpu, cpu->pc) == 0x14) {
       if (dump)
         printf("INC D\n");
 
@@ -427,7 +427,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // DEC D
-    else if (cpu->mem[cpu->pc] == 0x15) {
+    else if (read_memory8(cpu, cpu->pc) == 0x15) {
       if (dump)
         printf("DEC D\n");
 
@@ -436,7 +436,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // LD D, d8
-    else if (cpu->mem[cpu->pc] == 0x16) {
+    else if (read_memory8(cpu, cpu->pc) == 0x16) {
       if (dump)
         printf("LD D, %02X\n", cpu->mem[cpu->pc + 1]);
 
@@ -446,7 +446,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // RLA
-    else if (cpu->mem[cpu->pc] == 0x17) {
+    else if (read_memory8(cpu, cpu->pc) == 0x17) {
       if (dump)
         printf("RLA\n");
 
@@ -458,7 +458,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // JR i8
-    else if (cpu->mem[cpu->pc] == 0x18) {
+    else if (read_memory8(cpu, cpu->pc) == 0x18) {
       if (dump)
         printf("JR %02X\n", cpu->mem[cpu->pc + 1]);
 
@@ -466,7 +466,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // ADD HL, DE
-    else if (cpu->mem[cpu->pc] == 0x19) {
+    else if (read_memory8(cpu, cpu->pc) == 0x19) {
       if (dump)
         printf("ADD HL, DE\n");
 
@@ -477,7 +477,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // LD A, (DE)
-    else if (cpu->mem[cpu->pc] == 0x1A) {
+    else if (read_memory8(cpu, cpu->pc) == 0x1A) {
       if (dump)
         printf("LD A, (DE)\n");
 
@@ -490,7 +490,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // DEC DE
-    else if (cpu->mem[cpu->pc] == 0x1B) {
+    else if (read_memory8(cpu, cpu->pc) == 0x1B) {
       if (dump)
         printf("DEC DE\n");
 
@@ -501,7 +501,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // INC E
-    else if (cpu->mem[cpu->pc] == 0x1C) {
+    else if (read_memory8(cpu, cpu->pc) == 0x1C) {
       if (dump)
         printf("INC E\n");
 
@@ -511,7 +511,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // DEC E
-    else if (cpu->mem[cpu->pc] == 0x1D) {
+    else if (read_memory8(cpu, cpu->pc) == 0x1D) {
       if (dump)
         printf("DEC E\n");
 
@@ -521,7 +521,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // LD E, d8
-    else if (cpu->mem[cpu->pc] == 0x1E) {
+    else if (read_memory8(cpu, cpu->pc) == 0x1E) {
       if (dump)
         printf("LD E, %02X\n", cpu->mem[cpu->pc + 1]);
 
@@ -531,7 +531,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // RRA
-    else if (cpu->mem[cpu->pc] == 0x1F) {
+    else if (read_memory8(cpu, cpu->pc) == 0x1F) {
       if (dump)
         printf("RRA\n");
 
@@ -543,7 +543,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // JP NZ, i8
-    else if (cpu->mem[cpu->pc] == 0x20) {
+    else if (read_memory8(cpu, cpu->pc) == 0x20) {
       if (dump)
         printf("JP NZ, %02X\n", cpu->mem[cpu->pc + 1]);
 
@@ -554,7 +554,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // LD HL, d16
-    else if (cpu->mem[cpu->pc] == 0x21) {
+    else if (read_memory8(cpu, cpu->pc) == 0x21) {
       if (dump)
         printf("LD HL, %02X%02X\n", cpu->mem[cpu->pc + 1],
                cpu->mem[cpu->pc + 2]);
@@ -566,7 +566,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // LD (HL+), A
-    else if (cpu->mem[cpu->pc] == 0x22) {
+    else if (read_memory8(cpu, cpu->pc) == 0x22) {
       if (dump)
         printf("LD (HL+), A\n");
 
@@ -579,7 +579,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // INC HL
-    else if (cpu->mem[cpu->pc] == 0x23) {
+    else if (read_memory8(cpu, cpu->pc) == 0x23) {
       if (dump)
         printf("INC HL\n");
 
@@ -590,7 +590,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // INC H
-    else if (cpu->mem[cpu->pc] == 0x24) {
+    else if (read_memory8(cpu, cpu->pc) == 0x24) {
       if (dump)
         printf("INC H\n");
 
@@ -599,7 +599,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // DEC H
-    else if (cpu->mem[cpu->pc] == 0x25) {
+    else if (read_memory8(cpu, cpu->pc) == 0x25) {
       if (dump)
         printf("DEC H\n");
 
@@ -608,7 +608,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // LD H, d8
-    else if (cpu->mem[cpu->pc] == 0x26) {
+    else if (read_memory8(cpu, cpu->pc) == 0x26) {
       if (dump)
         printf("LD H, %02X\n", cpu->mem[cpu->pc + 1]);
 
@@ -618,7 +618,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // DAA
-    else if (cpu->mem[cpu->pc] == 0x27) {
+    else if (read_memory8(cpu, cpu->pc) == 0x27) {
       if (dump)
         printf("DAA\n");
 
@@ -633,7 +633,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // JR Z, i8
-    else if (cpu->mem[cpu->pc] == 0x28) {
+    else if (read_memory8(cpu, cpu->pc) == 0x28) {
       if (dump)
         printf("JP NZ, %02X\n", cpu->mem[cpu->pc + 1]);
 
@@ -644,7 +644,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // ADD HL, HL
-    else if (cpu->mem[cpu->pc] == 0x29) {
+    else if (read_memory8(cpu, cpu->pc) == 0x29) {
       if (dump)
         printf("ADD HL, DE\n");
 
@@ -655,7 +655,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // LD A, (HL+)
-    else if (cpu->mem[cpu->pc] == 0x2A) {
+    else if (read_memory8(cpu, cpu->pc) == 0x2A) {
       if (dump)
         printf("LOAD A, (HL+)\n");
 
@@ -668,7 +668,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // DEC HL
-    else if (cpu->mem[cpu->pc] == 0x2B) {
+    else if (read_memory8(cpu, cpu->pc) == 0x2B) {
       if (dump)
         printf("DEC DE\n");
 
@@ -679,7 +679,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // INC L
-    else if (cpu->mem[cpu->pc] == 0x2C) {
+    else if (read_memory8(cpu, cpu->pc) == 0x2C) {
       if (dump)
         printf("INC L\n");
 
@@ -689,7 +689,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // DEC L
-    else if (cpu->mem[cpu->pc] == 0x2D) {
+    else if (read_memory8(cpu, cpu->pc) == 0x2D) {
       if (dump)
         printf("DEC L\n");
 
@@ -699,7 +699,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // LD L, d8
-    else if (cpu->mem[cpu->pc] == 0x2E) {
+    else if (read_memory8(cpu, cpu->pc) == 0x2E) {
       if (dump)
         printf("LD L, %02X\n", cpu->mem[cpu->pc + 1]);
 
@@ -709,7 +709,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // CPL
-    else if (cpu->mem[cpu->pc] == 0x2F) {
+    else if (read_memory8(cpu, cpu->pc) == 0x2F) {
       if (dump)
         printf("CPL\n");
 
@@ -718,7 +718,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // JR NC, i8
-    else if (cpu->mem[cpu->pc] == 0x30) {
+    else if (read_memory8(cpu, cpu->pc) == 0x30) {
       if (dump)
         printf("JR NZ, %02X\n", cpu->mem[cpu->pc + 1]);
 
@@ -729,7 +729,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // LD SP, d16
-    else if (cpu->mem[cpu->pc] == 0x31) {
+    else if (read_memory8(cpu, cpu->pc) == 0x31) {
       if (dump)
         printf("LD SP, %02X%02X\n", cpu->mem[cpu->pc + 1],
                cpu->mem[cpu->pc + 2]);
@@ -739,7 +739,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // LD (HL-), A
-    else if (cpu->mem[cpu->pc] == 0x32) {
+    else if (read_memory8(cpu, cpu->pc) == 0x32) {
       if (dump)
         printf("LD (HL-), A\n");
 
@@ -751,7 +751,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // INC SP
-    else if (cpu->mem[cpu->pc] == 0x33) {
+    else if (read_memory8(cpu, cpu->pc) == 0x33) {
       if (dump)
         printf("INC SP\n");
 
@@ -761,7 +761,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // INC (HL)
-    else if (cpu->mem[cpu->pc] == 0x34) {
+    else if (read_memory8(cpu, cpu->pc) == 0x34) {
       if (dump)
         printf("INC (HL)\n");
 
@@ -771,7 +771,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // DEC H
-    else if (cpu->mem[cpu->pc] == 0x35) {
+    else if (read_memory8(cpu, cpu->pc) == 0x35) {
       if (dump)
         printf("DEC H\n");
 
@@ -780,7 +780,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // LD H, d8
-    else if (cpu->mem[cpu->pc] == 0x36) {
+    else if (read_memory8(cpu, cpu->pc) == 0x36) {
       if (dump)
         printf("ld h, %02x\n", cpu->mem[cpu->pc + 1]);
 
@@ -790,7 +790,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // SCF
-    else if (cpu->mem[cpu->pc] == 0x37) {
+    else if (read_memory8(cpu, cpu->pc) == 0x37) {
       if (dump)
         printf("SCF\n");
 
@@ -800,7 +800,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // JR C, i8
-    else if (cpu->mem[cpu->pc] == 0x38) {
+    else if (read_memory8(cpu, cpu->pc) == 0x38) {
       if (dump)
         printf("JR C, %02X\n", cpu->mem[cpu->pc + 1]);
 
@@ -811,7 +811,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // ADD HL, SP
-    else if (cpu->mem[cpu->pc] == 0x39) {
+    else if (read_memory8(cpu, cpu->pc) == 0x39) {
       if (dump)
         printf("ADD HL, SP\n");
 
@@ -822,7 +822,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // LD A, (HL+)
-    else if (cpu->mem[cpu->pc] == 0x3A) {
+    else if (read_memory8(cpu, cpu->pc) == 0x3A) {
       if (dump)
         printf("LD A, (HL-)\n");
 
@@ -835,7 +835,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // DEC SP
-    else if (cpu->mem[cpu->pc] == 0x3B) {
+    else if (read_memory8(cpu, cpu->pc) == 0x3B) {
       if (dump)
         printf("DEC SP\n");
 
@@ -845,7 +845,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // INC A
-    else if (cpu->mem[cpu->pc] == 0x3C) {
+    else if (read_memory8(cpu, cpu->pc) == 0x3C) {
       if (dump)
         printf("INC A\n");
 
@@ -855,7 +855,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // DEC A
-    else if (cpu->mem[cpu->pc] == 0x3D) {
+    else if (read_memory8(cpu, cpu->pc) == 0x3D) {
       if (dump)
         printf("DEC A\n");
 
@@ -865,7 +865,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // LD A, d8
-    else if (cpu->mem[cpu->pc] == 0x3E) {
+    else if (read_memory8(cpu, cpu->pc) == 0x3E) {
       if (dump)
         printf("LD A, %02X\n", cpu->mem[cpu->pc + 1]);
 
@@ -875,7 +875,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // CCF
-    else if (cpu->mem[cpu->pc] == 0x3F) {
+    else if (read_memory8(cpu, cpu->pc) == 0x3F) {
       if (dump)
         printf("CCF\n");
 
@@ -887,7 +887,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // LD B, B
-    else if (cpu->mem[cpu->pc] == 0x40) {
+    else if (read_memory8(cpu, cpu->pc) == 0x40) {
       if (dump)
         printf("LD B, B\n");
 
@@ -897,7 +897,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // LD B, C
-    else if (cpu->mem[cpu->pc] == 0x41) {
+    else if (read_memory8(cpu, cpu->pc) == 0x41) {
       if (dump)
         printf("LD B, C\n");
 
@@ -906,7 +906,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // LD B, D
-    else if (cpu->mem[cpu->pc] == 0x42) {
+    else if (read_memory8(cpu, cpu->pc) == 0x42) {
       if (dump)
         printf("LD B, D\n");
 
@@ -915,7 +915,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // LD B, E
-    else if (cpu->mem[cpu->pc] == 0x43) {
+    else if (read_memory8(cpu, cpu->pc) == 0x43) {
       if (dump)
         printf("LD B, E\n");
 
@@ -924,7 +924,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // LD B, H
-    else if (cpu->mem[cpu->pc] == 0x44) {
+    else if (read_memory8(cpu, cpu->pc) == 0x44) {
       if (dump)
         printf("LD B, H\n");
 
@@ -934,7 +934,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // LD B, L
-    else if (cpu->mem[cpu->pc] == 0x45) {
+    else if (read_memory8(cpu, cpu->pc) == 0x45) {
       if (dump)
         printf("LD B, L\n");
 
@@ -943,7 +943,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // LD B, (HL)
-    else if (cpu->mem[cpu->pc] == 0x46) {
+    else if (read_memory8(cpu, cpu->pc) == 0x46) {
       if (dump)
         printf("LD B, (HL)\n");
 
@@ -954,7 +954,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // LD B, A
-    else if (cpu->mem[cpu->pc] == 0x47) {
+    else if (read_memory8(cpu, cpu->pc) == 0x47) {
       if (dump)
         printf("LD B, A\n");
 
@@ -963,7 +963,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // LD C, B
-    else if (cpu->mem[cpu->pc] == 0x48) {
+    else if (read_memory8(cpu, cpu->pc) == 0x48) {
       if (dump)
         printf("LD C, B\n");
 
@@ -973,7 +973,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // LD C, C
-    else if (cpu->mem[cpu->pc] == 0x49) {
+    else if (read_memory8(cpu, cpu->pc) == 0x49) {
       if (dump)
         printf("LD C, C\n");
 
@@ -982,7 +982,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // LD C, D
-    else if (cpu->mem[cpu->pc] == 0x4A) {
+    else if (read_memory8(cpu, cpu->pc) == 0x4A) {
       if (dump)
         printf("LD C, D\n");
 
@@ -991,7 +991,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // LD C, E
-    else if (cpu->mem[cpu->pc] == 0x4B) {
+    else if (read_memory8(cpu, cpu->pc) == 0x4B) {
       if (dump)
         printf("LD C, E\n");
 
@@ -1001,7 +1001,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // LD C, H
-    else if (cpu->mem[cpu->pc] == 0x4C) {
+    else if (read_memory8(cpu, cpu->pc) == 0x4C) {
       if (dump)
         printf("LD C, H\n");
 
@@ -1010,7 +1010,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // LD C, L
-    else if (cpu->mem[cpu->pc] == 0x4D) {
+    else if (read_memory8(cpu, cpu->pc) == 0x4D) {
       if (dump)
         printf("LD C, L\n");
 
@@ -1019,7 +1019,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // LD C, (HL)
-    else if (cpu->mem[cpu->pc] == 0x4E) {
+    else if (read_memory8(cpu, cpu->pc) == 0x4E) {
       if (dump)
         printf("LD C, (HL)\n");
 
@@ -1029,7 +1029,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // LD C, A
-    else if (cpu->mem[cpu->pc] == 0x4F) {
+    else if (read_memory8(cpu, cpu->pc) == 0x4F) {
       if (dump)
         printf("LD C, A\n");
 
@@ -1038,7 +1038,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // LD D, B
-    else if (cpu->mem[cpu->pc] == 0x50) {
+    else if (read_memory8(cpu, cpu->pc) == 0x50) {
       if (dump)
         printf("LD D, B\n");
 
@@ -1047,7 +1047,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // LD D, C
-    else if (cpu->mem[cpu->pc] == 0x51) {
+    else if (read_memory8(cpu, cpu->pc) == 0x51) {
       if (dump)
         printf("LD D, C\n");
 
@@ -1056,7 +1056,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // LD D, D
-    else if (cpu->mem[cpu->pc] == 0x52) {
+    else if (read_memory8(cpu, cpu->pc) == 0x52) {
       if (dump)
         printf("LD D, D\n");
 
@@ -1065,7 +1065,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // LD D, E
-    else if (cpu->mem[cpu->pc] == 0x53) {
+    else if (read_memory8(cpu, cpu->pc) == 0x53) {
       if (dump)
         printf("LD D, E\n");
 
@@ -1074,7 +1074,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // LD D, H
-    else if (cpu->mem[cpu->pc] == 0x54) {
+    else if (read_memory8(cpu, cpu->pc) == 0x54) {
       if (dump)
         printf("LD D, H\n");
 
@@ -1083,7 +1083,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // LD D, L
-    else if (cpu->mem[cpu->pc] == 0x55) {
+    else if (read_memory8(cpu, cpu->pc) == 0x55) {
       if (dump)
         printf("LD D, L\n");
 
@@ -1092,7 +1092,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // LD D, (HL)
-    else if (cpu->mem[cpu->pc] == 0x56) {
+    else if (read_memory8(cpu, cpu->pc) == 0x56) {
       if (dump)
         printf("LD D, (HL)\n");
 
@@ -1102,7 +1102,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // LD D, A
-    else if (cpu->mem[cpu->pc] == 0x57) {
+    else if (read_memory8(cpu, cpu->pc) == 0x57) {
       if (dump)
         printf("LD D, A\n");
 
@@ -1111,7 +1111,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // LD E, B
-    else if (cpu->mem[cpu->pc] == 0x58) {
+    else if (read_memory8(cpu, cpu->pc) == 0x58) {
       if (dump)
         printf("LD E, B\n");
 
@@ -1120,7 +1120,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // LD E, C
-    else if (cpu->mem[cpu->pc] == 0x59) {
+    else if (read_memory8(cpu, cpu->pc) == 0x59) {
       if (dump)
         printf("LD E, C\n");
 
@@ -1129,7 +1129,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // LD E, D
-    else if (cpu->mem[cpu->pc] == 0x5A) {
+    else if (read_memory8(cpu, cpu->pc) == 0x5A) {
       if (dump)
         printf("LD E, D\n");
 
@@ -1138,7 +1138,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // LD E, E
-    else if (cpu->mem[cpu->pc] == 0x5B) {
+    else if (read_memory8(cpu, cpu->pc) == 0x5B) {
       if (dump)
         printf("LD E, E\n");
 
@@ -1147,7 +1147,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // LD E, H
-    else if (cpu->mem[cpu->pc] == 0x5C) {
+    else if (read_memory8(cpu, cpu->pc) == 0x5C) {
       if (dump)
         printf("LD E, H\n");
 
@@ -1156,7 +1156,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // LD E, L
-    else if (cpu->mem[cpu->pc] == 0x5D) {
+    else if (read_memory8(cpu, cpu->pc) == 0x5D) {
       if (dump)
         printf("LD E, L\n");
 
@@ -1165,7 +1165,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // LD E, (HL)
-    else if (cpu->mem[cpu->pc] == 0x5E) {
+    else if (read_memory8(cpu, cpu->pc) == 0x5E) {
       if (dump)
         printf("LD E, (HL)\n");
 
@@ -1175,7 +1175,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // LD E, A
-    else if (cpu->mem[cpu->pc] == 0x5D) {
+    else if (read_memory8(cpu, cpu->pc) == 0x5D) {
       if (dump)
         printf("LD E, A\n");
 
@@ -1184,7 +1184,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // LD H, B
-    else if (cpu->mem[cpu->pc] == 0x60) {
+    else if (read_memory8(cpu, cpu->pc) == 0x60) {
       if (dump)
         printf("LD H, B\n");
 
@@ -1193,7 +1193,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // LD H, C
-    else if (cpu->mem[cpu->pc] == 0x61) {
+    else if (read_memory8(cpu, cpu->pc) == 0x61) {
       if (dump)
         printf("LD H, C\n");
 
@@ -1202,7 +1202,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // LD H, D
-    else if (cpu->mem[cpu->pc] == 0x62) {
+    else if (read_memory8(cpu, cpu->pc) == 0x62) {
       if (dump)
         printf("LD H, D\n");
 
@@ -1211,7 +1211,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // LD H, E
-    else if (cpu->mem[cpu->pc] == 0x63) {
+    else if (read_memory8(cpu, cpu->pc) == 0x63) {
       if (dump)
         printf("LD H, E\n");
 
@@ -1220,7 +1220,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // LD H, H
-    else if (cpu->mem[cpu->pc] == 0x64) {
+    else if (read_memory8(cpu, cpu->pc) == 0x64) {
       if (dump)
         printf("LD H, H\n");
 
@@ -1229,7 +1229,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // LD H, L
-    else if (cpu->mem[cpu->pc] == 0x65) {
+    else if (read_memory8(cpu, cpu->pc) == 0x65) {
       if (dump)
         printf("LD H, L\n");
 
@@ -1238,7 +1238,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // LD H, (HL)
-    else if (cpu->mem[cpu->pc] == 0x66) {
+    else if (read_memory8(cpu, cpu->pc) == 0x66) {
       if (dump)
         printf("LD H, (HL)\n");
 
@@ -1249,7 +1249,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // LD H, A
-    else if (cpu->mem[cpu->pc] == 0x67) {
+    else if (read_memory8(cpu, cpu->pc) == 0x67) {
       if (dump)
         printf("LD H, A\n");
 
@@ -1258,7 +1258,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // LD L, B
-    else if (cpu->mem[cpu->pc] == 0x68) {
+    else if (read_memory8(cpu, cpu->pc) == 0x68) {
       if (dump)
         printf("LD L, B\n");
 
@@ -1267,7 +1267,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // LD L, C
-    else if (cpu->mem[cpu->pc] == 0x69) {
+    else if (read_memory8(cpu, cpu->pc) == 0x69) {
       if (dump)
         printf("LD L, C\n");
 
@@ -1276,7 +1276,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // LD L, D
-    else if (cpu->mem[cpu->pc] == 0x6A) {
+    else if (read_memory8(cpu, cpu->pc) == 0x6A) {
       if (dump)
         printf("LD L, D\n");
 
@@ -1285,7 +1285,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // LD L, E
-    else if (cpu->mem[cpu->pc] == 0x6B) {
+    else if (read_memory8(cpu, cpu->pc) == 0x6B) {
       if (dump)
         printf("LD L, E\n");
 
@@ -1294,7 +1294,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // LD L, H
-    else if (cpu->mem[cpu->pc] == 0x6C) {
+    else if (read_memory8(cpu, cpu->pc) == 0x6C) {
       if (dump)
         printf("LD L, H\n");
 
@@ -1303,7 +1303,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // LD L, L
-    else if (cpu->mem[cpu->pc] == 0x6D) {
+    else if (read_memory8(cpu, cpu->pc) == 0x6D) {
       if (dump)
         printf("LD L, L\n");
 
@@ -1312,7 +1312,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // LD L, (HL)
-    else if (cpu->mem[cpu->pc] == 0x6E) {
+    else if (read_memory8(cpu, cpu->pc) == 0x6E) {
       if (dump)
         printf("LD L, (HL)\n");
 
@@ -1322,7 +1322,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // LD L, A
-    else if (cpu->mem[cpu->pc] == 0x6F) {
+    else if (read_memory8(cpu, cpu->pc) == 0x6F) {
       if (dump)
         printf("LD L, A\n");
 
@@ -1331,7 +1331,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // LD (HL), B
-    else if (cpu->mem[cpu->pc] == 0x70) {
+    else if (read_memory8(cpu, cpu->pc) == 0x70) {
       if (dump)
         printf("LD (HL), B\n");
 
@@ -1341,7 +1341,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // LD (HL), C
-    else if (cpu->mem[cpu->pc] == 0x71) {
+    else if (read_memory8(cpu, cpu->pc) == 0x71) {
       if (dump)
         printf("LD (HL), C\n");
 
@@ -1351,7 +1351,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // LD (HL), D
-    else if (cpu->mem[cpu->pc] == 0x72) {
+    else if (read_memory8(cpu, cpu->pc) == 0x72) {
       if (dump)
         printf("LD (HL), D\n");
 
@@ -1361,7 +1361,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // LD (HL), E
-    else if (cpu->mem[cpu->pc] == 0x73) {
+    else if (read_memory8(cpu, cpu->pc) == 0x73) {
       if (dump)
         printf("LD (HL), E\n");
 
@@ -1371,7 +1371,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // LD (HL), H
-    else if (cpu->mem[cpu->pc] == 0x74) {
+    else if (read_memory8(cpu, cpu->pc) == 0x74) {
       if (dump)
         printf("LD (HL), H\n");
 
@@ -1381,7 +1381,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // LD (HL), L
-    else if (cpu->mem[cpu->pc] == 0x75) {
+    else if (read_memory8(cpu, cpu->pc) == 0x75) {
       if (dump)
         printf("LD (HL), L\n");
 
@@ -1391,7 +1391,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // HALT
-    else if (cpu->mem[cpu->pc] == 0x76) {
+    else if (read_memory8(cpu, cpu->pc) == 0x76) {
       if (dump)
         printf("HALT\n");
 
@@ -1399,7 +1399,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // LD (HL), A
-    else if (cpu->mem[cpu->pc] == 0x77) {
+    else if (read_memory8(cpu, cpu->pc) == 0x77) {
       if (dump)
         printf("LD (HL), A\n");
 
@@ -1409,7 +1409,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // LD A, B
-    else if (cpu->mem[cpu->pc] == 0x78) {
+    else if (read_memory8(cpu, cpu->pc) == 0x78) {
       if (dump)
         printf("LD A, B\n");
 
@@ -1418,7 +1418,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // LD A, C
-    else if (cpu->mem[cpu->pc] == 0x79) {
+    else if (read_memory8(cpu, cpu->pc) == 0x79) {
       if (dump)
         printf("LD A, C\n");
 
@@ -1427,7 +1427,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // LD A, D
-    else if (cpu->mem[cpu->pc] == 0x7A) {
+    else if (read_memory8(cpu, cpu->pc) == 0x7A) {
       if (dump)
         printf("LD A, D\n");
 
@@ -1436,7 +1436,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // LD A, E
-    else if (cpu->mem[cpu->pc] == 0x7B) {
+    else if (read_memory8(cpu, cpu->pc) == 0x7B) {
       if (dump)
         printf("LD A, E\n");
 
@@ -1445,7 +1445,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // LD A, H
-    else if (cpu->mem[cpu->pc] == 0x7C) {
+    else if (read_memory8(cpu, cpu->pc) == 0x7C) {
       if (dump)
         printf("LD A, H\n");
 
@@ -1454,7 +1454,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // LD A, L
-    else if (cpu->mem[cpu->pc] == 0x7D) {
+    else if (read_memory8(cpu, cpu->pc) == 0x7D) {
       if (dump)
         printf("LD A, L\n");
 
@@ -1463,7 +1463,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // LD A, (HL)
-    else if (cpu->mem[cpu->pc] == 0x7E) {
+    else if (read_memory8(cpu, cpu->pc) == 0x7E) {
       if (dump)
         printf("LD H, (HL)\n");
 
@@ -1475,7 +1475,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // LD A, A
-    else if (cpu->mem[cpu->pc] == 0x7F) {
+    else if (read_memory8(cpu, cpu->pc) == 0x7F) {
       if (dump)
         printf("LD A, A\n");
 
@@ -1484,7 +1484,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // ADD A, B
-    else if (cpu->mem[cpu->pc] == 0x80) {
+    else if (read_memory8(cpu, cpu->pc) == 0x80) {
       if (dump)
         printf("ADD A, B\n");
 
@@ -1494,7 +1494,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // ADD A, C
-    else if (cpu->mem[cpu->pc] == 0x81) {
+    else if (read_memory8(cpu, cpu->pc) == 0x81) {
       if (dump)
         printf("ADD A, C\n");
 
@@ -1504,7 +1504,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // ADD A, D
-    else if (cpu->mem[cpu->pc] == 0x82) {
+    else if (read_memory8(cpu, cpu->pc) == 0x82) {
       if (dump)
         printf("ADD A, D\n");
 
@@ -1514,7 +1514,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // ADD A, E
-    else if (cpu->mem[cpu->pc] == 0x83) {
+    else if (read_memory8(cpu, cpu->pc) == 0x83) {
       if (dump)
         printf("ADD A, E\n");
 
@@ -1524,7 +1524,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // ADD A, H
-    else if (cpu->mem[cpu->pc] == 0x84) {
+    else if (read_memory8(cpu, cpu->pc) == 0x84) {
       if (dump)
         printf("ADD A, H\n");
 
@@ -1534,7 +1534,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // ADD A, L
-    else if (cpu->mem[cpu->pc] == 0x85) {
+    else if (read_memory8(cpu, cpu->pc) == 0x85) {
       if (dump)
         printf("ADD A, L\n");
 
@@ -1544,7 +1544,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // ADD A, (HL)
-    else if (cpu->mem[cpu->pc] == 0x86) {
+    else if (read_memory8(cpu, cpu->pc) == 0x86) {
       if (dump)
         printf("ADD A, (HL)\n");
 
@@ -1556,7 +1556,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // ADD A, B
-    else if (cpu->mem[cpu->pc] == 0x87) {
+    else if (read_memory8(cpu, cpu->pc) == 0x87) {
       if (dump)
         printf("ADD A, B\n");
 
@@ -1566,7 +1566,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // ADC A, B
-    else if (cpu->mem[cpu->pc] == 0x88) {
+    else if (read_memory8(cpu, cpu->pc) == 0x88) {
       if (dump)
         printf("ADC A, B\n");
 
@@ -1576,7 +1576,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // ADC A, C
-    else if (cpu->mem[cpu->pc] == 0x89) {
+    else if (read_memory8(cpu, cpu->pc) == 0x89) {
       if (dump)
         printf("ADC A, C\n");
 
@@ -1586,7 +1586,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // ADC A, D
-    else if (cpu->mem[cpu->pc] == 0x8A) {
+    else if (read_memory8(cpu, cpu->pc) == 0x8A) {
       if (dump)
         printf("ADC A, D\n");
 
@@ -1596,7 +1596,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // ADC A, E
-    else if (cpu->mem[cpu->pc] == 0x8B) {
+    else if (read_memory8(cpu, cpu->pc) == 0x8B) {
       if (dump)
         printf("ADC A, E\n");
 
@@ -1606,7 +1606,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // ADC A, H
-    else if (cpu->mem[cpu->pc] == 0x8C) {
+    else if (read_memory8(cpu, cpu->pc) == 0x8C) {
       if (dump)
         printf("ADC A, H\n");
 
@@ -1616,7 +1616,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // ADC A, L
-    else if (cpu->mem[cpu->pc] == 0x8D) {
+    else if (read_memory8(cpu, cpu->pc) == 0x8D) {
       if (dump)
         printf("ADC A, L\n");
 
@@ -1626,7 +1626,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // ADC A, (HL)
-    else if (cpu->mem[cpu->pc] == 0x8E) {
+    else if (read_memory8(cpu, cpu->pc) == 0x8E) {
       if (dump)
         printf("ADC A, (HL)\n");
 
@@ -1638,7 +1638,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // ADC A, A
-    else if (cpu->mem[cpu->pc] == 0x8F) {
+    else if (read_memory8(cpu, cpu->pc) == 0x8F) {
       if (dump)
         printf("ADC A, A\n");
 
@@ -1648,7 +1648,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // SUB A, B
-    else if (cpu->mem[cpu->pc] == 0x90) {
+    else if (read_memory8(cpu, cpu->pc) == 0x90) {
       if (dump)
         printf("SUB A, B\n");
 
@@ -1658,7 +1658,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // SUB A, C
-    else if (cpu->mem[cpu->pc] == 0x91) {
+    else if (read_memory8(cpu, cpu->pc) == 0x91) {
       if (dump)
         printf("SUB A, C\n");
 
@@ -1668,7 +1668,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // SUB A, D
-    else if (cpu->mem[cpu->pc] == 0x92) {
+    else if (read_memory8(cpu, cpu->pc) == 0x92) {
       if (dump)
         printf("SUB A, D\n");
 
@@ -1678,7 +1678,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // SUB A, E
-    else if (cpu->mem[cpu->pc] == 0x93) {
+    else if (read_memory8(cpu, cpu->pc) == 0x93) {
       if (dump)
         printf("SUB A, E\n");
 
@@ -1688,7 +1688,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // SUB A, H
-    else if (cpu->mem[cpu->pc] == 0x94) {
+    else if (read_memory8(cpu, cpu->pc) == 0x94) {
       if (dump)
         printf("SUB A, H\n");
 
@@ -1698,7 +1698,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // SUB A, L
-    else if (cpu->mem[cpu->pc] == 0x95) {
+    else if (read_memory8(cpu, cpu->pc) == 0x95) {
       if (dump)
         printf("SUB A, L\n");
 
@@ -1708,7 +1708,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // SUB A, L
-    else if (cpu->mem[cpu->pc] == 0x95) {
+    else if (read_memory8(cpu, cpu->pc) == 0x95) {
       if (dump)
         printf("SUB A, L\n");
 
@@ -1718,7 +1718,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // SUB A, (HL)
-    else if (cpu->mem[cpu->pc] == 0x96) {
+    else if (read_memory8(cpu, cpu->pc) == 0x96) {
       if (dump)
         printf("SUB A, (HL)\n");
 
@@ -1730,7 +1730,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // SUB A, A
-    else if (cpu->mem[cpu->pc] == 0x97) {
+    else if (read_memory8(cpu, cpu->pc) == 0x97) {
       if (dump)
         printf("SUB A, A\n");
 
@@ -1740,7 +1740,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // SBC A, B
-    else if (cpu->mem[cpu->pc] == 0x98) {
+    else if (read_memory8(cpu, cpu->pc) == 0x98) {
       if (dump)
         printf("SBC A, B\n");
 
@@ -1750,7 +1750,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // SBC A, C
-    else if (cpu->mem[cpu->pc] == 0x99) {
+    else if (read_memory8(cpu, cpu->pc) == 0x99) {
       if (dump)
         printf("SBC A, C\n");
 
@@ -1760,7 +1760,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // SBC A, D
-    else if (cpu->mem[cpu->pc] == 0x9A) {
+    else if (read_memory8(cpu, cpu->pc) == 0x9A) {
       if (dump)
         printf("SBC A, D\n");
 
@@ -1770,7 +1770,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // SBC A, E
-    else if (cpu->mem[cpu->pc] == 0x9B) {
+    else if (read_memory8(cpu, cpu->pc) == 0x9B) {
       if (dump)
         printf("SBC A, E\n");
 
@@ -1780,7 +1780,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // SBC A, H
-    else if (cpu->mem[cpu->pc] == 0x9C) {
+    else if (read_memory8(cpu, cpu->pc) == 0x9C) {
       if (dump)
         printf("SBC A, C\n");
 
@@ -1790,7 +1790,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // SBC A, L
-    else if (cpu->mem[cpu->pc] == 0x9D) {
+    else if (read_memory8(cpu, cpu->pc) == 0x9D) {
       if (dump)
         printf("SBC A, L\n");
 
@@ -1800,7 +1800,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // SBC A, (HL)
-    else if (cpu->mem[cpu->pc] == 0x9E) {
+    else if (read_memory8(cpu, cpu->pc) == 0x9E) {
       if (dump)
         printf("SBC A, (HL)\n");
 
@@ -1812,7 +1812,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // SBC A, A
-    else if (cpu->mem[cpu->pc] == 0x9F) {
+    else if (read_memory8(cpu, cpu->pc) == 0x9F) {
       if (dump)
         printf("SBC A, A\n");
 
@@ -1822,7 +1822,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // AND A, B
-    else if (cpu->mem[cpu->pc] == 0xA0) {
+    else if (read_memory8(cpu, cpu->pc) == 0xA0) {
       if (dump)
         printf("AND A, B\n");
 
@@ -1832,7 +1832,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // AND A, C
-    else if (cpu->mem[cpu->pc] == 0xA1) {
+    else if (read_memory8(cpu, cpu->pc) == 0xA1) {
       if (dump)
         printf("AND A, C\n");
 
@@ -1842,7 +1842,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // AND A, D
-    else if (cpu->mem[cpu->pc] == 0xA2) {
+    else if (read_memory8(cpu, cpu->pc) == 0xA2) {
       if (dump)
         printf("AND A, D\n");
 
@@ -1852,7 +1852,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // AND A, E
-    else if (cpu->mem[cpu->pc] == 0xA3) {
+    else if (read_memory8(cpu, cpu->pc) == 0xA3) {
       if (dump)
         printf("AND A, E\n");
 
@@ -1862,7 +1862,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // AND A, H
-    else if (cpu->mem[cpu->pc] == 0xA4) {
+    else if (read_memory8(cpu, cpu->pc) == 0xA4) {
       if (dump)
         printf("AND A, H\n");
 
@@ -1872,7 +1872,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // AND A, L
-    else if (cpu->mem[cpu->pc] == 0xA5) {
+    else if (read_memory8(cpu, cpu->pc) == 0xA5) {
       if (dump)
         printf("AND A, L\n");
 
@@ -1882,7 +1882,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // AND A, (HL)
-    else if (cpu->mem[cpu->pc] == 0xA6) {
+    else if (read_memory8(cpu, cpu->pc) == 0xA6) {
       if (dump)
         printf("AND A, (HL)\n");
 
@@ -1894,7 +1894,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // AND A, A
-    else if (cpu->mem[cpu->pc] == 0xA7) {
+    else if (read_memory8(cpu, cpu->pc) == 0xA7) {
       if (dump)
         printf("AND A, A\n");
 
@@ -1904,7 +1904,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // XOR A, B
-    else if (cpu->mem[cpu->pc] == 0xA8) {
+    else if (read_memory8(cpu, cpu->pc) == 0xA8) {
       if (dump)
         printf("XOR A, B\n");
 
@@ -1914,7 +1914,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // XOR A, C
-    else if (cpu->mem[cpu->pc] == 0xA9) {
+    else if (read_memory8(cpu, cpu->pc) == 0xA9) {
       if (dump)
         printf("XOR A, C\n");
 
@@ -1924,7 +1924,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // XOR A, D
-    else if (cpu->mem[cpu->pc] == 0xAA) {
+    else if (read_memory8(cpu, cpu->pc) == 0xAA) {
       if (dump)
         printf("XOR A, D\n");
 
@@ -1934,7 +1934,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // XOR A, E
-    else if (cpu->mem[cpu->pc] == 0xAB) {
+    else if (read_memory8(cpu, cpu->pc) == 0xAB) {
       if (dump)
         printf("XOR A, E\n");
 
@@ -1944,7 +1944,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // XOR A, H
-    else if (cpu->mem[cpu->pc] == 0xAC) {
+    else if (read_memory8(cpu, cpu->pc) == 0xAC) {
       if (dump)
         printf("XOR A, H\n");
 
@@ -1954,7 +1954,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // XOR A, L
-    else if (cpu->mem[cpu->pc] == 0xAD) {
+    else if (read_memory8(cpu, cpu->pc) == 0xAD) {
       if (dump)
         printf("XOR A, H\n");
 
@@ -1964,7 +1964,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // XOR A, (HL)
-    else if (cpu->mem[cpu->pc] == 0xAE) {
+    else if (read_memory8(cpu, cpu->pc) == 0xAE) {
       if (dump)
         printf("XOR A, (HL)\n");
 
@@ -1976,7 +1976,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // XOR A, A
-    else if (cpu->mem[cpu->pc] == 0xAF) {
+    else if (read_memory8(cpu, cpu->pc) == 0xAF) {
       if (dump)
         printf("XOR A, A\n");
 
@@ -1986,7 +1986,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // OR A, B
-    else if (cpu->mem[cpu->pc] == 0xB0) {
+    else if (read_memory8(cpu, cpu->pc) == 0xB0) {
       if (dump)
         printf("OR A, B\n");
 
@@ -1996,7 +1996,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // OR A, C
-    else if (cpu->mem[cpu->pc] == 0xB1) {
+    else if (read_memory8(cpu, cpu->pc) == 0xB1) {
       if (dump)
         printf("OR A, C\n");
 
@@ -2006,7 +2006,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // OR A, D
-    else if (cpu->mem[cpu->pc] == 0xB2) {
+    else if (read_memory8(cpu, cpu->pc) == 0xB2) {
       if (dump)
         printf("OR A, D\n");
 
@@ -2016,7 +2016,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // OR A, E
-    else if (cpu->mem[cpu->pc] == 0xB3) {
+    else if (read_memory8(cpu, cpu->pc) == 0xB3) {
       if (dump)
         printf("OR A, E\n");
 
@@ -2026,7 +2026,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // OR A, H
-    else if (cpu->mem[cpu->pc] == 0xB4) {
+    else if (read_memory8(cpu, cpu->pc) == 0xB4) {
       if (dump)
         printf("OR A, H\n");
 
@@ -2036,7 +2036,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // OR A, L
-    else if (cpu->mem[cpu->pc] == 0xB5) {
+    else if (read_memory8(cpu, cpu->pc) == 0xB5) {
       if (dump)
         printf("OR A, L\n");
 
@@ -2046,7 +2046,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // OR A, (HL)
-    else if (cpu->mem[cpu->pc] == 0xB6) {
+    else if (read_memory8(cpu, cpu->pc) == 0xB6) {
       if (dump)
         printf("OR A, (HL)\n");
 
@@ -2058,7 +2058,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // OR A, A
-    else if (cpu->mem[cpu->pc] == 0xB7) {
+    else if (read_memory8(cpu, cpu->pc) == 0xB7) {
       if (dump)
         printf("OR A, A\n");
 
@@ -2068,7 +2068,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // CP A, B
-    else if (cpu->mem[cpu->pc] == 0xB8) {
+    else if (read_memory8(cpu, cpu->pc) == 0xB8) {
       if (dump)
         printf("CP A, B\n");
 
@@ -2078,7 +2078,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // CP A, C
-    else if (cpu->mem[cpu->pc] == 0xB9) {
+    else if (read_memory8(cpu, cpu->pc) == 0xB9) {
       if (dump)
         printf("CP A, C\n");
 
@@ -2088,7 +2088,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // CP A, D
-    else if (cpu->mem[cpu->pc] == 0xBA) {
+    else if (read_memory8(cpu, cpu->pc) == 0xBA) {
       if (dump)
         printf("CP A, D\n");
 
@@ -2098,7 +2098,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // CP A, E
-    else if (cpu->mem[cpu->pc] == 0xBB) {
+    else if (read_memory8(cpu, cpu->pc) == 0xBB) {
       if (dump)
         printf("CP A, E\n");
 
@@ -2108,7 +2108,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // CP A, H
-    else if (cpu->mem[cpu->pc] == 0xBC) {
+    else if (read_memory8(cpu, cpu->pc) == 0xBC) {
       if (dump)
         printf("CP A, H\n");
 
@@ -2118,7 +2118,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // CP A, L
-    else if (cpu->mem[cpu->pc] == 0xBD) {
+    else if (read_memory8(cpu, cpu->pc) == 0xBD) {
       if (dump)
         printf("CP A, L\n");
 
@@ -2128,7 +2128,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // CP A, (HL)
-    else if (cpu->mem[cpu->pc] == 0xBE) {
+    else if (read_memory8(cpu, cpu->pc) == 0xBE) {
       if (dump)
         printf("CP A, (HL)\n");
 
@@ -2140,7 +2140,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // CP A, A
-    else if (cpu->mem[cpu->pc] == 0xBF) {
+    else if (read_memory8(cpu, cpu->pc) == 0xBF) {
       if (dump)
         printf("CP A, A\n");
 
@@ -2150,7 +2150,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // RET NZ
-    else if (cpu->mem[cpu->pc] == 0xC0) {
+    else if (read_memory8(cpu, cpu->pc) == 0xC0) {
       if (dump)
         printf("RET NZ\n");
       if ((cpu->registers[f] & ~(1 << flag_z))) {
@@ -2162,7 +2162,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // POP BC
-    else if (cpu->mem[cpu->pc] == 0xC1) {
+    else if (read_memory8(cpu, cpu->pc) == 0xC1) {
       if (dump)
         printf("POP BC\n");
 
@@ -2171,7 +2171,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // JP NZ, u16
-    else if (cpu->mem[cpu->pc] == 0xC2) {
+    else if (read_memory8(cpu, cpu->pc) == 0xC2) {
       if (dump)
         printf("JP NZ, %02X\n",
                (cpu->mem[cpu->pc + 2] << 4 | cpu->mem[cpu->pc + 1]));
@@ -2183,7 +2183,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // JP u16
-    else if (cpu->mem[cpu->pc] == 0xC3) {
+    else if (read_memory8(cpu, cpu->pc) == 0xC3) {
       if (dump)
         printf("JP %02X\n",
                (cpu->mem[cpu->pc + 2] << 4 | cpu->mem[cpu->pc + 1]));
@@ -2192,7 +2192,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // CALL NZ, u16
-    else if (cpu->mem[cpu->pc] == 0xC4) {
+    else if (read_memory8(cpu, cpu->pc) == 0xC4) {
       if (dump)
         printf("CALL NZ, %02X\n",
                (cpu->mem[cpu->pc + 2] << 4 | cpu->mem[cpu->pc + 1]));
@@ -2204,7 +2204,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // PUSH BC
-    else if (cpu->mem[cpu->pc] == 0xC5) {
+    else if (read_memory8(cpu, cpu->pc) == 0xC5) {
       if (dump)
         printf("PUSH BC\n");
 
@@ -2213,7 +2213,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // ADD A, u8
-    else if (cpu->mem[cpu->pc] == 0xC6) {
+    else if (read_memory8(cpu, cpu->pc) == 0xC6) {
       if (dump)
         printf("ADD A, u8\n");
 
@@ -2224,7 +2224,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
 
     else {
       if (dump)
-        printf("Invalid opcode: 0x%02X\n", cpu->mem[cpu->pc]);
+        printf("Invalid opcode: 0x%02X\n", read_memory8(cpu, cpu->pc));
 
       cpu->halt = true;
     }
