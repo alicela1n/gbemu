@@ -7,6 +7,8 @@
 #include <string.h>
 #include <unistd.h>
 
+#include "rom.h"
+
 /* The GameBoy has 8 8-bit registers
  * A -> Accumulator
  * B -> General Purpose
@@ -54,12 +56,15 @@ struct CPU {
   bool halt;
   bool ime; /* Interrupt master enable flag */
   bool ime_pending;
+
+  /* Keep track of rom struct */
+  struct ROM *rom;
 };
 
 struct ROM;
 
 void cpu_init(struct CPU *cpu);
 void cpu_toggle_halt(struct CPU *cpu);
-void cpu_execute(struct CPU *cpu, struct ROM *rom, bool dump, bool print_regs);
+void cpu_execute(struct CPU *cpu, bool dump, bool print_regs);
 
 #endif

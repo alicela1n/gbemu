@@ -1,11 +1,10 @@
 #include "memory.h"
-#include "cpu.h"
 #include "rom.h"
 
-uint8_t read_memory8(struct CPU *cpu, struct ROM *rom, uint16_t addr) {
+uint8_t read_memory8(struct CPU *cpu, uint16_t addr) {
   uint8_t data = 0;
   if (addr <= 0x3FFF) {
-    data = rom->data[addr];
+    data = cpu->rom->data[addr];
   } else if (addr > 0x3FFF && addr <= 0x7FFF) {
     // TODO: Implement bank switching
     return 0;
@@ -14,6 +13,12 @@ uint8_t read_memory8(struct CPU *cpu, struct ROM *rom, uint16_t addr) {
   }
 
   return data;
+}
+
+uint16_t read_memory16(struct CPU *cpu, uint16_t addr) {
+  uint8_t a = read_memory8(cpu, addr + 1);
+  uint8_t b = read_memory8(cpu, addr);
+  return (a << 8) | b;
 }
 
 void write_memory8(struct CPU *cpu, uint8_t value, uint16_t addr) {
