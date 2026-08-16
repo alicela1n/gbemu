@@ -14,8 +14,6 @@ int main(int argc, char **argv) {
   printf("main(): Creating dummy rom to pass to CPU\n");
   dummy_rom(dummy_rom_data, dummy_rom_size, cpu.rom);
 
-  memcpy(cpu.mem, cpu.rom->data, 0x3FFF);
-
   cpu_execute(&cpu, true, true);
 
   return 0;
