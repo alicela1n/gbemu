@@ -21,6 +21,8 @@
  */
 enum registers { a = 0, b = 1, c = 2, d = 3, e = 4, f = 5, h = 6, l = 7 };
 
+enum registers16 { sp = 0, pc = 1, af = 2, bc = 3, de = 4, hl = 5 };
+
 /* There are four flags, z, n, h, and c */
 enum flags {
   flag_z = 0x80, // Zero bit (bit-7)
