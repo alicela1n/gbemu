@@ -2216,35 +2216,32 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     // JP NZ, u16
     else if (read_memory8(cpu, cpu->pc) == 0xC2) {
       if (dump)
-        printf("JP NZ, %02X\n", (read_memory8(cpu, cpu->pc + 2) << 8 |
-                                 read_memory8(cpu, cpu->pc + 1)));
+        printf("JP NZ, %04X\n", uint8to16(cpu->pc, cpu->pc + 2));
 
-      if (!cpu_check_flag(cpu, flag_z))
-        cpu->pc += 3 + (read_memory8(cpu, cpu->pc + 2) << 8 |
-                        read_memory8(cpu, cpu->pc + 1));
-      else
+      if (!cpu_check_flag(cpu, flag_z)) {
+        cpu_jp(cpu, cpu->pc++);
         cpu->pc += 3;
+      } else {
+        cpu->pc += 3;
+      }
     }
 
     // JP u16
     else if (read_memory8(cpu, cpu->pc) == 0xC3) {
       if (dump)
-        printf("JP %02X\n", (read_memory8(cpu, cpu->pc + 2) << 8 |
-                             read_memory8(cpu, cpu->pc + 1)));
+        printf("JP %04X\n", uint8to16(cpu->pc, cpu->pc + 2));
 
-      cpu->pc += 3 + (read_memory8(cpu, cpu->pc + 2) << 8 |
-                      read_memory8(cpu, cpu->pc + 1));
+      cpu_jp(cpu, cpu->pc++);
+      cpu->pc += 3;
     }
 
     // CALL NZ, u16
     else if (read_memory8(cpu, cpu->pc) == 0xC4) {
       if (dump)
-        printf("CALL NZ, %02X\n", (read_memory8(cpu, cpu->pc + 2) << 8 |
-                                   read_memory8(cpu, cpu->pc + 1)));
+        printf("CALL NZ, %04X\n", uint8to16(cpu->pc, cpu->pc + 2));
 
       if (!cpu_check_flag(cpu, flag_z))
-        cpu_call(cpu, (read_memory8(cpu, cpu->pc + 2) << 8 |
-                       read_memory8(cpu, cpu->pc + 1)));
+        cpu_call(cpu, uint8to16(cpu->pc, cpu->pc + 2));
       else
         cpu->pc += 3;
     }
@@ -2295,6 +2292,107 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
         printf("RET\n");
       cpu_ret(cpu);
       cpu->pc++;
+    }
+
+    // JP Z, u16
+    else if (read_memory8(cpu, cpu->pc) == 0xCA) {
+      if (dump)
+        printf("JP Z, %04X\n", uint8to16(cpu->pc, cpu->pc + 2));
+
+      if (cpu_check_flag(cpu, flag_z)) {
+        cpu_jp(cpu, cpu->pc++);
+        cpu->pc += 3;
+      } else {
+        cpu->pc += 3;
+      }
+    }
+
+    // PREFIX CB
+    // TODO: Implement
+    else if (read_memory8(cpu, cpu->pc) == 0xCB) {
+      if (dump)
+        printf("PREFIX CB (NOT IMPLEMENTED!!!)\n");
+
+      cpu->pc += 2;
+    }
+
+    // CALL Z, u16
+    else if (read_memory8(cpu, cpu->pc) == 0xCC) {
+      if (dump)
+        printf("CALL Z, %04X\n", uint8to16(cpu->pc, cpu->pc + 2));
+
+      if (cpu_check_flag(cpu, flag_z))
+        cpu_call(cpu, uint8to16(cpu->pc, cpu->pc + 2));
+      else
+        cpu->pc += 3;
+    }
+
+    // CALL, u16
+    else if (read_memory8(cpu, cpu->pc) == 0xCC) {
+      if (dump)
+        printf("CALL, %04X\n", uint8to16(cpu->pc, cpu->pc + 2));
+
+      cpu_call(cpu, uint8to16(cpu->pc, cpu->pc + 2));
+    }
+
+    // ADC A, u8
+    else if (read_memory8(cpu, cpu->pc) == 0xCD) {
+      if (dump)
+        printf("ADC A, %02X\n", cpu->pc + 1);
+
+      cpu_adc8(cpu, &cpu->registers[a], (uint8_t *)&cpu->pc + 1);
+      cpu->pc++;
+    }
+
+    // RST 08h
+    else if (read_memory8(cpu, cpu->pc) == 0xCE) {
+      if (dump)
+        printf("RST 08h\n");
+
+      cpu_rst(cpu, 0x08);
+      cpu->pc++;
+    }
+
+    // RET NZ
+    else if (read_memory8(cpu, cpu->pc) == 0xD0) {
+      if (dump)
+        printf("RET NZ\n");
+
+      if (!cpu_check_flag(cpu, flag_z))
+        cpu_ret(cpu);
+
+      cpu->pc++;
+    }
+
+    // POP DE
+    else if (read_memory8(cpu, cpu->pc) == 0xD1) {
+      if (dump)
+        printf("POP DE\n");
+
+      cpu_pop(cpu, &cpu->registers[d], &cpu->registers[e]);
+      cpu->pc++;
+    }
+
+    // JP NZ, u16
+    else if (read_memory8(cpu, cpu->pc) == 0xD2) {
+      if (dump)
+        printf("JP NZ, %04X\n", uint8to16(cpu->pc, cpu->pc + 2));
+
+      if (!cpu_check_flag(cpu, flag_z)) {
+        cpu_jp(cpu, cpu->pc++);
+        cpu->pc += 3;
+      } else {
+        cpu->pc += 3;
+      }
+    }
+
+    // JP, u16
+    else if (read_memory8(cpu, cpu->pc) == 0xD3) {
+      if (dump)
+        printf("JP, %04X\n", uint8to16(cpu->pc, cpu->pc + 2));
+
+      cpu_jp(cpu, cpu->pc++);
+      cpu->pc += 3;
     }
 
     else {
