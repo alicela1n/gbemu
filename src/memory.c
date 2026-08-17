@@ -1,4 +1,5 @@
 #include "memory.h"
+#include "helper.h"
 #include "rom.h"
 
 uint8_t read_memory8(struct CPU *cpu, uint16_t addr) {
@@ -29,7 +30,7 @@ uint8_t *mem_ptr8(struct CPU *cpu, uint16_t addr) {
 uint16_t read_memory16(struct CPU *cpu, uint16_t addr) {
   uint8_t a = read_memory8(cpu, addr + 1);
   uint8_t b = read_memory8(cpu, addr);
-  return (a << 8) | b;
+  return uint8to16(a, b);
 }
 
 void write_memory8(struct CPU *cpu, uint8_t value, uint16_t addr) {
@@ -38,4 +39,9 @@ void write_memory8(struct CPU *cpu, uint8_t value, uint16_t addr) {
   } else {
     cpu->mem[addr] = value;
   }
+}
+
+void write_memory16(struct CPU *cpu, uint16_t value, uint16_t addr) {
+  write_memory8(cpu, (uint8_t)value & 0xFF, addr);
+  write_memory8(cpu, (uint8_t)(value >> 8) & 0xFF, ++addr);
 }
