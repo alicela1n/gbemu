@@ -36,6 +36,38 @@ void cpu_toggle_halt(struct CPU *cpu) {
     cpu->halt = false;
 }
 
+/* cpu_check_flag(): Check if a flag in the flags register is set
+ */
+bool cpu_check_flag(struct CPU *cpu, uint8_t flag) {
+  if (cpu->registers[f] & (1 << flag)) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+/* cpu_set_flag(): Set a flag in the flags register,
+ * passing 1 to set sets the flag, passing 0 unsets it
+ */
+void cpu_set_flag(struct CPU *cpu, uint8_t flag, bool set) {
+  if (set)
+    cpu->registers[f] = cpu->registers[f] | (1 << flag);
+  else
+    cpu->registers[f] = cpu->registers[f] & ~(1 << flag);
+}
+
+/* cpu_toggle_flag(): Toggle a flag in the flag register
+ * If set unset it, if not set set it
+ */
+void cpu_toggle_flag(struct CPU *cpu, uint8_t flag) {
+  if (cpu_check_flag(cpu, flag))
+    // Unset
+    cpu_set_flag(cpu, flag, 0);
+  else
+    // Set
+    cpu_set_flag(cpu, flag, 1);
+}
+
 /* cpu_ld_reg8(): Load data (b) into a register (a), 8 bit
  */
 void cpu_ld_reg8(struct CPU *cpu, uint8_t *a, uint8_t b) { *a = b; }
@@ -62,19 +94,19 @@ void cpu_add8(struct CPU *cpu, uint8_t *a, uint8_t b) {
   *a = *a + b;
 
   if ((*a & 0x0F) + (b & 0x0F) == 0x10)
-    cpu->registers[f] = (cpu->registers[f] | (1 << flag_h));
+    cpu_set_flag(cpu, flag_h, 1);
   else
-    cpu->registers[f] = (cpu->registers[f] & ~(1 << flag_h));
+    cpu_set_flag(cpu, flag_h, 0);
 
   if (*a > 0xFF)
-    cpu->registers[f] = (cpu->registers[f] | (1 << flag_c));
+    cpu_set_flag(cpu, flag_c, 1);
   else
-    cpu->registers[f] = (cpu->registers[f] & ~(1 << flag_c));
+    cpu_set_flag(cpu, flag_c, 0);
 
   if (*a == 0)
-    cpu->registers[f] = (cpu->registers[f] | (1 << flag_z));
+    cpu_set_flag(cpu, flag_z, 1);
   else
-    cpu->registers[f] = (cpu->registers[f] & ~(1 << flag_z));
+    cpu_set_flag(cpu, flag_z, 0);
 }
 
 /* cpu_adc8(): Same as cpu_add() but adds the carry
@@ -90,19 +122,19 @@ void cpu_sub8(struct CPU *cpu, uint8_t *a, uint8_t b) {
   *a = b - *a;
 
   if ((*a & 0x0F) + (b & 0x0F) == 0x10)
-    cpu->registers[f] = (cpu->registers[f] | (1 << flag_h));
+    cpu_set_flag(cpu, flag_h, 1);
   else
-    cpu->registers[f] = (cpu->registers[f] & ~(1 << flag_h));
+    cpu_set_flag(cpu, flag_h, 0);
 
   if (*a > 0xFF)
-    cpu->registers[f] = (cpu->registers[f] | (1 << flag_c));
+    cpu_set_flag(cpu, flag_c, 1);
   else
-    cpu->registers[f] = (cpu->registers[f] & ~(1 << flag_c));
+    cpu_set_flag(cpu, flag_c, 0);
 
   if (*a == 0)
-    cpu->registers[f] = (cpu->registers[f] | (1 << flag_z));
+    cpu_set_flag(cpu, flag_z, 1);
   else
-    cpu->registers[f] = (cpu->registers[f] & ~(1 << flag_z));
+    cpu_set_flag(cpu, flag_z, 0);
 }
 
 /* cpu_sbc8(): Same as cpu_sub8() but adds the carry to the value being
@@ -127,12 +159,12 @@ void cpu_cp8(struct CPU *cpu, uint8_t *a, uint8_t *b) {
 void cpu_and(struct CPU *cpu, uint8_t *a, uint8_t *b) {
   *a = *a & *b;
   if (*a == 0)
-    cpu->registers[f] = (cpu->registers[f] | (1 << flag_z));
+    cpu_set_flag(cpu, flag_z, 1);
   else
-    cpu->registers[f] = (cpu->registers[f] & ~(1 << flag_z));
+    cpu_set_flag(cpu, flag_z, 0);
 
   // Set half carry flag?
-  cpu->registers[f] = (cpu->registers[f] | (1 << flag_h));
+  cpu_set_flag(cpu, flag_h, 1);
 }
 
 /* cpu_xor(): XOR operation
@@ -140,9 +172,9 @@ void cpu_and(struct CPU *cpu, uint8_t *a, uint8_t *b) {
 void cpu_xor(struct CPU *cpu, uint8_t *a, uint8_t *b) {
   *a = *a ^ *b;
   if (*a == 0)
-    cpu->registers[f] = (cpu->registers[f] | (1 << flag_z));
+    cpu_set_flag(cpu, flag_z, 1);
   else
-    cpu->registers[f] = (cpu->registers[f] & ~(1 << flag_z));
+    cpu_set_flag(cpu, flag_z, 0);
 }
 
 /* cpu_or(): OR operation
@@ -150,9 +182,9 @@ void cpu_xor(struct CPU *cpu, uint8_t *a, uint8_t *b) {
 void cpu_or(struct CPU *cpu, uint8_t *a, uint8_t *b) {
   *a = *a | *b;
   if (*a == 0)
-    cpu->registers[f] = (cpu->registers[f] | (1 << flag_z));
+    cpu_set_flag(cpu, flag_z, 1);
   else
-    cpu->registers[f] = (cpu->registers[f] & ~(1 << flag_z));
+    cpu_set_flag(cpu, flag_z, 0);
 }
 
 /* cpu_pop(): Pop from stack to register a
@@ -179,6 +211,20 @@ void cpu_call(struct CPU *cpu, uint16_t addr) {
   cpu_push(cpu, &high, &low);
   cpu->pc = addr;
 }
+
+/* cpu_rst(): Restart / unconditionally call function
+ */
+void cpu_rst(struct CPU *cpu, uint16_t n) {
+  cpu->sp--;
+  write_memory8(cpu, (cpu->pc >> 8) & 0xFF, cpu->sp);
+  cpu->sp--;
+  write_memory8(cpu, (cpu->pc & 0xFF), cpu->sp);
+  cpu->pc = n & 0xFF;
+}
+
+/* cpu_ret(): Return
+ */
+void cpu_ret(struct CPU *cpu) { cpu->pc = read_memory8(cpu, cpu->sp++); }
 
 /* cpu_execute(): What this does is decode each opcode and translate it into
  * an instruction to be cpu_execute by the virtual CPU. Optional dump flag
@@ -546,7 +592,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
       if (dump)
         printf("JP NZ, %02X\n", read_memory8(cpu, cpu->pc + 1));
 
-      if (cpu->registers[f] != (cpu->registers[f] & (1 << flag_z)))
+      if (!cpu_check_flag(cpu, flag_z))
         cpu->pc += 2 + read_memory8(cpu, cpu->pc + 1);
       else
         cpu->pc += 2;
@@ -621,10 +667,9 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
       if (dump)
         printf("DAA\n");
 
-      if (cpu->registers[a] > 0x09 || cpu->registers[f] & (1 << flag_h)) {
+      if (cpu->registers[a] > 0x09 || cpu_check_flag(cpu, flag_z)) {
         cpu->registers[a] += 0x06;
-      } else if (cpu->registers[a] > 0x99 ||
-                 cpu->registers[c] == (cpu->registers[f] & (1 << flag_c))) {
+      } else if (cpu->registers[a] > 0x99 || cpu_check_flag(cpu, flag_c)) {
         cpu->registers[a] += 0x60;
       }
 
@@ -636,7 +681,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
       if (dump)
         printf("JP NZ, %02X\n", read_memory8(cpu, cpu->pc + 1));
 
-      if (cpu->registers[f] == (cpu->registers[f] | flag_z))
+      if (cpu_check_flag(cpu, flag_z))
         cpu->pc += 2 + read_memory8(cpu, cpu->pc + 1);
       else
         cpu->pc += 2;
@@ -720,7 +765,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
       if (dump)
         printf("JR NZ, %02X\n", read_memory8(cpu, cpu->pc + 1));
 
-      if (cpu->registers[f] != (cpu->registers[f] & flag_c))
+      if (!cpu_check_flag(cpu, flag_c))
         cpu->pc += 2 + read_memory8(cpu, cpu->pc + 1);
       else
         cpu->pc += 2;
@@ -792,7 +837,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
       if (dump)
         printf("SCF\n");
 
-      cpu->registers[f] = (cpu->registers[f] | (1 << flag_c));
+      cpu_set_flag(cpu, flag_c, 1);
 
       cpu->pc += 1;
     }
@@ -802,7 +847,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
       if (dump)
         printf("JR C, %02X\n", read_memory8(cpu, cpu->pc + 1));
 
-      if (cpu->registers[f] == (cpu->registers[f] & (1 << flag_c)))
+      if (cpu_check_flag(cpu, flag_c))
         cpu->pc += 2 + read_memory8(cpu, cpu->pc + 1);
       else
         cpu->pc += 2;
@@ -876,10 +921,8 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
       if (dump)
         printf("CCF\n");
 
-      if (cpu->registers[f] & flag_c)
-        cpu->registers[f] = cpu->registers[f] & (~flag_c);
-      else if (cpu->registers[f] & (~flag_c))
-        cpu->registers[f] = (cpu->registers[f] | (1 << flag_c));
+      cpu_toggle_flag(cpu, flag_c);
+
       cpu->pc++;
     }
 
@@ -2141,8 +2184,8 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     else if (read_memory8(cpu, cpu->pc) == 0xC0) {
       if (dump)
         printf("RET NZ\n");
-      if ((cpu->registers[f] & ~(1 << flag_z))) {
-        cpu->pc = read_memory8(cpu, cpu->sp++);
+      if (!cpu_check_flag(cpu, flag_z)) {
+        cpu_ret(cpu);
 
       } else {
         cpu->pc++;
@@ -2164,7 +2207,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
         printf("JP NZ, %02X\n", (read_memory8(cpu, cpu->pc + 2) << 4 |
                                  read_memory8(cpu, cpu->pc + 1)));
 
-      if (cpu->registers[f] != (cpu->registers[f] & (1 << flag_z)))
+      if (!cpu_check_flag(cpu, flag_z))
         cpu->pc += 3 + (read_memory8(cpu, cpu->pc + 2) << 4 |
                         read_memory8(cpu, cpu->pc + 1));
       else
@@ -2187,7 +2230,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
         printf("CALL NZ, %02X\n", (read_memory8(cpu, cpu->pc + 2) << 4 |
                                    read_memory8(cpu, cpu->pc + 1)));
 
-      if (cpu->registers[f] != (cpu->registers[f] & (1 << flag_z)))
+      if (!cpu_check_flag(cpu, flag_z))
         cpu_call(cpu, (read_memory8(cpu, cpu->pc + 2) << 4 |
                        read_memory8(cpu, cpu->pc + 1)));
       else
@@ -2211,6 +2254,27 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
       cpu_add8(cpu, &cpu->registers[a], read_memory8(cpu, cpu->pc + 1));
 
       cpu->pc += 2;
+    }
+
+    // RST 00h
+    else if (read_memory8(cpu, cpu->pc) == 0xC7) {
+      if (dump)
+        printf("RST 00h\n");
+
+      cpu_rst(cpu, 0x00);
+      cpu->pc++;
+    }
+
+    // RET Z
+    else if (read_memory8(cpu, cpu->pc) == 0xC8) {
+      if (dump)
+        printf("RET NZ\n");
+      if (cpu_check_flag(cpu, flag_z)) {
+        cpu_ret(cpu);
+
+      } else {
+        cpu->pc++;
+      }
     }
 
     else {
