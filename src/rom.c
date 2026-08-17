@@ -5,20 +5,20 @@
  * changed, the bootrom will reject the rom. If the dump boolean passed is true,
  * dump the logo from the rom.
  */
-bool validate_rom(const uint8_t *rom, size_t rom_size, bool dump) {
+bool validate_rom(struct ROM *rom, bool dump) {
   const uint8_t nintendo_logo[] = {
       0xCE, 0xED, 0x66, 0x66, 0xCC, 0x0D, 0x00, 0x0B, 0x03, 0x73, 0x00, 0x83,
       0x00, 0x0C, 0x00, 0x0D, 0x00, 0x08, 0x11, 0x1F, 0x88, 0x89, 0x00, 0x0E,
       0xDC, 0xCC, 0x6E, 0xE6, 0xDD, 0xDD, 0xD9, 0x99, 0xBB, 0xBB, 0x67, 0x63,
       0x6E, 0x0E, 0xEC, 0xCC, 0xDD, 0xDC, 0x99, 0x9F, 0xBB, 0xB9, 0x33, 0x3E};
-  const uint8_t *logo_offset = rom + 0x104;
-  const uint8_t *logo_end_offset = rom + 0x133;
-  const uint8_t *rom_end_offset = rom + rom_size;
+  const uint8_t *logo_offset = rom->data + 0x104;
+  const uint8_t *logo_end_offset = rom->data + 0x133;
+  const uint8_t *rom_end_offset = rom->data + rom->size;
 
   ptrdiff_t logo_offset_diff = logo_end_offset - logo_offset;
-  ptrdiff_t rom_offset_diff = rom_end_offset - rom;
+  ptrdiff_t rom_offset_diff = rom_end_offset - rom->data;
 
-  if (rom_size < (32 * 1024))
+  if (rom->size < (32 * 1024))
     return false;
 
   if (rom_offset_diff < 0x150)
@@ -39,10 +39,10 @@ bool validate_rom(const uint8_t *rom, size_t rom_size, bool dump) {
   // Calculated checksum
   for (uint16_t address = (uint16_t)0x134; address <= (uint16_t)0x14C;
        address++) {
-    checksum = checksum - rom[address] - 1;
+    checksum = checksum - rom->data[address] - 1;
   }
 
-  if ((checksum & 0xFF) != rom[0x14D])
+  if ((checksum & 0xFF) != rom->data[0x14D])
     return false;
 
   if (dump)
@@ -54,17 +54,17 @@ bool validate_rom(const uint8_t *rom, size_t rom_size, bool dump) {
 /* get_title(): Return the title from the rom and return it as a string,
  *              on GameBoy roms the title is located at 0x134 to 0x143.
  */
-void get_title(const uint8_t *rom, size_t rom_size, char *title,
-               size_t *title_size) {
-  const uint8_t *title_offset = rom + 0x134;
-  const uint8_t *title_end_offset = rom + 0x143;
+void get_title(struct ROM *rom) {
+  const uint8_t *title_offset = rom->data + 0x134;
+  const uint8_t *title_end_offset = rom->data + 0x143;
   ptrdiff_t title_offset_diff = title_end_offset - title_offset;
 
-  for (int i = 0; i < title_offset_diff; i++) {
-    title[i] += title_offset[i];
-  }
+  rom->title = malloc(title_offset_diff * sizeof(char));
 
-  *title_size = title_offset_diff;
+  for (int i = 0; i < title_offset_diff; i++) {
+    rom->title[i] = title_offset[i];
+    rom->title_length++;
+  }
 }
 
 /* cgb_flag(): Return the CGB flag which tells you if the game supports the
@@ -72,14 +72,14 @@ void get_title(const uint8_t *rom, size_t rom_size, char *title,
  * cgb_only bool, which gets passed as a pointer and set to flag that the game
  * only supports GBC.
  */
-bool cgb_flag(const uint8_t *rom, size_t rom_size, bool *cgb_only) {
-  const uint8_t *cgb_flag_offset = rom + 0x143;
+bool cgb_flag(struct ROM *rom) {
+  const uint8_t *cgb_flag_offset = rom->data + 0x143;
 
   if (*cgb_flag_offset == 0x80 || *cgb_flag_offset == 0xC0) {
     if (*cgb_flag_offset == 0xC0) {
-      *cgb_only = true;
+      rom->cgb_only = true;
     } else {
-      *cgb_only = false;
+      rom->cgb_only = false;
     }
     return true;
   }
@@ -90,9 +90,9 @@ bool cgb_flag(const uint8_t *rom, size_t rom_size, bool *cgb_only) {
  * this is different from the file rom size and is found by computing 32768 by
  * (1 << 0x148).
  */
-uint32_t get_cartridge_rom_size(const uint8_t *rom, size_t rom_size) {
+uint32_t get_cartridge_rom_size(struct ROM *rom) {
   uint16_t cartridge_rom_size;
-  const uint8_t *cartridge_rom_size_offset = rom + 0x148;
+  const uint8_t *cartridge_rom_size_offset = rom->data + 0x148;
 
   cartridge_rom_size = *cartridge_rom_size_offset;
   return 32768 * (1 << cartridge_rom_size);
@@ -102,9 +102,9 @@ uint32_t get_cartridge_rom_size(const uint8_t *rom, size_t rom_size) {
  * I'm not sure how or if this value is computed so I used switch statements to
  * get it.
  */
-uint32_t get_cartridge_ram_size(const uint8_t *rom, size_t rom_size) {
+uint32_t get_cartridge_ram_size(struct ROM *rom) {
   uint32_t cartridge_ram_size;
-  const uint8_t *cartridge_ram_size_offset = rom + 0x149;
+  const uint8_t *cartridge_ram_size_offset = rom->data + 0x149;
 
   switch (*cartridge_ram_size_offset) {
   case 0:
@@ -160,14 +160,14 @@ int load_rom(FILE *fp, struct ROM *rom) {
   rom->data = (uint8_t *)malloc(sizeof(uint8_t) * rom->size);
   fread(rom->data, 1, rom->size, fp);
 
-  if (!validate_rom(rom->data, rom->size, false)) {
+  if (!validate_rom(rom, false)) {
     return 1;
   }
 
-  get_title(rom->data, rom->size, rom->title, &rom->title_size);
-  rom->cgb_flag = cgb_flag(rom->data, rom->size, &rom->cgb_only);
-  rom->cartridge_ram_size = get_cartridge_ram_size(rom->data, rom->size);
-  rom->cartridge_rom_size = get_cartridge_rom_size(rom->data, rom->size);
+  get_title(rom);
+  rom->cgb_flag = cgb_flag(rom);
+  rom->cartridge_ram_size = get_cartridge_ram_size(rom);
+  rom->cartridge_rom_size = get_cartridge_rom_size(rom);
 
   return 0;
 }
