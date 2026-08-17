@@ -281,6 +281,10 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
       printf("cpu_execute(): 16 bit registers sp and pc\n");
       printf("cpu_execute(): sp: 0x%02X\n", cpu->sp);
       printf("cpu_execute(): pc: 0x%02X\n", cpu->pc);
+      printf("cpu_execute(): Flags\n\n");
+      printf("cpu_execute(): z: %02X, n: %02X, h: %02X, c: %02X\n",
+             cpu_check_flag(cpu, flag_z), cpu_check_flag(cpu, flag_n),
+             cpu_check_flag(cpu, flag_h), cpu_check_flag(cpu, flag_c));
     }
 
     // NOP
