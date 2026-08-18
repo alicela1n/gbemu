@@ -1,8 +1,6 @@
 #include "cpu.h"
 #include "helper.h"
 #include "memory.h"
-#include <_inttypes.h>
-#include <math.h>
 
 /* cpu_init(): Initialize CPU
  */
@@ -110,9 +108,9 @@ void cpu_ld_mem16(struct CPU *cpu, uint16_t addr, uint16_t b) {
   cpu_ld_mem8(cpu, addr + 1, b);
 }
 
-void cpu_jp(struct CPU *cpu, uint16_t addr) {
-  cpu->pc = read_memory16(cpu, addr);
-}
+/* cpu_jp(): Jump to a location in memory
+ */
+void cpu_jp(struct CPU *cpu, uint16_t addr) { cpu->pc = addr; }
 
 /* cpu_add8(): 8-bit adding function which deals with carries and stuff,
  *             takes in two variables a and b, and stores the result in a.
@@ -2411,7 +2409,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
       if (dump)
         printf("Invalid instruction: 0x%02X\n", read_memory8(cpu, cpu->pc));
 
-      cpu->pc += 1;
+      cpu->halt = true;
     }
 
     // CALL NZ, u16
@@ -2493,7 +2491,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
       if (dump)
         printf("Invalid instruction: 0x%02X\n", read_memory8(cpu, cpu->pc));
 
-      cpu->pc += 1;
+      cpu->halt = true;
     }
 
     // CALL C, u16
@@ -2512,7 +2510,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
       if (dump)
         printf("Invalid instruction: 0x%02X\n", read_memory8(cpu, cpu->pc));
 
-      cpu->pc += 1;
+      cpu->halt = true;
     }
 
     // SBC A, u8
@@ -2531,6 +2529,176 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
 
       cpu_rst(cpu, 0x18);
       cpu->pc++;
+    }
+
+    // LD (FF00+u8), A
+    else if (read_memory8(cpu, cpu->pc) == 0xE0) {
+      if (dump)
+        printf("LD (FF00+%02X), A\n", read_memory8(cpu, cpu->pc + 1));
+
+      cpu_ld_mem8(cpu, 0xFF00 + cpu->pc + 1, cpu->registers[a]);
+      cpu->pc += 2;
+    }
+
+    // POP HL
+    else if (read_memory8(cpu, cpu->pc) == 0xE1) {
+      if (dump)
+        printf("POP HL\n");
+
+      cpu_pop(cpu, &cpu->registers[h], &cpu->registers[l]);
+      cpu->pc++;
+    }
+
+    // LD (FF00+C), A
+    else if (read_memory8(cpu, cpu->pc) == 0xE2) {
+      if (dump)
+        printf("LD (FF00+C), A\n");
+
+      cpu_ld_mem8(cpu, 0xFF00 + cpu->pc + 1, cpu->registers[a]);
+      cpu->pc += 2;
+    }
+
+    // Invalid
+    else if (read_memory8(cpu, cpu->pc) == 0xE3) {
+      if (dump)
+        printf("Invalid instruction: 0x%02X\n", read_memory8(cpu, cpu->pc));
+
+      cpu->halt = true;
+    }
+
+    // Invalid
+    else if (read_memory8(cpu, cpu->pc) == 0xE4) {
+      if (dump)
+        printf("Invalid instruction: 0x%02X\n", read_memory8(cpu, cpu->pc));
+
+      cpu->halt = true;
+    }
+
+    // PUSH HL
+    else if (read_memory8(cpu, cpu->pc) == 0xE5) {
+      if (dump)
+        printf("PUSH HL\n");
+
+      cpu_push(cpu, &cpu->registers[h], &cpu->registers[l]);
+      cpu->pc++;
+    }
+
+    // AND A, u8
+    else if (read_memory8(cpu, cpu->pc) == 0xE6) {
+      if (dump)
+        printf("AND A, %020X\n", read_memory8(cpu, cpu->pc++));
+
+      cpu_and(cpu, &cpu->registers[a], mem_ptr8(cpu, cpu->pc++));
+
+      cpu->pc += 3;
+    }
+
+    // RST 20h
+    else if (read_memory8(cpu, cpu->pc) == 0xE7) {
+      if (dump)
+        printf("RST 20h\n");
+
+      cpu_rst(cpu, 0x20);
+      cpu->pc++;
+    }
+
+    // ADD SP, i8
+    else if (read_memory8(cpu, cpu->pc) == 0xE8) {
+      if (dump)
+        printf("ADD SP, %020X\n", read_memory8(cpu, cpu->pc + 1));
+
+      cpu_add8(cpu, (uint8_t *)&cpu->sp, read_memory8(cpu, cpu->pc + 1));
+
+      cpu->pc += 2;
+    }
+
+    // JP HL
+    else if (read_memory8(cpu, cpu->pc) == 0xE9) {
+      if (dump)
+        printf("JP %04X\n", uint8to16(cpu->registers[h], cpu->registers[l]));
+
+      cpu_jp(cpu, uint8to16(cpu->registers[h], cpu->registers[l]));
+      cpu->pc += 3;
+    }
+
+    // LD (u16), A
+    else if (read_memory8(cpu, cpu->pc) == 0xEA) {
+      if (dump)
+        printf("LD (u16), A\n");
+
+      cpu_ld_mem8(cpu, uint8to16(cpu->pc++, cpu->pc + 2), cpu->registers[a]);
+
+      cpu->pc += 3;
+    }
+
+    // Invalid
+    else if (read_memory8(cpu, cpu->pc) == 0xEB) {
+      if (dump)
+        printf("Invalid instruction: 0x%02X\n", read_memory8(cpu, cpu->pc));
+
+      cpu->halt = true;
+    }
+
+    // Invalid
+    else if (read_memory8(cpu, cpu->pc) == 0xEC) {
+      if (dump)
+        printf("Invalid instruction: 0x%02X\n", read_memory8(cpu, cpu->pc));
+
+      cpu->halt = true;
+    }
+
+    // Invalid
+    else if (read_memory8(cpu, cpu->pc) == 0xED) {
+      if (dump)
+        printf("Invalid instruction: 0x%02X\n", read_memory8(cpu, cpu->pc));
+
+      cpu->halt = true;
+    }
+
+    // XOR A, u8
+    else if (read_memory8(cpu, cpu->pc) == 0xEE) {
+      if (dump)
+        printf("XOR A, %020X\n", read_memory8(cpu, cpu->pc++));
+
+      cpu_xor(cpu, &cpu->registers[a], mem_ptr8(cpu, cpu->pc++));
+
+      cpu->pc += 2;
+    }
+
+    // RST 28h
+    else if (read_memory8(cpu, cpu->pc) == 0xEF) {
+      if (dump)
+        printf("RST 28h\n");
+
+      cpu_rst(cpu, 0x28);
+      cpu->pc++;
+    }
+
+    // LD A, (FF00+u8)
+    else if (read_memory8(cpu, cpu->pc) == 0xF0) {
+      if (dump)
+        printf("LD A, (FF00+%02X)\n", read_memory8(cpu, cpu->pc + 1));
+
+      cpu_ld_reg8(cpu, a, 0xFF00 + cpu->pc + 1);
+      cpu->pc += 2;
+    }
+
+    // POP AF
+    else if (read_memory8(cpu, cpu->pc) == 0xF1) {
+      if (dump)
+        printf("POP AF\n");
+
+      cpu_pop(cpu, &cpu->registers[a], &cpu->registers[f]);
+      cpu->pc++;
+    }
+
+    // LD A, (FF00+C)
+    else if (read_memory8(cpu, cpu->pc) == 0xF0) {
+      if (dump)
+        printf("LD A, (FF00+C)\n");
+
+      cpu_ld_reg8(cpu, a, 0xFF00 + cpu->registers[c]);
+      cpu->pc += 2;
     }
 
     else {
