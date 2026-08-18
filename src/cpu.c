@@ -2693,12 +2693,130 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     }
 
     // LD A, (FF00+C)
-    else if (read_memory8(cpu, cpu->pc) == 0xF0) {
+    else if (read_memory8(cpu, cpu->pc) == 0xF2) {
       if (dump)
         printf("LD A, (FF00+C)\n");
 
       cpu_ld_reg8(cpu, a, 0xFF00 + cpu->registers[c]);
       cpu->pc += 2;
+    }
+
+    // DI
+    else if (read_memory8(cpu, cpu->pc) == 0xF3) {
+      if (dump)
+        printf("DI\n");
+
+      cpu->ime_r = false;
+      cpu->pc++;
+    }
+
+    // Invalid
+    else if (read_memory8(cpu, cpu->pc) == 0xF4) {
+      if (dump)
+        printf("Invalid instruction: 0x%02X\n", read_memory8(cpu, cpu->pc));
+
+      cpu->halt = true;
+    }
+
+    // PUSH AF
+    else if (read_memory8(cpu, cpu->pc) == 0xF5) {
+      if (dump)
+        printf("PUSH HL\n");
+
+      cpu_push(cpu, &cpu->registers[a], &cpu->registers[f]);
+      cpu->pc++;
+    }
+
+    // OR A, u8
+    else if (read_memory8(cpu, cpu->pc) == 0xF6) {
+      if (dump)
+        printf("OR A, %020X\n", read_memory8(cpu, cpu->pc++));
+
+      cpu_or(cpu, &cpu->registers[a], mem_ptr8(cpu, cpu->pc++));
+      cpu->pc += 2;
+    }
+
+    // RST 30h
+    else if (read_memory8(cpu, cpu->pc) == 0xF7) {
+      if (dump)
+        printf("RST 30h\n");
+
+      cpu_rst(cpu, 0x30);
+      cpu->pc++;
+    }
+
+    // LD HL,SP+i8
+    else if (read_memory8(cpu, cpu->pc) == 0xF8) {
+      if (dump)
+        printf("LD HL, SP + %020X", read_memory8(cpu, cpu->pc + 1));
+
+      cpu_ld_reg16(cpu, hl, cpu->sp + cpu->pc + 1);
+
+      cpu->pc += 2;
+    }
+
+    // LD SP, HL
+    else if (read_memory8(cpu, cpu->pc) == 0xF9) {
+      if (dump)
+        printf("LD SP, HL\n");
+
+      cpu_ld_reg16(cpu, sp, uint8to16(cpu->registers[h], cpu->registers[l]));
+
+      cpu->pc++;
+    }
+
+    // LD A, (u16)
+    else if (read_memory8(cpu, cpu->pc) == 0xFA) {
+      if (dump)
+        printf("LD A, %040X\n", read_memory16(cpu, cpu->pc + 1));
+
+      cpu_ld_reg8(cpu, a, (uint8_t)read_memory16(cpu, cpu->pc + 1));
+      cpu->pc += 2;
+    }
+
+    // EI
+    else if (read_memory8(cpu, cpu->pc) == 0xFB) {
+      if (dump)
+        printf("EI\n");
+
+      cpu->ime_r = true;
+      cpu->pc++;
+    }
+
+    // Invalid
+    else if (read_memory8(cpu, cpu->pc) == 0xFC) {
+      if (dump)
+        printf("Invalid instruction: 0x%02X\n", read_memory8(cpu, cpu->pc));
+
+      cpu->halt = true;
+    }
+
+    // Invalid
+    else if (read_memory8(cpu, cpu->pc) == 0xFD) {
+      if (dump)
+        printf("Invalid instruction: 0x%02X\n", read_memory8(cpu, cpu->pc));
+
+      cpu->halt = true;
+    }
+
+    // CP A, u8
+    else if (read_memory8(cpu, cpu->pc) == 0xFE) {
+      if (dump)
+        printf("CP A, %020X\n", cpu->pc + 1);
+
+      cpu_cp8(cpu, &cpu->registers[a], mem_ptr8(cpu, cpu->pc + 1));
+
+      cpu->pc++;
+    }
+
+    // RST 38h
+    else if (read_memory8(cpu, cpu->pc) == 0xFF) {
+      if (dump)
+        printf("RST 38h\n");
+
+      cpu_rst(cpu, 0x38);
+
+      cpu->pc++;
     }
 
     else {
