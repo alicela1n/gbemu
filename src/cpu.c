@@ -2,6 +2,8 @@
 #include "helper.h"
 #include "memory.h"
 
+void cpu_cb(struct CPU *cpu, bool dump);
+
 /* cpu_init(): Initialize CPU
  */
 void cpu_init(struct CPU *cpu) {
@@ -26,6 +28,14 @@ void cpu_init(struct CPU *cpu) {
 
   // CPU is running so halt = false
   cpu->halt = false;
+
+  // Allocate rom struct
+  cpu->rom = malloc(sizeof(struct ROM));
+}
+
+void cpu_cleanup(struct CPU *cpu) {
+  rom_cleanup(cpu->rom);
+  free(cpu->mem);
 }
 
 /* cpu_toggle_halt(): Toggle halt flag on CPU
@@ -527,7 +537,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     // RLA
     else if (read_memory8(cpu, cpu->pc) == 0x17) {
       if (dump)
-        printf("RLA\n");
+printf("RLA\n");
 
       cpu->registers[a] =
           (cpu->registers[a] << 1) | ((cpu->registers[a] >> 7) & 1);
@@ -2331,6 +2341,8 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
       if (dump)
         printf("PREFIX CB (NOT IMPLEMENTED!!!)\n");
 
+      cpu_cb(cpu, dump);
+
       cpu->pc += 2;
     }
 
@@ -2831,4 +2843,91 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
       sleep(3);
     }
   }
+}
+
+/* cpu_rlc_r(): Rotate register left circular
+ */
+void cpu_rlc_r(struct CPU *cpu, uint8_t r) {
+  if (cpu->registers[r] & (1 << 7))
+    cpu_set_flag(cpu, flag_c, true);
+  else
+   cpu_set_flag(cpu, flag_c, false);
+
+  cpu->registers[r] = cpu->registers[r] << 1;
+
+  if (cpu->registers[r] & (1 << 0))
+    cpu_set_flag(cpu, flag_z, true);
+  else
+    cpu_set_flag(cpu, flag_z, false);
+}
+
+/* cpu_rlc_mem8(): Rotate value at memory address left circular
+ */ 
+void cpu_rlc_mem8(struct CPU *cpu, uint16_t addr) {
+  if (read_memory8(cpu, addr) & (1 << 7))
+    cpu_set_flag(cpu, flag_c, true);
+  else
+   cpu_set_flag(cpu, flag_c, false);
+
+  write_memory8(cpu, (read_memory8(cpu, addr) << 1), addr);
+
+  if (read_memory8(cpu, addr) & (1 << 0))
+    cpu_set_flag(cpu, flag_z, true);
+  else
+    cpu_set_flag(cpu, flag_z, false);
+
+}
+
+/* cpu_cb(): Handle CB prefixed instructions
+ */
+void cpu_cb(struct CPU *cpu, bool dump) {
+  if (read_memory8(cpu, cpu->pc) == 0x01) {
+    if (dump)
+      printf("RLC B\n");
+
+    cpu_rlc_r(cpu, b);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x02) {
+    if (dump)
+      printf("RLC C\n");
+
+    cpu_rlc_r(cpu, c);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x03) {
+    if (dump)
+      printf("RLC D\n");
+
+    cpu_rlc_r(cpu, d);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x04) {
+    if (dump)
+      printf("RLC E\n");
+
+    cpu_rlc_r(cpu, e);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x05) {
+    if (dump)
+      printf("RLC H\n");
+
+    cpu_rlc_r(cpu, h);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x06) {
+    if (dump)
+      printf("RLC L\n");
+
+    cpu_rlc_r(cpu, l);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x07) {
+    if (dump)
+      printf("RLC (HL)\n");
+    cpu_rlc_mem8(cpu, (uint8to16(cpu->registers[h], cpu->registers[l]))); 
+  }
+
+
 }

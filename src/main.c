@@ -16,7 +16,7 @@ printf("main(): Creating dummy rom to pass to CPU\n");
 dummy_rom(dummy_rom_data, dummy_rom_size, cpu.rom);
   */
 
-  FILE *rom_file = fopen(argv[1], "r");
+  FILE *rom_file = fopen(argv[1], "rb");
 
   if (!rom_file) {
     perror("Error opening file");
@@ -25,6 +25,8 @@ dummy_rom(dummy_rom_data, dummy_rom_size, cpu.rom);
 
   load_rom(rom_file, cpu.rom);
   cpu_execute(&cpu, true, true);
+
+  cpu_cleanup(&cpu);
 
   return 0;
 }

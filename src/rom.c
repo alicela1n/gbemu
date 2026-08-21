@@ -171,3 +171,9 @@ int load_rom(FILE *fp, struct ROM *rom) {
 
   return 0;
 }
+
+void rom_cleanup(struct ROM *rom) {
+  free(rom->data);
+  rom->data = NULL;
+  free(rom);
+}
