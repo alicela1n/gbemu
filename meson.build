@@ -5,7 +5,7 @@ project('gbemu', 'c',
 executable('gbemu',
            'src/main.c',
            'src/cpu.c',
-           'src/cpu_instr.h',
+           'src/cpu_instr.c',
            'src/rom.c',
            'src/memory.c',
            install : true)
