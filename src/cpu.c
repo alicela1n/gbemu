@@ -122,6 +122,10 @@ void cpu_ld_mem16(struct CPU *cpu, uint16_t addr, uint16_t b) {
  */
 void cpu_jp(struct CPU *cpu, uint16_t addr) { cpu->pc = addr; }
 
+/* cpu_jr(): Jump to a relative location
+ */
+void cpu_jr(struct CPU *cpu, uint8_t addr) { cpu->pc += addr; }
+
 /* cpu_add8(): 8-bit adding function which deals with carries and stuff,
  *             takes in two variables a and b, and stores the result in a.
  */
@@ -537,7 +541,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
     // RLA
     else if (read_memory8(cpu, cpu->pc) == 0x17) {
       if (dump)
-printf("RLA\n");
+        printf("RLA\n");
 
       cpu->registers[a] =
           (cpu->registers[a] << 1) | ((cpu->registers[a] >> 7) & 1);
@@ -551,7 +555,9 @@ printf("RLA\n");
       if (dump)
         printf("JR %02X\n", read_memory8(cpu, cpu->pc + 1));
 
-      cpu->pc += 2 + read_memory8(cpu, cpu->pc + 1);
+      uint8_t offset = read_memory8(cpu, cpu->pc + 1);
+      cpu->pc += 2;
+      cpu_jr(cpu, read_memory8(cpu, offset));
     }
 
     // ADD HL, DE
@@ -636,7 +642,7 @@ printf("RLA\n");
         printf("JP NZ, %02X\n", read_memory8(cpu, cpu->pc + 1));
 
       if (!cpu_check_flag(cpu, flag_z))
-        cpu->pc += 2 + read_memory8(cpu, cpu->pc + 1);
+        cpu_jp(cpu, read_memory8(cpu, cpu->pc + 1));
       else
         cpu->pc += 2;
     }
@@ -724,10 +730,13 @@ printf("RLA\n");
       if (dump)
         printf("JP NZ, %02X\n", read_memory8(cpu, cpu->pc + 1));
 
-      if (cpu_check_flag(cpu, flag_z))
-        cpu->pc += 2 + read_memory8(cpu, cpu->pc + 1);
-      else
+      if (cpu_check_flag(cpu, flag_z)) {
+        uint8_t offset = read_memory8(cpu, cpu->pc + 1);
         cpu->pc += 2;
+        cpu_jr(cpu, read_memory8(cpu, offset));
+      } else {
+        cpu->pc += 2;
+      }
     }
 
     // ADD HL, HL
@@ -808,10 +817,14 @@ printf("RLA\n");
       if (dump)
         printf("JR NZ, %02X\n", read_memory8(cpu, cpu->pc + 1));
 
-      if (!cpu_check_flag(cpu, flag_c))
-        cpu->pc += 2 + read_memory8(cpu, cpu->pc + 1);
-      else
+      if (!cpu_check_flag(cpu, flag_c)) {
+        uint8_t offset = read_memory8(cpu, cpu->pc + 1);
         cpu->pc += 2;
+        cpu_jr(cpu, read_memory8(cpu, offset));
+      }
+      else {
+        cpu->pc += 2;
+      }
     }
 
     // LD SP, d16
@@ -890,10 +903,14 @@ printf("RLA\n");
       if (dump)
         printf("JR C, %02X\n", read_memory8(cpu, cpu->pc + 1));
 
-      if (cpu_check_flag(cpu, flag_c))
-        cpu->pc += 2 + read_memory8(cpu, cpu->pc + 1);
-      else
+      if (cpu_check_flag(cpu, flag_c)) {
+        uint8_t offset = read_memory8(cpu, cpu->pc + 1);
         cpu->pc += 2;
+        cpu_jr(cpu, read_memory8(cpu, offset));
+      }
+      else {
+        cpu->pc += 2;
+      }
     }
 
     // ADD HL, SP
@@ -3095,6 +3112,15 @@ void cpu_sra_r(struct CPU *cpu, uint8_t r) {
     cpu_set_flag(cpu, flag_z, false);
 }
 
+void cpu_swap_r(struct CPU *cpu, uint8_t r) {
+  cpu->registers[r] = (cpu->registers[r] & 0x0F) << 4 | (cpu->registers[r] & 0xF0) >> 4;
+}
+
+void cpu_swap_m(struct CPU *cpu, uint8_t addr) {
+  uint8_t val = read_memory8(cpu, addr);
+  write_memory8(cpu, ((val & 0x0F) << 4 | (val & 0xF0) >> 4), addr);
+}
+
 /* cpu_sra_mem8(): Shift value at memory address right arithmetic
  */ 
 void cpu_sra_mem8(struct CPU *cpu, uint16_t addr) {
@@ -3389,4 +3415,100 @@ void cpu_cb(struct CPU *cpu, bool dump) {
     cpu_sla_r(cpu, a);
   }
 
+  else if (read_memory8(cpu, cpu->pc) == 0x28) {
+    if (dump)
+      printf("SRA B\n");
+
+    cpu_sra_r(cpu, b);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x29) {
+    if (dump)
+      printf("SRA C\n");
+
+    cpu_sra_r(cpu, c);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x2A) {
+    if (dump)
+      printf("SRA D\n");
+
+    cpu_sra_r(cpu, d);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x2B) {
+    if (dump)
+      printf("SRA E\n");
+
+    cpu_sra_r(cpu, e);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x2C) {
+    if (dump)
+      printf("SRA H\n");
+
+    cpu_sra_r(cpu, h);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x2D) {
+    if (dump)
+      printf("SRA L\n");
+
+    cpu_sra_r(cpu, l);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x2E) {
+    if (dump)
+      printf("SRA (HL)\n");
+    cpu_sra_mem8(cpu, (uint8to16(cpu->registers[h], cpu->registers[l]))); 
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x2F) {
+    if (dump)
+      printf("SRA A\n");
+
+    cpu_sra_r(cpu, a);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x30) {
+    if (dump)
+      printf("SWAP B\n");
+
+    cpu_swap_r(cpu, b);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x31) {
+    if (dump)
+      printf("SWAP C\n");
+
+    cpu_swap_r(cpu, c);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x32) {
+    if (dump)
+      printf("SWAP D\n");
+
+    cpu_swap_r(cpu, d);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x33) {
+    if (dump)
+      printf("SWAP E\n");
+
+    cpu_swap_r(cpu, e);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x34) {
+    if (dump)
+      printf("SWAP (HL)");
+
+    cpu_swap_m(cpu, (uint8to16(cpu->registers[h], cpu->registers[l])));
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x35) {
+    if (dump)
+      printf("SWAP A\n");
+
+    cpu_swap_r(cpu, a);
+  }
 }
