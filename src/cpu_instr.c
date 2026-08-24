@@ -1,6 +1,7 @@
 #include "cpu.h"
 #include "memory.h"
 #include "cpu_instr.h"
+#include "helper.h"
 
 /* cpu_toggle_halt(): Toggle halt flag on CPU
  */
@@ -126,7 +127,7 @@ void cpu_adc8(struct CPU *cpu, uint8_t *a, uint8_t *b) {
 /* cpu_sub8(): 8-bit subtraction function which deals with carries and stuff,
  *             takes in two variables a and b, and stores the result in a.
  */
-void cpu_sub8(struct cpu *cpu, uint8_t *a, uint8_t b) {
+void cpu_sub8(struct CPU *cpu, uint8_t *a, uint8_t b) {
   *a = b - *a;
 
   if ((*a & 0x0F) + (b & 0x0F) == 0x10)
