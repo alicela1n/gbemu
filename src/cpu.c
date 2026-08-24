@@ -30,7 +30,7 @@ void cpu_init(struct CPU *cpu) {
   cpu->halt = false;
 
   // Allocate rom struct
-  cpu->rom = malloc(sizeof(struct ROM));
+  cpu->rom = calloc(1, sizeof(struct ROM));
 }
 
 void cpu_cleanup(struct CPU *cpu) {
@@ -288,7 +288,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
       printf("\n");
       printf("cpu_execute(): 16 bit registers sp and pc\n");
       printf("cpu_execute(): sp: 0x%02X\n", cpu->sp);
-      printf("cpu_execute(): pc: 0x%02X\n", cpu->pc);
+      printf("cpu_execute(): pc: 0x%02X; 0x%02X\n", cpu->pc, read_memory8(cpu, cpu->pc));
       printf("cpu_execute(): Flags\n\n");
       printf("cpu_execute(): z: %02X, n: %02X, h: %02X, c: %02X\n",
              cpu_check_flag(cpu, flag_z), cpu_check_flag(cpu, flag_n),
@@ -2845,15 +2845,83 @@ printf("RLA\n");
   }
 }
 
+/* cpu_rl_r(): Rotate register left
+ */
+void cpu_rl_r(struct CPU *cpu, uint8_t r) {
+  cpu->registers[r] = circshift(cpu->registers[r], 1);
+  
+  if (cpu->registers[r] & (1 << 7))
+    cpu_set_flag(cpu, flag_c, true);
+  else
+    cpu_set_flag(cpu, flag_c, false);
+
+  if (cpu->registers[r] & (1 << 0))
+    cpu_set_flag(cpu, flag_z, true);
+  else
+    cpu_set_flag(cpu, flag_z, false);
+ 
+}
+
+/* cpu_rl_mem8(): Rotate value at memory address left
+ */ 
+void cpu_rl_mem8(struct CPU *cpu, uint16_t addr) {
+  write_memory8(cpu, circshift(read_memory8(cpu, addr), 1), addr);
+
+  if (read_memory8(cpu, addr) & (1 << 7))
+    cpu_set_flag(cpu, flag_c, true);
+  else
+   cpu_set_flag(cpu, flag_c, false);
+
+  if (read_memory8(cpu, addr) & (1 << 0))
+    cpu_set_flag(cpu, flag_z, true);
+  else
+    cpu_set_flag(cpu, flag_z, false);
+
+}
+
+/* cpu_rl_r(): Rotate register right
+ */
+void cpu_rr_r(struct CPU *cpu, uint8_t r) {
+  cpu->registers[r] = circshift(cpu->registers[r], 1);
+  
+  if (cpu->registers[r] & (1 << 7))
+    cpu_set_flag(cpu, flag_c, true);
+  else
+    cpu_set_flag(cpu, flag_c, false);
+
+  if (cpu->registers[r] & (1 << 0))
+    cpu_set_flag(cpu, flag_z, true);
+  else
+    cpu_set_flag(cpu, flag_z, false);
+ 
+}
+
+/* cpu_rr_mem8(): Rotate value at memory address left
+ */ 
+void cpu_rr_mem8(struct CPU *cpu, uint16_t addr) {
+  write_memory8(cpu, circshift(read_memory8(cpu, addr), -1), addr);
+
+  if (read_memory8(cpu, addr) & (1 << 7))
+    cpu_set_flag(cpu, flag_c, true);
+  else
+   cpu_set_flag(cpu, flag_c, false);
+
+  if (read_memory8(cpu, addr) & (1 << 0))
+    cpu_set_flag(cpu, flag_z, true);
+  else
+    cpu_set_flag(cpu, flag_z, false);
+
+}
+
 /* cpu_rlc_r(): Rotate register left circular
  */
 void cpu_rlc_r(struct CPU *cpu, uint8_t r) {
   if (cpu->registers[r] & (1 << 7))
     cpu_set_flag(cpu, flag_c, true);
   else
-   cpu_set_flag(cpu, flag_c, false);
+    cpu_set_flag(cpu, flag_c, false);
 
-  cpu->registers[r] = cpu->registers[r] << 1;
+  cpu->registers[r] = circshift(cpu->registers[r], 1);
 
   if (cpu->registers[r] & (1 << 0))
     cpu_set_flag(cpu, flag_z, true);
@@ -2869,6 +2937,139 @@ void cpu_rlc_mem8(struct CPU *cpu, uint16_t addr) {
   else
    cpu_set_flag(cpu, flag_c, false);
 
+  write_memory8(cpu, circshift(read_memory8(cpu, addr), 1), addr);
+
+  if (read_memory8(cpu, addr) & (1 << 0))
+    cpu_set_flag(cpu, flag_z, true);
+  else
+    cpu_set_flag(cpu, flag_z, false);
+
+}
+
+/* cpu_rrc_r(): Rotate register right circular
+ */
+void cpu_rrc_r(struct CPU *cpu, uint8_t r) {
+  if (cpu->registers[r] & (1 << 7))
+    cpu_set_flag(cpu, flag_c, true);
+  else
+   cpu_set_flag(cpu, flag_c, false);
+
+  cpu->registers[r] = circshift(cpu->registers[r], -1);
+
+  if (cpu->registers[r] & (1 << 0))
+    cpu_set_flag(cpu, flag_z, true);
+  else
+    cpu_set_flag(cpu, flag_z, false);
+}
+
+/* cpu_rrc_mem8(): Rotate value at memory address left circular
+ */ 
+void cpu_rrc_mem8(struct CPU *cpu, uint16_t addr) {
+  if (read_memory8(cpu, addr) & (1 << 7))
+    cpu_set_flag(cpu, flag_c, true);
+  else
+   cpu_set_flag(cpu, flag_c, false);
+
+  write_memory8(cpu, circshift(read_memory8(cpu, addr), -1), addr);
+
+  if (read_memory8(cpu, addr) & (1 << 0))
+    cpu_set_flag(cpu, flag_z, true);
+  else
+    cpu_set_flag(cpu, flag_z, false);
+}
+
+/* cpu_sl_r(): Shift register left
+ */
+void cpu_sl_r(struct CPU *cpu, uint8_t r) {
+  cpu->registers[r] = cpu->registers[r] << 1;
+  
+  if (cpu->registers[r] & (1 << 7))
+    cpu_set_flag(cpu, flag_c, true);
+  else
+    cpu_set_flag(cpu, flag_c, false);
+
+  if (cpu->registers[r] & (1 << 0))
+    cpu_set_flag(cpu, flag_z, true);
+  else
+    cpu_set_flag(cpu, flag_z, false);
+ 
+}
+
+/* cpu_sl_mem8(): Shift value at memory address left
+ */ 
+void cpu_sl_mem8(struct CPU *cpu, uint16_t addr) {
+  write_memory8(cpu, (read_memory8(cpu, addr) << 1), addr);
+
+  if (read_memory8(cpu, addr) & (1 << 7))
+    cpu_set_flag(cpu, flag_c, true);
+  else
+   cpu_set_flag(cpu, flag_c, false);
+
+  if (read_memory8(cpu, addr) & (1 << 0))
+    cpu_set_flag(cpu, flag_z, true);
+  else
+    cpu_set_flag(cpu, flag_z, false);
+
+}
+
+/* cpu_sr_r(): Shift register right
+ */
+void cpu_sr_r(struct CPU *cpu, uint8_t r) {
+  cpu->registers[r] = cpu->registers[r] >> 1;
+  
+  if (cpu->registers[r] & (1 << 7))
+    cpu_set_flag(cpu, flag_c, true);
+  else
+    cpu_set_flag(cpu, flag_c, false);
+
+  if (cpu->registers[r] & (1 << 0))
+    cpu_set_flag(cpu, flag_z, true);
+  else
+    cpu_set_flag(cpu, flag_z, false);
+ 
+}
+
+/* cpu_sr_mem8(): Shift value at memory address left
+ */ 
+void cpu_sr_mem8(struct CPU *cpu, uint16_t addr) {
+  write_memory8(cpu, (read_memory8(cpu, addr) >> 1), addr);
+
+  if (read_memory8(cpu, addr) & (1 << 7))
+    cpu_set_flag(cpu, flag_c, true);
+  else
+   cpu_set_flag(cpu, flag_c, false);
+
+  if (read_memory8(cpu, addr) & (1 << 0))
+    cpu_set_flag(cpu, flag_z, true);
+  else
+    cpu_set_flag(cpu, flag_z, false);
+
+}
+
+/* cpu_sla_r(): Shift register left arithmetic
+ */
+void cpu_sla_r(struct CPU *cpu, uint8_t r) {
+  if (cpu->registers[r] & (1 << 7))
+    cpu_set_flag(cpu, flag_c, true);
+  else
+    cpu_set_flag(cpu, flag_c, false);
+
+  cpu->registers[r] = cpu->registers[r] << 1;
+
+  if (cpu->registers[r] & (1 << 0))
+    cpu_set_flag(cpu, flag_z, true);
+  else
+    cpu_set_flag(cpu, flag_z, false);
+}
+
+/* cpu_sla_mem8(): Shift value at memory address left arithmetic
+ */ 
+void cpu_sla_mem8(struct CPU *cpu, uint16_t addr) {
+  if (read_memory8(cpu, addr) & (1 << 7))
+    cpu_set_flag(cpu, flag_c, true);
+  else
+   cpu_set_flag(cpu, flag_c, false);
+
   write_memory8(cpu, (read_memory8(cpu, addr) << 1), addr);
 
   if (read_memory8(cpu, addr) & (1 << 0))
@@ -2878,56 +3079,314 @@ void cpu_rlc_mem8(struct CPU *cpu, uint16_t addr) {
 
 }
 
+/* cpu_sra_r(): Shift register right arithmetic
+ */
+void cpu_sra_r(struct CPU *cpu, uint8_t r) {
+  if (cpu->registers[r] & (1 << 7))
+    cpu_set_flag(cpu, flag_c, true);
+  else
+   cpu_set_flag(cpu, flag_c, false);
+
+  cpu->registers[r] = cpu->registers[r] >> 1;
+
+  if (cpu->registers[r] & (1 << 0))
+    cpu_set_flag(cpu, flag_z, true);
+  else
+    cpu_set_flag(cpu, flag_z, false);
+}
+
+/* cpu_sra_mem8(): Shift value at memory address right arithmetic
+ */ 
+void cpu_sra_mem8(struct CPU *cpu, uint16_t addr) {
+  if (read_memory8(cpu, addr) & (1 << 7))
+    cpu_set_flag(cpu, flag_c, true);
+  else
+   cpu_set_flag(cpu, flag_c, false);
+
+  write_memory8(cpu, (read_memory8(cpu, addr) >> 1), addr);
+
+  if (read_memory8(cpu, addr) & (1 << 0))
+    cpu_set_flag(cpu, flag_z, true);
+  else
+    cpu_set_flag(cpu, flag_z, false);
+}
+
 /* cpu_cb(): Handle CB prefixed instructions
  */
 void cpu_cb(struct CPU *cpu, bool dump) {
-  if (read_memory8(cpu, cpu->pc) == 0x01) {
+  if (read_memory8(cpu, cpu->pc) == 0x00) {
     if (dump)
       printf("RLC B\n");
 
     cpu_rlc_r(cpu, b);
   }
 
-  else if (read_memory8(cpu, cpu->pc) == 0x02) {
+  else if (read_memory8(cpu, cpu->pc) == 0x01) {
     if (dump)
       printf("RLC C\n");
 
     cpu_rlc_r(cpu, c);
   }
 
-  else if (read_memory8(cpu, cpu->pc) == 0x03) {
+  else if (read_memory8(cpu, cpu->pc) == 0x02) {
     if (dump)
       printf("RLC D\n");
 
     cpu_rlc_r(cpu, d);
   }
 
-  else if (read_memory8(cpu, cpu->pc) == 0x04) {
+  else if (read_memory8(cpu, cpu->pc) == 0x03) {
     if (dump)
       printf("RLC E\n");
 
     cpu_rlc_r(cpu, e);
   }
 
-  else if (read_memory8(cpu, cpu->pc) == 0x05) {
+  else if (read_memory8(cpu, cpu->pc) == 0x04) {
     if (dump)
       printf("RLC H\n");
 
     cpu_rlc_r(cpu, h);
   }
 
-  else if (read_memory8(cpu, cpu->pc) == 0x06) {
+  else if (read_memory8(cpu, cpu->pc) == 0x05) {
     if (dump)
       printf("RLC L\n");
 
     cpu_rlc_r(cpu, l);
   }
 
-  else if (read_memory8(cpu, cpu->pc) == 0x07) {
+  else if (read_memory8(cpu, cpu->pc) == 0x06) {
     if (dump)
       printf("RLC (HL)\n");
     cpu_rlc_mem8(cpu, (uint8to16(cpu->registers[h], cpu->registers[l]))); 
   }
 
+  else if (read_memory8(cpu, cpu->pc) == 0x07) {
+    if (dump)
+      printf("RLC A\n");
+
+    cpu_rlc_r(cpu, a);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x08) {
+    if (dump)
+      printf("RRC B\n");
+
+    cpu_rrc_r(cpu, b);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x09) {
+    if (dump)
+      printf("RRC C\n");
+
+    cpu_rrc_r(cpu, c);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x0A) {
+    if (dump)
+      printf("RRC D\n");
+
+    cpu_rrc_r(cpu, d);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x0B) {
+    if (dump)
+      printf("RRC E\n");
+
+    cpu_rrc_r(cpu, e);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x0C) {
+    if (dump)
+      printf("RRC H\n");
+
+    cpu_rrc_r(cpu, h);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x0D) {
+    if (dump)
+      printf("RRC L\n");
+
+    cpu_rrc_r(cpu, l);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x0E) {
+    if (dump)
+      printf("RRC (HL)\n");
+    cpu_rrc_mem8(cpu, (uint8to16(cpu->registers[h], cpu->registers[l]))); 
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x0F) {
+    if (dump)
+      printf("RRC A\n");
+
+    cpu_rrc_r(cpu, a);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x10) {
+    if (dump)
+      printf("RL B\n");
+
+    cpu_rl_r(cpu, b);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x11) {
+    if (dump)
+      printf("RL C\n");
+
+    cpu_rl_r(cpu, c);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x12) {
+    if (dump)
+      printf("RL D\n");
+
+    cpu_rl_r(cpu, d);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x13) {
+    if (dump)
+      printf("RL E\n");
+
+    cpu_rl_r(cpu, e);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x14) {
+    if (dump)
+      printf("RL H\n");
+
+    cpu_rl_r(cpu, h);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x15) {
+    if (dump)
+      printf("RL L\n");
+
+    cpu_rl_r(cpu, l);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x16) {
+    if (dump)
+      printf("RL (HL)\n");
+    cpu_rl_mem8(cpu, (uint8to16(cpu->registers[h], cpu->registers[l]))); 
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x17) {
+    if (dump)
+      printf("RL A\n");
+
+    cpu_rl_r(cpu, a);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x18) {
+    if (dump)
+      printf("RR B\n");
+
+    cpu_rr_r(cpu, b);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x19) {
+    if (dump)
+      printf("RR C\n");
+
+    cpu_rr_r(cpu, c);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x1A) {
+    if (dump)
+      printf("RR D\n");
+
+    cpu_rr_r(cpu, d);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x1B) {
+    if (dump)
+      printf("RR E\n");
+
+    cpu_rr_r(cpu, e);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x1C) {
+    if (dump)
+      printf("RR H\n");
+
+    cpu_rr_r(cpu, h);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x1D) {
+    if (dump)
+      printf("RR L\n");
+
+    cpu_rr_r(cpu, l);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x1E) {
+    if (dump)
+      printf("RR (HL)\n");
+    cpu_rr_mem8(cpu, (uint8to16(cpu->registers[h], cpu->registers[l]))); 
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x1F) {
+    if (dump)
+      printf("RR A\n");
+
+    cpu_rr_r(cpu, a);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x20) {
+    if (dump)
+      printf("SLA B\n");
+
+    cpu_sla_r(cpu, b);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x21) {
+    if (dump)
+      printf("SLA C\n");
+
+    cpu_sla_r(cpu, c);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x22) {
+    if (dump)
+      printf("SLA D\n");
+
+    cpu_sla_r(cpu, d);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x23) {
+    if (dump)
+      printf("SLA E\n");
+
+    cpu_sla_r(cpu, e);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x24) {
+    if (dump)
+      printf("SLA H\n");
+
+    cpu_sla_r(cpu, h);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x25) {
+    if (dump)
+      printf("SLA L\n");
+
+    cpu_sla_r(cpu, l);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x26) {
+    if (dump)
+      printf("SLA (HL)\n");
+    cpu_sla_mem8(cpu, (uint8to16(cpu->registers[h], cpu->registers[l]))); 
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x27) {
+    if (dump)
+      printf("SLA A\n");
+
+    cpu_sla_r(cpu, a);
+  }
 
 }
