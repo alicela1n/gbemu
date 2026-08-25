@@ -27,9 +27,9 @@ bool cpu_check_flag(struct CPU *cpu, uint8_t flag) {
  */
 void cpu_set_flag(struct CPU *cpu, uint8_t flag, bool set) {
   if (set)
-    cpu->registers[f] = cpu->registers[f] | (1 << flag);
+    cpu->registers[f] |= flag;
   else
-    cpu->registers[f] = cpu->registers[f] & ~(1 << flag);
+    cpu->registers[f] &= ~(flag);
 }
 
 /* cpu_toggle_flag(): Toggle a flag in the flag register
@@ -128,7 +128,13 @@ void cpu_adc8(struct CPU *cpu, uint8_t *a, uint8_t *b) {
  *             takes in two variables a and b, and stores the result in a.
  */
 void cpu_sub8(struct CPU *cpu, uint8_t *a, uint8_t b) {
-  *a = b - *a;
+  /* Accounting for integer underflows, if result is negative, set absolute value as register and set subtraction flag
+   */
+  int8_t tmp = b - *a;
+  if (tmp < 0) {
+    cpu_set_flag(cpu, flag_n, 1);
+  }
+  *a = abs(tmp);
 
   if ((*a & 0x0F) + (b & 0x0F) == 0x10)
     cpu_set_flag(cpu, flag_h, 1);
@@ -505,6 +511,22 @@ void cpu_sra_mem8(struct CPU *cpu, uint16_t addr) {
   write_memory8(cpu, (read_memory8(cpu, addr) >> 1), addr);
 
   if (read_memory8(cpu, addr) & (1 << 0))
+    cpu_set_flag(cpu, flag_z, true);
+  else
+    cpu_set_flag(cpu, flag_z, false);
+}
+
+/* cpu_srl_r():  Shift register left logical
+ */
+void cpu_srl_r(struct CPU *cpu, uint8_t r) {
+  if (cpu->registers[r] & (1 << 0))
+    cpu_set_flag(cpu, flag_c, true);
+  else
+    cpu_set_flag(cpu, flag_c, false);
+
+  cpu->registers[r] = cpu->registers[r] << 1;
+
+  if (cpu->registers[r] & (1 << 7))
     cpu_set_flag(cpu, flag_z, true);
   else
     cpu_set_flag(cpu, flag_z, false);
