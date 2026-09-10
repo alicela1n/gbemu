@@ -18,4 +18,8 @@ static inline unsigned char circshift(unsigned char x, int n) {
   return (x << n) | (x >> (8 - n));
 }
 
+static inline uint16_t swap_byte16(uint16_t n) {
+  return (n << 8) | (n >> 8);
+}
+
 #endif

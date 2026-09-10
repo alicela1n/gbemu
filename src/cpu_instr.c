@@ -50,24 +50,63 @@ void cpu_ld_reg8(struct CPU *cpu, uint8_t r, uint8_t n) {
   cpu->registers[r] = n;
 }
 
+/* cpu_ld_reg16(): Load data (n) into 16 bit register or register pair
+ */
 void cpu_ld_reg16(struct CPU *cpu, uint16_t r, uint16_t n) {
-  if (r == sp) {
-    cpu->sp = n;
-  } else if (r == pc) {
-    cpu->pc = n;
-  } else if (r == af) {
-    cpu_ld_reg8(cpu, a, n & 0xFF);
-    cpu_ld_reg8(cpu, f, (n >> 8) & 0xFF);
-  } else if (r == bc) {
-    cpu_ld_reg8(cpu, b, n & 0xff);
-    cpu_ld_reg8(cpu, c, (n >> 8) & 0xff);
-  } else if (r == de) {
-    cpu_ld_reg8(cpu, d, n & 0xff);
-    cpu_ld_reg8(cpu, e, (n >> 8) & 0xff);
-  } else if (r == hl) {
-    cpu_ld_reg8(cpu, h, n & 0xff);
-    cpu_ld_reg8(cpu, l, (n >> 8) & 0xff);
+  switch(r) {
+    case sp:
+      cpu->sp = n;
+      break;
+    case pc:
+      cpu->pc = n;
+      break;
+    case af:
+      cpu_ld_reg8(cpu, f, n & 0xFF);
+      cpu_ld_reg8(cpu, a, (n >> 8) & 0xFF);
+      break;
+    case bc:
+      cpu_ld_reg8(cpu, c, n & 0xff);
+      cpu_ld_reg8(cpu, b, (n >> 8) & 0xff);
+    break;
+    case de:
+      cpu_ld_reg8(cpu, e, n & 0xff);
+      cpu_ld_reg8(cpu, d, (n >> 8) & 0xff);
+      break;
+    case hl:
+      cpu_ld_reg8(cpu, l, n & 0xff);
+      cpu_ld_reg8(cpu, h, (n >> 8) & 0xff);
+      break;
   }
+}
+
+/* cpu_inc_reg8(): Increment 8 bit register 
+ */
+void cpu_inc_reg8(struct CPU *cpu, uint8_t r, uint8_t n) {
+  cpu->registers[r] += n;
+}
+
+/* cpu_inc_reg16(): Increment 16 bit register or register pair
+ */
+void cpu_inc_reg16(struct CPU *cpu, uint16_t r, uint16_t n) {
+  uint16_t val = cpu_read_reg16(cpu, r);
+  val += n;
+
+  cpu_ld_reg16(cpu, r, val);
+}
+
+/* cpu_dec_reg8(): Decrement 8 bit register
+ */
+void cpu_dec_reg8(struct CPU *cpu, uint8_t r, uint8_t n) {
+  cpu->registers[r] -= n;
+}
+
+/* cpu_dec_reg16(): Decrement 16 bit register or register pair
+ */
+void cpu_dec_reg16(struct CPU *cpu, uint16_t r, uint16_t n) {
+  uint16_t val = cpu_read_reg16(cpu, r);
+
+  val -= n;
+  cpu_ld_reg16(cpu, r, val);
 }
 
 /* cpu_ld_mem8(): Load data (a) into memory at addr
@@ -124,17 +163,54 @@ void cpu_adc8(struct CPU *cpu, uint8_t *a, uint8_t *b) {
   cpu_add8(cpu, a, *b);
 }
 
+/* cpu_add_reg16(): 16-bit adding function for two register pairs 
+ */
+void cpu_add_reg16(struct CPU *cpu, uint16_t rp1, uint16_t rp2) {
+  uint16_t result = cpu_read_reg16(cpu, rp1) + cpu_read_reg16(cpu, rp2);
+
+  cpu_ld_reg16(cpu, rp1, result);
+}
+
+/* cpu_read_reg16(): Read 16 bit register or register pair
+ */
+uint16_t cpu_read_reg16(struct CPU *cpu, uint16_t r) {
+  switch(r) {
+    case af:
+      return uint8to16(cpu->registers[f], cpu->registers[a]);
+      break;
+    case bc:
+      return uint8to16(cpu->registers[c], cpu->registers[b]);
+      break;
+    case de:
+      return uint8to16(cpu->registers[e], cpu->registers[d]);
+      break;
+    case hl:
+      return uint8to16(cpu->registers[l], cpu->registers[h]);
+      break;
+    case sp:
+      return cpu->sp;
+      break;
+    case pc:
+      return cpu->pc;
+      break;
+    }
+
+    return 0;
+}
+
+
 /* cpu_sub8(): 8-bit subtraction function which deals with carries and stuff,
  *             takes in two variables a and b, and stores the result in a.
  */
 void cpu_sub8(struct CPU *cpu, uint8_t *a, uint8_t b) {
-  /* Accounting for integer underflows, if result is negative, set absolute value as register and set subtraction flag
-   */
-  int8_t tmp = b - *a;
-  if (tmp < 0) {
+  if (*a >= b) {
+    // normal subtract
+    *a -= b;
+  } else {
+    // negative
+    *a = b - *a;
     cpu_set_flag(cpu, flag_n, 1);
   }
-  *a = abs(tmp);
 
   if ((*a & 0x0F) + (b & 0x0F) == 0x10)
     cpu_set_flag(cpu, flag_h, 1);
@@ -450,12 +526,14 @@ void cpu_sla_r(struct CPU *cpu, uint8_t r) {
   else
     cpu_set_flag(cpu, flag_c, false);
 
-  cpu->registers[r] = cpu->registers[r] << 1;
+  cpu->registers[r] = (cpu->registers[r] << 1) | ((cpu->registers[r] & 0x80) << 7);
 
   if (cpu->registers[r] & (1 << 0))
     cpu_set_flag(cpu, flag_z, true);
   else
     cpu_set_flag(cpu, flag_z, false);
+
+  cpu_set_flag(cpu, flag_h, false);
 }
 
 /* cpu_sla_mem8(): Shift value at memory address left arithmetic
@@ -473,6 +551,7 @@ void cpu_sla_mem8(struct CPU *cpu, uint16_t addr) {
   else
     cpu_set_flag(cpu, flag_z, false);
 
+  cpu_set_flag(cpu, flag_h, false);
 }
 
 /* cpu_sra_r(): Shift register right arithmetic
@@ -483,12 +562,14 @@ void cpu_sra_r(struct CPU *cpu, uint8_t r) {
   else
    cpu_set_flag(cpu, flag_c, false);
 
-  cpu->registers[r] = cpu->registers[r] >> 1;
+  cpu->registers[r] = (cpu->registers[r] >> 1) | ((cpu->registers[r] & 0x80) >> 7);
 
   if (cpu->registers[r] & (1 << 0))
     cpu_set_flag(cpu, flag_z, true);
   else
     cpu_set_flag(cpu, flag_z, false);
+
+  cpu_set_flag(cpu, flag_h, false);
 }
 
 void cpu_swap_r(struct CPU *cpu, uint8_t r) {
@@ -514,22 +595,59 @@ void cpu_sra_mem8(struct CPU *cpu, uint16_t addr) {
     cpu_set_flag(cpu, flag_z, true);
   else
     cpu_set_flag(cpu, flag_z, false);
+
+  cpu_set_flag(cpu, flag_h, false);
 }
 
-/* cpu_srl_r():  Shift register left logical
+/* cpu_srl_r(): Shift register right logical
  */
 void cpu_srl_r(struct CPU *cpu, uint8_t r) {
-  if (cpu->registers[r] & (1 << 0))
+  if (cpu->registers[r] & (1 << 7))
+    cpu_set_flag(cpu, flag_c, true);
+  else
+   cpu_set_flag(cpu, flag_c, false);
+
+  cpu->registers[r] = cpu->registers[r] >> 1;
+
+  if (cpu->registers[r] == 0)
+    cpu_set_flag(cpu, flag_z, true);
+  else
+    cpu_set_flag(cpu, flag_z, false);
+
+  cpu_set_flag(cpu, flag_h, false);
+}
+
+/* cpu_srl_mem8(): Shift register right logical
+ */
+void cpu_srl_mem8(struct CPU *cpu, uint16_t addr) {
+  if (read_memory8(cpu, addr) & (1 << 7))
+    cpu_set_flag(cpu, flag_c, true);
+  else
+   cpu_set_flag(cpu, flag_c, false);
+
+  write_memory8(cpu, addr, (read_memory8(cpu, addr) >> 1));
+
+  if (read_memory8(cpu, addr) == 0)
+    cpu_set_flag(cpu, flag_z, true);
+  else
+    cpu_set_flag(cpu, flag_z, false);
+
+  cpu_set_flag(cpu, flag_h, false);
+}
+
+/* cpu_sll_r(): Shift register left arithmetic
+ */
+void cpu_sll_r(struct CPU *cpu, uint8_t r) {
+  if (cpu->registers[r] & (1 << 7))
     cpu_set_flag(cpu, flag_c, true);
   else
     cpu_set_flag(cpu, flag_c, false);
 
-  cpu->registers[r] = cpu->registers[r] << 1;
+  cpu->registers[r] = cpu->registers[r] >> 1;
 
-  if (cpu->registers[r] & (1 << 7))
+  if (cpu->registers[r] & (1 << 0))
     cpu_set_flag(cpu, flag_z, true);
   else
     cpu_set_flag(cpu, flag_z, false);
 }
-
 
