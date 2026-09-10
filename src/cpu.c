@@ -3051,4 +3051,18 @@ void cpu_cb(struct CPU *cpu, bool dump) {
 
     cpu_srl_r(cpu, l);
   }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x3E) {
+    if (dump)
+      printf("SRL (HL)\n");
+
+    cpu_srl_mem8(cpu, cpu_read_reg16(cpu, hl));
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x3F) {
+    if (dump)
+      printf("SRL A\n");
+
+    cpu_srl_r(cpu, a);
+  }
 }

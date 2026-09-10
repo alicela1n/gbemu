@@ -54,6 +54,7 @@ void cpu_sr_mem8(struct CPU *cpu, uint16_t addr);
 void cpu_sla_r(struct CPU *cpu, uint8_t r);
 void cpu_sla_mem8(struct CPU *cpu, uint16_t addr);
 void cpu_srl_r(struct CPU *cpu, uint8_t r);
+void cpu_srl_mem8(struct CPU *cpu, uint16_t addr);
 void cpu_sra_r(struct CPU *cpu, uint8_t r);
 void cpu_swap_r(struct CPU *cpu, uint8_t r);
 void cpu_swap_m(struct CPU *cpu, uint8_t addr);
