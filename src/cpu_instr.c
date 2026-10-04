@@ -44,6 +44,28 @@ void cpu_toggle_flag(struct CPU *cpu, uint8_t flag) {
     cpu_set_flag(cpu, flag, 1);
 }
 
+void cpu_bit_r(struct CPU *cpu, uint8_t r, uint8_t b) {
+  if ((cpu->registers[r] & (1 << b)) == 0)
+    cpu_set_flag(cpu, flag_z, true);
+  else
+    cpu_set_flag(cpu, flag_z, false);
+
+  cpu_set_flag(cpu, flag_n, false);
+  cpu_set_flag(cpu, flag_h, true);
+}
+
+void cpu_bit_mem8(struct CPU *cpu, uint16_t addr, uint8_t b) {
+
+  if ((read_memory8(cpu, addr) & (1 << b)) == 0)
+    cpu_set_flag(cpu, flag_z, true);
+  else
+    cpu_set_flag(cpu, flag_z, false);
+
+  cpu_set_flag(cpu, flag_n, false);
+  cpu_set_flag(cpu, flag_h, true);
+}
+
+
 /* cpu_ld_reg8(): Load data (n) into a register (r), 8 bit
  */
 void cpu_ld_reg8(struct CPU *cpu, uint8_t r, uint8_t n) {

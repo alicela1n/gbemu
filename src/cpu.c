@@ -3065,4 +3065,452 @@ void cpu_cb(struct CPU *cpu, bool dump) {
 
     cpu_srl_r(cpu, a);
   }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x40) {
+    if (dump)
+      printf("BIT 0,B\n");
+
+    cpu_bit_r(cpu, b, 0);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x41) {
+    if (dump)
+      printf("BIT 0,C\n");
+
+    cpu_bit_r(cpu, c, 0);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x42) {
+    if (dump)
+      printf("BIT 0,D\n");
+
+    cpu_bit_r(cpu, d, 0);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x43) {
+    if (dump)
+      printf("BIT 0,E\n");
+
+    cpu_bit_r(cpu, e, 0);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x44) {
+    if (dump)
+      printf("BIT 0,H\n");
+
+    cpu_bit_r(cpu, h, 0);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x45) {
+    if (dump)
+      printf("BIT 0,L\n");
+
+    cpu_bit_r(cpu, l, 0);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x46) {
+    if (dump)
+      printf("BIT 0,(HL)\n");
+
+    cpu_bit_mem8(cpu, cpu_read_reg16(cpu, hl), 0);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x47) {
+    if (dump)
+      printf("BIT 0,A\n");
+
+    cpu_bit_r(cpu, a, 0);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x48) {
+    if (dump)
+      printf("BIT 1,B\n");
+
+    cpu_bit_r(cpu, b, 1);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x49) {
+    if (dump)
+      printf("BIT 1,C\n");
+
+    cpu_bit_r(cpu,c, 1);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x4A) {
+    if (dump)
+      printf("BIT 1,D\n");
+
+    cpu_bit_r(cpu, d, 1);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x4B) {
+    if (dump)
+      printf("BIT 1,E\n");
+
+    cpu_bit_r(cpu, e, 1);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x4C) {
+    if (dump)
+      printf("BIT 1,H\n");
+
+    cpu_bit_r(cpu, h, 1);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x4D) {
+    if (dump)
+      printf("BIT 1,L\n");
+
+    cpu_bit_r(cpu, l, 1);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x4E) {
+    if (dump)
+      printf("BIT 1,(HL)\n");
+
+    cpu_bit_mem8(cpu, cpu_read_reg16(cpu, hl), 1);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x4F) {
+    if (dump)
+      printf("BIT 1,A\n");
+
+    cpu_bit_r(cpu, a, 1);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x50) {
+    if (dump)
+      printf("BIT 2,B\n");
+
+    cpu_bit_r(cpu, b, 2);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x51) {
+    if (dump)
+      printf("BIT 2,C\n");
+
+    cpu_bit_r(cpu, c, 2);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x52) {
+    if (dump)
+      printf("BIT 2,D\n");
+
+    cpu_bit_r(cpu, d, 2);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x53) {
+    if (dump)
+      printf("BIT 2,E\n");
+
+    cpu_bit_r(cpu, e, 2);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x54) {
+    if (dump)
+      printf("BIT 2,H\n");
+
+    cpu_bit_r(cpu, h, 2);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x55) {
+    if (dump)
+      printf("BIT 2,L\n");
+
+    cpu_bit_r(cpu, l, 2);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x56) {
+    if (dump)
+      printf("BIT 2,(HL)\n");
+
+    cpu_bit_mem8(cpu, cpu_read_reg16(cpu, hl), 2);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x57) {
+    if (dump)
+      printf("BIT 2,A\n");
+
+    cpu_bit_r(cpu, a, 2);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x58) {
+    if (dump)
+      printf("BIT 3,B\n");
+
+    cpu_bit_r(cpu, b, 3);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x59) {
+    if (dump)
+      printf("BIT 3,C\n");
+
+    cpu_bit_r(cpu, c, 3);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x5A) {
+    if (dump)
+      printf("BIT 3,D\n");
+
+    cpu_bit_r(cpu, d, 3);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x5B) {
+    if (dump)
+      printf("BIT 3,E\n");
+
+    cpu_bit_r(cpu, e, 3);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x5C) {
+    if (dump)
+      printf("BIT 3,H\n");
+
+    cpu_bit_r(cpu, h, 3);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x5D) {
+    if (dump)
+      printf("BIT 3,L\n");
+
+    cpu_bit_r(cpu, l, 3);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x5E) {
+    if (dump)
+      printf("BIT 3,(HL)\n");
+
+    cpu_bit_mem8(cpu, cpu_read_reg16(cpu, hl), 3);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x5F) {
+    if (dump)
+      printf("BIT 3,A\n");
+
+    cpu_bit_r(cpu, a, 3);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x60) {
+    if (dump)
+      printf("BIT 4,B\n");
+
+    cpu_bit_r(cpu, b, 4);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x61) {
+    if (dump)
+      printf("BIT 4,C\n");
+
+    cpu_bit_r(cpu, c, 4);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x62) {
+    if (dump)
+      printf("BIT 4,D\n");
+
+    cpu_bit_r(cpu, d, 4);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x63) {
+    if (dump)
+      printf("BIT 4,E\n");
+
+    cpu_bit_r(cpu, e, 4);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x64) {
+    if (dump)
+      printf("BIT 4,H\n");
+
+    cpu_bit_r(cpu, h, 4);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x65) {
+    if (dump)
+      printf("BIT 4,L\n");
+
+    cpu_bit_r(cpu, l, 4);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x66) {
+    if (dump)
+      printf("BIT 4,(HL)\n");
+
+    cpu_bit_mem8(cpu, cpu_read_reg16(cpu, hl), 4);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x67) {
+    if (dump)
+      printf("BIT 4,A\n");
+
+    cpu_bit_r(cpu, a, 4);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x68) {
+    if (dump)
+      printf("BIT 5,B\n");
+
+    cpu_bit_r(cpu, b, 5);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x69) {
+    if (dump)
+      printf("BIT 5,C\n");
+
+    cpu_bit_r(cpu, c, 5);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x6A) {
+    if (dump)
+      printf("BIT 5,D\n");
+
+    cpu_bit_r(cpu, d, 5);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x6B) {
+    if (dump)
+      printf("BIT 5,E\n");
+
+    cpu_bit_r(cpu, e, 5);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x6C) {
+    if (dump)
+      printf("BIT 5,L\n");
+
+    cpu_bit_r(cpu, l, 5);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x6D) {
+    if (dump)
+      printf("BIT 5,H\n");
+
+    cpu_bit_r(cpu, h, 5);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x6E) {
+    if (dump)
+      printf("BIT 5,(HL)\n");
+
+    cpu_bit_mem8(cpu, cpu_read_reg16(cpu, hl), 5);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x6F) {
+    if (dump)
+      printf("BIT 5,A\n");
+
+    cpu_bit_r(cpu, a, 5);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x70) {
+    if (dump)
+      printf("BIT 6,B\n");
+
+    cpu_bit_r(cpu, b, 6);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x71) {
+    if (dump)
+      printf("BIT 6,C\n");
+
+    cpu_bit_r(cpu, c, 6);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x72) {
+    if (dump)
+      printf("BIT 6,D\n");
+
+    cpu_bit_r(cpu, d, 6);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x73) {
+    if (dump)
+      printf("BIT 6,E\n");
+
+    cpu_bit_r(cpu, e, 6);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x74) {
+    if (dump)
+      printf("BIT 6,H\n");
+
+    cpu_bit_r(cpu, h, 6);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x75) {
+    if (dump)
+      printf("BIT 6,L\n");
+
+    cpu_bit_r(cpu, l, 6);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x76) {
+    if (dump)
+      printf("BIT 6,(HL)\n");
+
+    cpu_bit_mem8(cpu, cpu_read_reg16(cpu, hl), 6);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x77) {
+    if (dump)
+      printf("BIT 6,A\n");
+
+    cpu_bit_r(cpu, a, 6);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x78) {
+    if (dump)
+      printf("BIT 7,B\n");
+
+    cpu_bit_r(cpu, b, 7);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x79) {
+    if (dump)
+      printf("BIT 7,C\n");
+
+    cpu_bit_r(cpu, c, 7);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x7A) {
+    if (dump)
+      printf("BIT 7,D\n");
+
+    cpu_bit_r(cpu, d, 7);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x7B) {
+    if (dump)
+      printf("BIT 7,E\n");
+
+    cpu_bit_r(cpu, e, 7);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x7C) {
+    if (dump)
+      printf("BIT 7,H\n");
+
+    cpu_bit_r(cpu, h, 7);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x7D) {
+    if (dump)
+      printf("BIT 7,L\n");
+
+    cpu_bit_r(cpu, l, 7);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x7E) {
+    if (dump)
+      printf("BIT 7,(HL)\n");
+
+    cpu_bit_mem8(cpu, cpu_read_reg16(cpu, hl), 7);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x7F) {
+    if (dump)
+      printf("BIT 7,A\n");
+
+    cpu_bit_r(cpu, a, 7);
+  }
 }

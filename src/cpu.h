@@ -1,12 +1,7 @@
 #ifndef CPU_H
 #define CPU_H
 
-#include <stdbool.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <string.h>
-#include <unistd.h>
-
+#include "helper.h"
 #include "rom.h"
 #include "cpu_instr.h"
 
