@@ -172,11 +172,9 @@ void cpu_jr(struct CPU *cpu, uint8_t addr) { cpu->pc += addr; }
  *             takes in two variables a and b, and stores the result in a.
  */
 void cpu_add8(struct CPU *cpu, uint8_t *a, uint8_t b) {
-  /*printf("%i\n", *a);
-  printf("%i\n", *b); */
-  *a = *a + b;
+  uint16_t r = (uint16_t)*a + b;
 
-  if ((*a & 0x0F) + (b & 0x0F) == 0x10)
+  if ((*a & 0x0F) + (b & 0x0F) > 0x0F)
     cpu_set_flag(cpu, flag_h, 1);
   else
     cpu_set_flag(cpu, flag_h, 0);
@@ -190,6 +188,8 @@ void cpu_add8(struct CPU *cpu, uint8_t *a, uint8_t b) {
     cpu_set_flag(cpu, flag_z, 1);
   else
     cpu_set_flag(cpu, flag_z, 0);
+
+  *a = (uint8_t)r;
 }
 
 /* cpu_adc8(): Same as cpu_add() but adds the carry
@@ -241,12 +241,13 @@ uint16_t cpu_read_reg16(struct CPU *cpu, uint16_t r) {
  *             takes in two variables a and b, and stores the result in a.
  */
 void cpu_sub8(struct CPU *cpu, uint8_t *a, uint8_t b) {
+  uint16_t r = 0;
   if (*a >= b) {
     // normal subtract
-    *a -= b;
+    r -= (uint16_t)b;
   } else {
     // negative
-    *a = b - *a;
+    r = (uint16_t)b - (uint16_t)*a;
     cpu_set_flag(cpu, flag_n, 1);
   }
 
@@ -264,6 +265,8 @@ void cpu_sub8(struct CPU *cpu, uint8_t *a, uint8_t b) {
     cpu_set_flag(cpu, flag_z, 1);
   else
     cpu_set_flag(cpu, flag_z, 0);
+
+  *a = r;
 }
 
 /* cpu_sbc8(): Same as cpu_sub8() but adds the carry to the value being
