@@ -55,7 +55,6 @@ void cpu_bit_r(struct CPU *cpu, uint8_t r, uint8_t b) {
 }
 
 void cpu_bit_mem8(struct CPU *cpu, uint16_t addr, uint8_t b) {
-
   if ((read_memory8(cpu, addr) & (1 << b)) == 0)
     cpu_set_flag(cpu, flag_z, true);
   else
@@ -65,6 +64,23 @@ void cpu_bit_mem8(struct CPU *cpu, uint16_t addr, uint8_t b) {
   cpu_set_flag(cpu, flag_h, true);
 }
 
+void cpu_res_r(struct CPU *cpu, uint8_t r, uint8_t b) {
+  cpu->registers[r] &= ~((uint8_t)1 << b);
+}
+
+void cpu_res_mem8(struct CPU *cpu, uint16_t addr, uint8_t b) {
+  uint8_t val = read_memory8(cpu, addr);
+  write_memory8(cpu, val & ~((uint8_t)1 << b), addr);
+}
+
+void cpu_set_r(struct CPU *cpu, uint8_t r, uint8_t b) {
+  cpu->registers[r] |= ((uint8_t)1 << b);
+}
+
+void cpu_set_mem8(struct CPU *cpu, uint16_t addr, uint8_t b) {
+  uint8_t val = read_memory8(cpu, addr);
+  write_memory8(cpu, val | ((uint8_t)1 << b), addr);
+}
 
 /* cpu_ld_reg8(): Load data (n) into a register (r), 8 bit
  */

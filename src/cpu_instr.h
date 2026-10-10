@@ -41,6 +41,10 @@ void cpu_ret(struct CPU *cpu);
 
 void cpu_bit_r(struct CPU *cpu, uint8_t r, uint8_t b);
 void cpu_bit_mem8(struct CPU *cpu, uint16_t addr, uint8_t b);
+void cpu_res_r(struct CPU *cpu, uint8_t r, uint8_t b);
+void cpu_res_mem8(struct CPU *cpu, uint16_t addr, uint8_t b);
+void cpu_set_r(struct CPU *cpu, uint8_t r, uint8_t b);
+void cpu_set_mem8(struct CPU *cpu, uint16_t addr, uint8_t b);
 void cpu_rl_r(struct CPU *cpu, uint8_t r);
 void cpu_rl_mem8(struct CPU *cpu, uint16_t addr);
 void cpu_rr_r(struct CPU *cpu, uint8_t r);

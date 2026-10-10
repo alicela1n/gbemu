@@ -1,6 +1,8 @@
 #include "cpu.h"
 #include "helper.h"
 #include "memory.h"
+#include <stddef.h>
+#include <stdio.h>
 
 void cpu_cb(struct CPU *cpu, bool dump);
 
@@ -3512,5 +3514,903 @@ void cpu_cb(struct CPU *cpu, bool dump) {
       printf("BIT 7,A\n");
 
     cpu_bit_r(cpu, a, 7);
+  }
+  
+  else if (read_memory8(cpu, cpu->pc) == 0x80) {
+    if (dump)
+      printf("RES 0,B\n");
+
+    cpu_res_r(cpu, b, 0);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x81) {
+    if (dump)
+      printf("RES 0,C\n");
+
+    cpu_res_r(cpu, c, 0);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x82) {
+    if (dump)
+      printf("RES 0,D\n");
+
+    cpu_res_r(cpu, d, 0);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x83) {
+    if (dump)
+      printf("RES 0,E\n");
+
+    cpu_res_r(cpu, e, 0);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x84) {
+    if (dump)
+      printf("RES 0,H\n");
+
+    cpu_res_r(cpu, h, 0);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x85) {
+    if (dump)
+      printf("RES 0,L\n");
+
+    cpu_res_r(cpu, l, 0);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x86) {
+    if (dump)
+      printf("RES 0,(HL)\n");
+
+    cpu_res_mem8(cpu, cpu_read_reg16(cpu, hl), 0);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x87) {
+    if (dump)
+      printf("RES 0,A\n");
+
+    cpu_res_r(cpu, a, 0);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x88) {
+    if (dump)
+      printf("RES 1,B\n");
+
+    cpu_res_r(cpu, b, 1);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x89) {
+    if (dump)
+      printf("RES 1,C\n");
+
+    cpu_res_r(cpu, c, 1);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x8A) {
+    if (dump)
+      printf("RES 1,D\n");
+
+    cpu_res_r(cpu, d, 1);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x8B) {
+    if (dump)
+      printf("RES 1,E\n");
+
+    cpu_res_r(cpu, e, 1);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x8C) {
+    if (dump)
+      printf("RES 1,H\n");
+
+    cpu_res_r(cpu, h, 1);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x8D) {
+    if (dump)
+      printf("RES 1,L\n");
+
+    cpu_res_r(cpu, l, 1);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x8E) {
+    if (dump)
+      printf("RES 1,(HL)\n");
+
+    cpu_res_mem8(cpu, cpu_read_reg16(cpu, hl), 1);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x8F) {
+    if (dump)
+      printf("RES 1,A\n");
+
+    cpu_res_r(cpu, a, 1);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x90) {
+    if (dump)
+      printf("RES 2,B\n");
+
+    cpu_res_r(cpu, b, 2);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x91) {
+    if (dump)
+      printf("RES 2,C\n");
+
+    cpu_res_r(cpu, c, 2);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x92) {
+    if (dump)
+      printf("RES 2,D\n");
+
+    cpu_res_r(cpu, d, 2);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x93) {
+    if (dump)
+      printf("RES 2,E\n");
+
+    cpu_res_r(cpu, e, 2);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x94) {
+    if (dump)
+      printf("RES 2,H\n");
+
+    cpu_res_r(cpu, h, 2);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x95) {
+    if (dump)
+      printf("RES 2,L\n");
+
+    cpu_res_r(cpu, l, 2);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x96) {
+    if (dump)
+      printf("RES 2,(HL)\n");
+
+    cpu_res_mem8(cpu, cpu_read_reg16(cpu, hl), 2);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x97) {
+    if (dump)
+      printf("RES 2,A\n");
+
+    cpu_res_r(cpu, a, 2);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x98) {
+    if (dump)
+      printf("RES 3,B\n");
+
+    cpu_res_r(cpu, b, 3);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x99) {
+    if (dump)
+      printf("RES 3,C\n");
+
+    cpu_res_r(cpu, c, 3);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x9A) {
+    if (dump)
+      printf("RES 3,D\n");
+
+    cpu_res_r(cpu, d, 3);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x9B) {
+    if (dump)
+      printf("RES 3,E\n");
+
+    cpu_res_r(cpu, e, 3);
+  }
+
+
+  else if (read_memory8(cpu, cpu->pc) == 0x9C) {
+    if (dump)
+      printf("RES 3,H\n");
+
+    cpu_res_r(cpu, h, 3);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x9D) {
+    if (dump)
+      printf("RES 3,L\n");
+
+    cpu_res_r(cpu, l, 3);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x9E) {
+    if (dump)
+      printf("RES 3,(HL)\n");
+
+    cpu_res_mem8(cpu, cpu_read_reg16(cpu, hl), 3);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x9F) {
+    if (dump)
+      printf("RES 3,A\n");
+
+    cpu_res_r(cpu, a, 3);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0xA0) {
+    if (dump)
+      printf("RES 4,B\n");
+
+    cpu_res_r(cpu, b, 4);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0xA1) {
+    if (dump)
+      printf("RES 4,C\n");
+
+    cpu_res_r(cpu, c, 4);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0xA2) {
+    if (dump)
+      printf("RES 4,D\n");
+
+    cpu_res_r(cpu, d, 4);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x43) {
+    if (dump)
+      printf("RES 4,E\n");
+
+    cpu_res_r(cpu, e, 4);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x44) {
+    if (dump)
+      printf("RES 4,H\n");
+
+    cpu_res_r(cpu, h, 4);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x45) {
+    if (dump)
+      printf("RES 4,L\n");
+
+    cpu_res_r(cpu, l, 4);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x46) {
+    if (dump)
+      printf("RES 4,(HL)\n");
+
+    cpu_res_mem8(cpu, cpu_read_reg16(cpu, hl), 4);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x47) {
+    if (dump)
+      printf("RES 4,A\n");
+
+    cpu_res_r(cpu, a, 4);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x48) {
+    if (dump)
+      printf("RES 5,B\n");
+
+    cpu_res_r(cpu, b, 5);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x49) {
+    if (dump)
+      printf("RES 5,C\n");
+
+    cpu_res_r(cpu, c, 5);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x4A) {
+    if (dump)
+      printf("RES 5,D\n");
+
+    cpu_res_r(cpu, d, 5);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x4B) {
+    if (dump)
+      printf("RES 5,E\n");
+
+    cpu_res_r(cpu, e, 5);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x4C) {
+    if (dump)
+      printf("RES 5,H\n");
+
+    cpu_res_r(cpu, h, 5);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x4D) {
+    if (dump)
+      printf("RES 5,L\n");
+
+    cpu_res_r(cpu, l, 5);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x4E) {
+    if (dump)
+      printf("RES 5,(HL)\n");
+
+    cpu_res_mem8(cpu, cpu_read_reg16(cpu, hl), 5);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0x4F) {
+    if (dump)
+      printf("RES 5,A\n");
+
+    cpu_res_r(cpu, a, 5);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0xB0) {
+    if (dump)
+      printf("RES 6,B\n");
+
+    cpu_res_r(cpu, b, 6);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0xB1) {
+    if (dump)
+      printf("RES 6,C\n");
+
+    cpu_res_r(cpu, c, 6);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0xB2) {
+    if (dump)
+      printf("RES 6,D\n");
+
+    cpu_res_r(cpu, d, 6);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0xB3) {
+    if (dump)
+      printf("RES 6,E\n");
+
+    cpu_res_r(cpu, e, 6);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0xB4) {
+    if (dump)
+      printf("RES 6,H\n");
+
+    cpu_res_r(cpu, h, 6);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0xB5) {
+    if (dump)
+      printf("RES 6,L\n");
+
+    cpu_res_r(cpu, l, 6);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0xB6) {
+    if (dump)
+      printf("RES 6,(HL)\n");
+
+    cpu_res_mem8(cpu, cpu_read_reg16(cpu, hl), 6);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0xB7) {
+    if (dump)
+      printf("RES 6,A\n");
+
+    cpu_res_r(cpu, a, 6);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0xB8) {
+    if (dump)
+      printf("RES 7,B\n");
+
+    cpu_res_r(cpu, b, 7);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0xB9) {
+    if (dump)
+      printf("RES 7,C\n");
+
+    cpu_res_r(cpu, c, 7);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0xBA) {
+    if (dump)
+      printf("RES 7,D\n");
+
+    cpu_res_r(cpu, d, 7);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0xBB) {
+    if (dump)
+      printf("RES 7,E\n");
+
+    cpu_res_r(cpu, e, 7);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0xBC) {
+    if (dump)
+      printf("RES 7,H\n");
+
+    cpu_res_r(cpu, h, 7);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0xBD) {
+    if (dump)
+      printf("RES 7,L\n");
+
+    cpu_res_r(cpu, l, 7);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0xBE) {
+    if (dump)
+      printf("RES 7,(HL)\n");
+
+    cpu_res_mem8(cpu, cpu_read_reg16(cpu, hl), 7);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0xBF) {
+    if (dump)
+      printf("RES 7,A\n");
+
+    cpu_res_r(cpu, a, 7);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0xC0) {
+    if (dump)
+      printf("SET 0,B\n");
+
+    cpu_set_r(cpu, b, 0);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0xC1) {
+    if (dump)
+      printf("SET 0,C\n");
+
+    cpu_set_r(cpu, c, 0);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0xC2) {
+    if (dump)
+      printf("SET 0,D\n");
+
+    cpu_set_r(cpu, d, 0);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0xC3) {
+    if (dump)
+      printf("SET 0,E\n");
+
+    cpu_set_r(cpu, e, 0);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0xC4) {
+    if (dump)
+      printf("SET 0,H\n");
+
+    cpu_set_r(cpu, h, 0);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0xC5) {
+    if (dump)
+      printf("SET 0,L\n");
+
+    cpu_set_r(cpu, l, 0);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0xC6) {
+    if (dump)
+      printf("SET 0,(HL)\n");
+
+    cpu_set_mem8(cpu, cpu_read_reg16(cpu, hl), 0);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0xC7) {
+    if (dump)
+      printf("SET 0,A\n");
+
+    cpu_set_r(cpu, a, 0);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0xC8) {
+    if (dump)
+      printf("SET 1,B\n");
+
+    cpu_set_r(cpu, b, 1);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0xC9) {
+    if (dump)
+      printf("SET 1,C\n");
+
+    cpu_set_r(cpu, c, 1);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0xCA) {
+    if (dump)
+      printf("SET 1,D\n");
+
+    cpu_set_r(cpu, d, 1);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0xCB) {
+    if (dump)
+      printf("SET 1,E\n");
+
+    cpu_set_r(cpu, e, 1);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0xCC) {
+    if (dump)
+      printf("SET 1,H\n");
+
+    cpu_set_r(cpu, h, 1);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0xCD) {
+    if (dump)
+      printf("SET 1,L\n");
+
+    cpu_set_r(cpu, l, 1);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0xCE) {
+    if (dump)
+      printf("SET 1,(HL)\n");
+
+    cpu_set_mem8(cpu, cpu_read_reg16(cpu, hl), 1);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0xCF) {
+    if (dump)
+      printf("SET 1,A\n");
+
+    cpu_set_r(cpu, a, 1);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0xD0) {
+    if (dump)
+      printf("SET 2,B\n");
+
+    cpu_set_r(cpu, b, 2);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0xD1) {
+    if (dump)
+      printf("SET 2,C\n");
+
+    cpu_set_r(cpu, c, 2);
+  }
+
+
+  else if (read_memory8(cpu, cpu->pc) == 0xD2) {
+    if (dump)
+      printf("SET 2,D\n");
+
+    cpu_set_r(cpu, d, 2);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0xD3) {
+    if (dump)
+      printf("SET 2,E\n");
+
+    cpu_set_r(cpu, e, 2);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0xD4) {
+    if (dump)
+      printf("SET 2,H\n");
+
+    cpu_set_r(cpu, h, 2);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0xD5) {
+    if (dump)
+      printf("SET 2,L\n");
+
+    cpu_set_r(cpu, l, 2);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0xD6) {
+    if (dump)
+      printf("SET 2,(HL)\n");
+
+    cpu_set_mem8(cpu, cpu_read_reg16(cpu, hl), 2);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0xD7) {
+    if (dump)
+      printf("SET 2,A\n");
+
+    cpu_set_r(cpu, a, 2);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0xD8) {
+    if (dump)
+      printf("SET 3,B\n");
+
+    cpu_set_r(cpu, b, 3);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0xD9) {
+    if (dump)
+      printf("SET 3,C\n");
+
+    cpu_set_r(cpu, c, 3);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0xDA) {
+    if (dump)
+      printf("SET 3,D\n");
+
+    cpu_set_r(cpu, d, 3);
+  }
+  
+  else if (read_memory8(cpu, cpu->pc) == 0xDB) {
+    if (dump)
+      printf("SET 3,E\n");
+
+    cpu_set_r(cpu, e, 3);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0xDC) {
+    if (dump)
+      printf("SET 3,H\n");
+
+    cpu_set_r(cpu, h, 3);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0xDD) {
+    if (dump)
+      printf("SET 3,L\n");
+
+    cpu_set_r(cpu, l, 3);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0xDE) {
+    if (dump)
+      printf("SET 3,(HL)\n");
+
+    cpu_set_mem8(cpu, cpu_read_reg16(cpu, hl), 3);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0xDF) {
+    if (dump)
+      printf("SET 3,A\n");
+
+    cpu_set_r(cpu, a, 3);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0xE0) {
+    if (dump)
+      printf("SET 4,B\n");
+
+    cpu_set_r(cpu, b, 4);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0xE1) {
+    if (dump)
+      printf("SET 4,C\n");
+
+    cpu_set_r(cpu, c, 4);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0xE2) {
+    if (dump)
+      printf("SET 4,D\n");
+
+    cpu_set_r(cpu, d, 4);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0xE3) {
+    if (dump)
+      printf("SET 4,E\n");
+
+    cpu_set_r(cpu, e, 4);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0xE4) {
+    if (dump)
+      printf("SET 4,H\n");
+
+    cpu_set_r(cpu, h, 4);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0xE5) {
+    if (dump)
+      printf("SET 4,L\n");
+
+    cpu_set_r(cpu, l, 4);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0xE6) {
+    if (dump)
+      printf("SET 4,(HL)\n");
+
+    cpu_set_mem8(cpu, cpu_read_reg16(cpu, hl), 4);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0xE7) {
+    if (dump)
+      printf("SET 4,A\n");
+
+    cpu_set_r(cpu, a, 4);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0xE8) {
+    if (dump)
+      printf("SET 5,B\n");
+
+    cpu_set_r(cpu, b, 5);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0xE9) {
+    if (dump)
+      printf("SET 5,C\n");
+
+    cpu_set_r(cpu, c, 5);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0xEA) {
+    if (dump)
+      printf("SET 5,D\n");
+
+    cpu_set_r(cpu, d, 5);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0xEB) {
+    if (dump)
+      printf("SET 5,E\n");
+
+    cpu_set_r(cpu, e, 5);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0xEC) {
+    if (dump)
+      printf("SET 5,H\n");
+
+    cpu_set_r(cpu, h, 5);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0xED) {
+    if (dump)
+      printf("SET 5,L\n");
+
+    cpu_set_r(cpu, l, 5);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0xEE) {
+    if (dump)
+      printf("SET 5,(HL)\n");
+
+    cpu_set_mem8(cpu, cpu_read_reg16(cpu, hl), 5);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0xEF) {
+    if (dump)
+      printf("SET 5,A\n");
+
+    cpu_set_r(cpu, a, 5);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0xF0) {
+    if (dump)
+      printf("SET 6,B\n");
+
+    cpu_set_r(cpu, b, 6);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0xF1) {
+    if (dump)
+      printf("SET 6,C\n");
+
+    cpu_set_r(cpu, c, 6);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0xF2) {
+    if (dump)
+      printf("SET 6,D\n");
+
+    cpu_set_r(cpu, d, 6);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0xF3) {
+    if (dump)
+      printf("SET 6,E\n");
+
+    cpu_set_r(cpu, e, 6);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0xF4) {
+    if (dump)
+      printf("SET 6,H\n");
+
+    cpu_set_r(cpu, h, 6);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0xF5) {
+    if (dump)
+      printf("SET 6,L\n");
+
+    cpu_set_r(cpu, l, 6);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0xF6) {
+    if (dump)
+      printf("SET 6,(HL)\n");
+
+    cpu_set_mem8(cpu, cpu_read_reg16(cpu, hl), 6);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0xF7) {
+    if (dump)
+      printf("SET 6,A\n");
+
+    cpu_set_r(cpu, a, 6);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0xF8) {
+    if (dump)
+      printf("SET 7,B\n");
+
+    cpu_set_r(cpu, b, 7);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0xF9) {
+    if (dump)
+      printf("SET 7,C\n");
+
+    cpu_set_r(cpu, c, 7);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0xFA) {
+    if (dump)
+      printf("SET 7,D\n");
+
+    cpu_set_r(cpu, d, 7);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0xFB) {
+    if (dump)
+      printf("SET 7,E\n");
+
+    cpu_set_r(cpu, e, 7);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0xFC) {
+    if (dump)
+      printf("SET 7,H\n");
+
+    cpu_set_r(cpu, h, 7);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0xFD) {
+    if (dump)
+      printf("SET 7,L\n");
+
+    cpu_set_r(cpu, l, 7);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0xFE) {
+    if (dump)
+      printf("SET 7,(HL)\n");
+
+    cpu_set_mem8(cpu, cpu_read_reg16(cpu, hl), 7);
+  }
+
+  else if (read_memory8(cpu, cpu->pc) == 0xFF) {
+    if (dump)
+      printf("SET 7,A\n");
+
+    cpu_set_r(cpu, a, 7);
   }
 }
