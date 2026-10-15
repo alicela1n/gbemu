@@ -6,6 +6,7 @@ executable('gbemu',
            'src/main.c',
            'src/cpu.c',
            'src/cpu_instr.c',
+           'src/ppu.c',
            'src/rom.c',
            'src/memory.c',
            install : true)
