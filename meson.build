@@ -10,3 +10,14 @@ executable('gbemu',
            'src/rom.c',
            'src/memory.c',
            install : true)
+
+test_add = executable('test_add',
+                  'src/tests/test_add.c',
+                  'src/cpu.c',
+                  'src/cpu_instr.c',
+                  'src/ppu.c',
+                  'src/rom.c',
+                  'src/memory.c',
+                  'src/tests/unity.c')
+
+test('test_add', test_add)

@@ -52,8 +52,6 @@ struct CPU {
 
   /* Keep track of CPU state */
   bool halt;
-  bool ime; /* Interrupt master enable flag */
-  bool ime_pending;
 
   /* Keep track of rom struct */
   struct ROM *rom;
@@ -62,7 +60,7 @@ struct CPU {
 struct ROM;
 
 void cpu_init(struct CPU *cpu);
-void cpu_execute(struct CPU *cpu, bool dump, bool print_regs);
+void cpu_execute(struct CPU *cpu, bool dump, bool print_regs, bool stop_on_halt);
 void cpu_cleanup(struct CPU *cpu);
 
 #endif

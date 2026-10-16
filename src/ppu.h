@@ -22,4 +22,5 @@ struct PPU {
 	uint16_t lcd_ctr; // Memory location of LCD control register
 	struct CPU *cpu;
 };
+
 #endif

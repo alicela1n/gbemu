@@ -37,14 +37,33 @@ void cpu_init(struct CPU *cpu) {
 
 void cpu_cleanup(struct CPU *cpu) {
   rom_cleanup(cpu->rom);
-  free(cpu->mem);
+}
+
+void cpu_halt_loop(struct CPU *cpu, bool dump) {
+  if (cpu->halt) {
+
+    if (dump) {
+      printf("cpu_halt_loop(): CPU Halted!\n");
+      printf("cpu_halt_loop(): Press enter to unhalt...\n");
+    }
+
+    while (cpu->halt) {
+      getchar();
+
+      if (dump) {
+        printf("Continuing...\n");
+      }
+
+      cpu->halt = false;
+    }
+  }
 }
 
 /* cpu_execute(): What this does is decode each opcode and translate it into
  * an instruction to be cpu_execute by the virtual CPU. Optional dump flag
  * for disassembly upon execution.
  */
-void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
+void cpu_execute(struct CPU *cpu, bool dump, bool print_regs, bool stop_on_halt) {
   while (!cpu->halt) {
     if (print_regs) {
       printf("cpu_execute(): --Begin--\n");
@@ -2257,7 +2276,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
         printf("RETI\n");
 
       cpu_ret(cpu);
-      cpu->ime = true;
+      cpu->ime_r = true;
 
       cpu->pc++;
     }
@@ -2619,6 +2638,13 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs) {
       printf("cpu_execute(): --End--\n\n");
       sleep(3);
     }
+  } 
+
+  if (cpu->halt) {
+    if (!stop_on_halt)
+      cpu_halt_loop(cpu, dump);
+    else
+     return;
   }
 }
 
