@@ -38,6 +38,16 @@ test_sub = executable('test_sub',
                   'src/memory.c',
                   'src/tests/unity.c')
 
+test_sbc = executable('test_sbc',
+                  'src/tests/test_sbc.c',
+                  'src/cpu.c',
+                  'src/cpu_instr.c',
+                  'src/ppu.c',
+                  'src/rom.c',
+                  'src/memory.c',
+                  'src/tests/unity.c')
+
 test('test_add', test_add)
 test('test_adc', test_adc)
 test('test_sub', test_sub)
+test('test_sbc', test_sbc)

@@ -7,7 +7,7 @@
 void setUp(void) {} //Nothing to do yet
 void tearDown(void) {} //Nothing to do yet
 
-void test_add(void) {
+void test_adc(void) {
   struct CPU *cpu = calloc(1, sizeof(struct CPU));
   cpu_init(cpu);
 
@@ -28,7 +28,7 @@ int main(void) {
   UNITY_BEGIN();
 
   printf("main(): Beginning test\n");
-  test_add();
+  test_adc();
   
   return UNITY_END();
 }
