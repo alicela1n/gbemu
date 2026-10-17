@@ -12,14 +12,14 @@ void test_add(void) {
   cpu_init(cpu);
 
   const size_t dummy_rom_size = 9;
-  const uint8_t dummy_rom_data[dummy_rom_size] = {0xc2, 0x03, 0x01, 0x06, 0x04, 0x3e, 0xa0, 0x80, 0x76};
+  const uint8_t dummy_rom_data[dummy_rom_size] = {0xc2, 0x03, 0x01, 0x06, 0xa4, 0x3e, 0xd9, 0x80, 0x76};
 
   dummy_rom(dummy_rom_data, dummy_rom_size, cpu->rom);
 
   cpu_execute(cpu, true, false, true);
 
-  TEST_ASSERT_EQUAL_HEX8(0xA4, cpu->registers[a]);
-  TEST_ASSERT_EQUAL_HEX8(0x00, cpu->registers[f]);
+  TEST_ASSERT_EQUAL_HEX8(0x7D, cpu->registers[a]);
+  TEST_ASSERT_EQUAL_HEX8(0x10, cpu->registers[f]);
 
   cpu_cleanup(cpu);
 }
