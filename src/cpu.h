@@ -46,7 +46,7 @@ struct CPU {
   uint16_t if_r;
   uint32_t ime_r;
 
-  uint8_t mem[0xFFFF];
+  uint8_t mem[0x7FFF];
 
   uint32_t cycles;
 
@@ -60,7 +60,7 @@ struct CPU {
 struct ROM;
 
 void cpu_init(struct CPU *cpu);
-void cpu_execute(struct CPU *cpu, bool dump, bool print_regs, bool stop_on_halt);
+void cpu_execute(struct CPU *cpu, bool dump, bool print_regs, bool print_memory, bool stop_on_halt);
 void cpu_cleanup(struct CPU *cpu);
 
 #endif

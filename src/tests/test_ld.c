@@ -1,5 +1,6 @@
 #include "../cpu.h"
 #include "../rom.h"
+#include "../memory.h"
 #include "unity.h"
 #include <stdio.h>
 #include <assert.h>
@@ -18,22 +19,22 @@ void test_add(void) {
 	jp nz, Main
 
   Main:
-	;; Write code here
 	ld B, 0xD9
 	ld C, B
 	
 	halt
   */
 
-  const size_t dummy_rom_size = 7;
-  const uint8_t dummy_rom_data[dummy_rom_size] = {0xc2, 0x03, 0x01, 0x06, 0xd9, 0x48, 0x76};
+  const size_t dummy_rom_size = 12;
+  const uint8_t dummy_rom_data[dummy_rom_size] = {0xc2, 0x03, 0x01, 0x06, 0xd9, 0x48, 0x26, 0xff, 0x2e, 0xaf, 0x70, 0x76};
 
   dummy_rom(dummy_rom_data, dummy_rom_size, cpu->rom);
 
-  cpu_execute(cpu, true, false, true);
+  cpu_execute(cpu, true, false, false, true);
 
   TEST_ASSERT_EQUAL_HEX8(0xD9, cpu->registers[b]);
   TEST_ASSERT_EQUAL_HEX8(0xD9, cpu->registers[c]);
+  TEST_ASSERT_EQUAL_HEX8(0xD9, read_memory8(cpu, 0xFFAF));
 
   cpu_cleanup(cpu);
 }

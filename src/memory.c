@@ -10,7 +10,7 @@ uint8_t read_memory8(struct CPU *cpu, uint16_t addr) {
     // TODO: Implement bank switching
     return 0;
   } else {
-    data = cpu->mem[addr];
+    data = cpu->mem[addr - 0x8000];
   }
 
   return data;
@@ -18,12 +18,12 @@ uint8_t read_memory8(struct CPU *cpu, uint16_t addr) {
 
 uint8_t *mem_ptr8(struct CPU *cpu, uint16_t addr) {
   if (addr <= 0x3FFF) {
-    return &cpu->rom->data[addr];
+    return &cpu->rom->data[addr - 0x8000];
   } else if (addr > 0x3FFF && addr <= 0x7FFF) {
     // TODO: Implement bank switching
     return NULL;
   } else {
-    return &cpu->mem[addr];
+    return &cpu->mem[addr - 0x8000];
   }
 }
 
@@ -37,7 +37,7 @@ void write_memory8(struct CPU *cpu, uint8_t value, uint16_t addr) {
   if (addr <= 0x7FFF) {
     return; // Cartridge data is read only
   } else {
-    cpu->mem[addr] = value;
+    cpu->mem[addr - 0x8000] = value;
   }
 }
 
