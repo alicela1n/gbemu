@@ -1061,7 +1061,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs, bool print_memory,
     }
 
     // LD E, A
-    else if (read_memory8(cpu, cpu->pc) == 0x5D) {
+    else if (read_memory8(cpu, cpu->pc) == 0x5F) {
       if (dump)
         printf("LD E, A\n");
 
@@ -2051,11 +2051,10 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs, bool print_memory,
     // JP NZ, u16
     else if (read_memory8(cpu, cpu->pc) == 0xC2) {
       if (dump)
-        printf("JP NZ, %04X\n", uint8to16(cpu->pc, cpu->pc + 2));
+        printf("JP NZ, %04X\n", read_memory16(cpu, cpu->pc++));
 
       if (!cpu_check_flag(cpu, flag_z)) {
-        cpu_jp(cpu, cpu->pc++);
-        cpu->pc += 3;
+        cpu_jp(cpu, read_memory16(cpu, cpu->pc++));
       } else {
         cpu->pc += 3;
       }
@@ -2064,10 +2063,9 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs, bool print_memory,
     // JP u16
     else if (read_memory8(cpu, cpu->pc) == 0xC3) {
       if (dump)
-        printf("JP %04X\n", uint8to16(cpu->pc, cpu->pc + 2));
+        printf("JP %04X\n", read_memory16(cpu, cpu->pc++));
 
-      cpu_jp(cpu, cpu->pc++);
-      cpu->pc += 3;
+      cpu_jp(cpu, read_memory16(cpu, cpu->pc++));
     }
 
     // CALL NZ, u16
@@ -2132,11 +2130,10 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs, bool print_memory,
     // JP Z, u16
     else if (read_memory8(cpu, cpu->pc) == 0xCA) {
       if (dump)
-        printf("JP Z, %04X\n", uint8to16(cpu->pc, cpu->pc + 2));
+        printf("JP Z, %04X\n", read_memory16(cpu, cpu->pc++));
 
       if (cpu_check_flag(cpu, flag_z)) {
-        cpu_jp(cpu, cpu->pc++);
-        cpu->pc += 3;
+        cpu_jp(cpu, read_memory16(cpu, cpu->pc++));
       } else {
         cpu->pc += 3;
       }
@@ -2213,11 +2210,10 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs, bool print_memory,
     // JP NZ, u16
     else if (read_memory8(cpu, cpu->pc) == 0xD2) {
       if (dump)
-        printf("JP NZ, %04X\n", uint8to16(cpu->pc, cpu->pc + 2));
+        printf("JP NZ, %04X\n", read_memory16(cpu, cpu->pc++));
 
       if (!cpu_check_flag(cpu, flag_z)) {
         cpu_jp(cpu, cpu->pc++);
-        cpu->pc += 3;
       } else {
         cpu->pc += 3;
       }
@@ -2295,11 +2291,10 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs, bool print_memory,
     // JP C, u16
     else if (read_memory8(cpu, cpu->pc) == 0xDA) {
       if (dump)
-        printf("JP C, %04X\n", uint8to16(cpu->pc, cpu->pc + 2));
+        printf("JP C, %04X\n", read_memory16(cpu, cpu->pc++));
 
       if (cpu_check_flag(cpu, flag_c)) {
-        cpu_jp(cpu, cpu->pc++);
-        cpu->pc += 3;
+        cpu_jp(cpu, read_memory16(cpu, cpu->pc++));
       } else {
         cpu->pc += 3;
       }
@@ -2437,7 +2432,6 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs, bool print_memory,
         printf("JP %04X\n", uint8to16(cpu->registers[h], cpu->registers[l]));
 
       cpu_jp(cpu, uint8to16(cpu->registers[h], cpu->registers[l]));
-      cpu->pc += 3;
     }
 
     // LD (u16), A

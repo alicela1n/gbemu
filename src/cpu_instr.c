@@ -15,11 +15,7 @@ void cpu_toggle_halt(struct CPU *cpu) {
 /* cpu_check_flag(): Check if a flag in the flags register is set
  */
 bool cpu_check_flag(struct CPU *cpu, uint8_t flag) {
-  if (cpu->registers[f] & (1 << flag)) {
-    return true;
-  } else {
-    return false;
-  }
+  return (cpu->registers[f] & flag) != 0;
 }
 
 /* cpu_set_flag(): Set a flag in the flags register,

@@ -28,9 +28,9 @@ uint8_t *mem_ptr8(struct CPU *cpu, uint16_t addr) {
 }
 
 uint16_t read_memory16(struct CPU *cpu, uint16_t addr) {
-  uint8_t a = read_memory8(cpu, addr + 1);
-  uint8_t b = read_memory8(cpu, addr);
-  return uint8to16(a, b);
+  uint8_t low = read_memory8(cpu, addr);
+  uint8_t high = read_memory8(cpu, addr + 1);
+  return uint8to16(low, high);
 }
 
 void write_memory8(struct CPU *cpu, uint8_t value, uint16_t addr) {
