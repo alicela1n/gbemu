@@ -18,7 +18,6 @@ void test_adc(void) {
 	jp nz, Main
 
   Main:
-	;; Write code here
 	ld B, 0xA4
 	ld A, 0xD9
 	adc A, B
@@ -30,7 +29,7 @@ void test_adc(void) {
 
   dummy_rom(dummy_rom_data, dummy_rom_size, cpu->rom);
 
-  cpu_execute(cpu, true, false, true);
+  cpu_execute(cpu, true, false, false, true);
 
   TEST_ASSERT_EQUAL_HEX8(0x7E, cpu->registers[a]);
   TEST_ASSERT_EQUAL_HEX8(0x10, cpu->registers[f]);

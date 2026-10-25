@@ -30,7 +30,7 @@ void test_sub(void) {
 
   dummy_rom(dummy_rom_data, dummy_rom_size, cpu->rom);
 
-  cpu_execute(cpu, true, false, true);
+  cpu_execute(cpu, true, false, false, true);
 
   TEST_ASSERT_EQUAL_HEX8(0xCB, cpu->registers[a]);
   TEST_ASSERT_EQUAL_HEX8(0x70, cpu->registers[f]);

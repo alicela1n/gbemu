@@ -18,7 +18,6 @@ void test_sbc(void) {
 	jp nz, Main
 
   Main:
-	;; Write code here
 	ld A, 0xA4
 	ld B, 0xD9
 	sbc A, B
@@ -31,7 +30,7 @@ void test_sbc(void) {
 
   dummy_rom(dummy_rom_data, dummy_rom_size, cpu->rom);
 
-  cpu_execute(cpu, true, false, true);
+  cpu_execute(cpu, true, false, false, true);
 
   TEST_ASSERT_EQUAL_HEX8(0xCA, cpu->registers[a]);
   TEST_ASSERT_EQUAL_HEX8(0x70, cpu->registers[f]);

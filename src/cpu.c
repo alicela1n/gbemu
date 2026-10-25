@@ -671,7 +671,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs, bool print_memory,
     // LD H, d8
     else if (read_memory8(cpu, cpu->pc) == 0x36) {
       if (dump)
-        printf("ld h, %02x\n", read_memory8(cpu, cpu->pc + 1));
+        printf("LD H, %02x\n", read_memory8(cpu, cpu->pc + 1));
 
       cpu_ld_reg8(cpu, h, read_memory8(cpu, (cpu->pc + 1)));
 
@@ -714,7 +714,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs, bool print_memory,
       cpu->pc++;
     }
 
-    // LD A, (HL+)
+    // LD A, (HL-)
     else if (read_memory8(cpu, cpu->pc) == 0x3A) {
       if (dump)
         printf("LD A, (HL-)\n");

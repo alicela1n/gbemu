@@ -12,18 +12,21 @@ void test_add(void) {
   struct CPU *cpu = calloc(1, sizeof(struct CPU));
   cpu_init(cpu);
 
-  /* ASM
-  SECTION "header", ROM0[$100]
+  /*
+SECTION "header", ROM0[$100]
 	ds $100 - @, 0
 
 	jp nz, Main
 
-  Main:
+Main:
 	ld B, 0xD9
 	ld C, B
+	ld H, 0xFF
+	ld L, 0xAF
+	ld [HL], B
 	
 	halt
-  */
+*/
 
   const size_t dummy_rom_size = 12;
   const uint8_t dummy_rom_data[dummy_rom_size] = {0xc2, 0x03, 0x01, 0x06, 0xd9, 0x48, 0x26, 0xff, 0x2e, 0xaf, 0x70, 0x76};

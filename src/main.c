@@ -21,7 +21,7 @@ int main(int argc, char *argv[]) {
   }
 
   load_rom(rom_file, cpu->rom);
-  cpu_execute(cpu, true, true, false);
+  cpu_execute(cpu, true, true, false, false);
   cpu_cleanup(cpu);
 
   return 0;

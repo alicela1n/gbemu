@@ -18,7 +18,6 @@ void test_add16(void) {
 	jp nz, Main
 
   Main:
-	;; Write code here
 	ld BC, 0xA4D9
 	ld HL, 0xD9A4
 	add HL, BC
@@ -31,7 +30,7 @@ void test_add16(void) {
 
   dummy_rom(dummy_rom_data, dummy_rom_size, cpu->rom);
 
-  cpu_execute(cpu, true, false, true);
+  cpu_execute(cpu, true, false, false, true);
 
   TEST_ASSERT_EQUAL_HEX8(0x7E, cpu->registers[h]);
   TEST_ASSERT_EQUAL_HEX8(0x7D, cpu->registers[l]);
