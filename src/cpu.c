@@ -2213,7 +2213,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs, bool print_memory,
         printf("JP NZ, %04X\n", read_memory16(cpu, cpu->pc++));
 
       if (!cpu_check_flag(cpu, flag_z)) {
-        cpu_jp(cpu, cpu->pc++);
+        cpu_jp(cpu, read_memory16(cpu, cpu->pc++));
       } else {
         cpu->pc += 3;
       }
