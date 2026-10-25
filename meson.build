@@ -83,6 +83,15 @@ test_memory = executable('test_memory',
                   'src/memory.c',
                   'src/tests/unity.c')
 
+test_flags = executable('test_flags',
+                  'src/tests/test_flags.c',
+                  'src/cpu.c',
+                  'src/cpu_instr.c',
+                  'src/ppu.c',
+                  'src/rom.c',
+                  'src/memory.c',
+                  'src/tests/unity.c')
+
 test('test_add', test_add)
 test('test_add16', test_add16)
 test('test_adc', test_adc)
@@ -91,3 +100,4 @@ test('test_sbc', test_sbc)
 test('test_ld', test_ld)
 test('test_jp', test_jp)
 test('test_memory', test_memory)
+test('test_flags', test_flags)

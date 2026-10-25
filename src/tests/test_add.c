@@ -44,7 +44,7 @@ int main(void) {
   UNITY_BEGIN();
 
   printf("main(): Beginning test\n");
-  test_add();
+  RUN_TEST(test_add);
   
   return UNITY_END();
 }

@@ -32,7 +32,7 @@ int main(void) {
   UNITY_BEGIN();
 
   printf("main(): Beginning test\n");
-  test_memory();
+  RUN_TEST(test_memory);
   
   return UNITY_END();
 }

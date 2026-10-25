@@ -181,10 +181,8 @@ void cpu_add8(struct CPU *cpu, uint8_t *a, uint8_t b) {
 /* cpu_adc8(): Same as cpu_add() but adds the carry
  */
 void cpu_adc8(struct CPU *cpu, uint8_t *a, uint8_t *b) {
-  if (cpu_check_flag(cpu, flag_c))
-    (*b)++;
-
   cpu_add8(cpu, a, *b);
+  cpu_add8(cpu, a, (uint8_t)cpu_check_flag(cpu, flag_c));
 }
 
 /* cpu_add_reg16(): 16-bit adding function for two register pairs 

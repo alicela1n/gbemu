@@ -2104,7 +2104,6 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs, bool print_memory,
         printf("RST 00h\n");
 
       cpu_rst(cpu, 0x00);
-      cpu->pc++;
     }
 
     // RET Z
@@ -2140,7 +2139,6 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs, bool print_memory,
     }
 
     // PREFIX CB
-    // TODO: Implement
     else if (read_memory8(cpu, cpu->pc) == 0xCB) {
       if (dump)
         printf("PREFIX CB (NOT IMPLEMENTED!!!)\n");
@@ -2184,7 +2182,6 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs, bool print_memory,
         printf("RST 08h\n");
 
       cpu_rst(cpu, 0x08);
-      cpu->pc++;
     }
 
     // RET NZ
@@ -2263,7 +2260,6 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs, bool print_memory,
         printf("RST 10h\n");
 
       cpu_rst(cpu, 0x10);
-      cpu->pc++;
     }
 
     // RET C
@@ -2342,7 +2338,6 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs, bool print_memory,
         printf("RST 18h\n");
 
       cpu_rst(cpu, 0x18);
-      cpu->pc++;
     }
 
     // LD (FF00+u8), A
@@ -2413,7 +2408,6 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs, bool print_memory,
         printf("RST 20h\n");
 
       cpu_rst(cpu, 0x20);
-      cpu->pc++;
     }
 
     // ADD SP, i8
@@ -2484,7 +2478,6 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs, bool print_memory,
         printf("RST 28h\n");
 
       cpu_rst(cpu, 0x28);
-      cpu->pc++;
     }
 
     // LD A, (FF00+u8)
@@ -2555,7 +2548,6 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs, bool print_memory,
         printf("RST 30h\n");
 
       cpu_rst(cpu, 0x30);
-      cpu->pc++;
     }
 
     // LD HL,SP+i8
@@ -2628,8 +2620,6 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs, bool print_memory,
         printf("RST 38h\n");
 
       cpu_rst(cpu, 0x38);
-
-      cpu->pc++;
     }
 
     else {

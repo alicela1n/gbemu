@@ -43,7 +43,7 @@ int main(void) {
   UNITY_BEGIN();
 
   printf("main(): Beginning test\n");
-  test_add16();
+  RUN_TEST(test_add16);
   
   return UNITY_END();
 }
