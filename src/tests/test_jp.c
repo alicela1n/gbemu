@@ -36,7 +36,7 @@ Main:
 
   dummy_rom(dummy_rom_data, dummy_rom_size, cpu->rom);
 
-  cpu_execute(cpu, true, true, false, true);
+  cpu_execute(cpu, true, false, false, true);
 
   TEST_ASSERT_EQUAL_HEX8(0x00, cpu->registers[a]);
   TEST_ASSERT_EQUAL_HEX8(0xA4, cpu->registers[b]);
