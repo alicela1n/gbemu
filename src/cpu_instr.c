@@ -182,7 +182,7 @@ void cpu_add8(struct CPU *cpu, uint8_t *a, uint8_t b) {
  */
 void cpu_adc8(struct CPU *cpu, uint8_t *a, uint8_t *b) {
   cpu_add8(cpu, a, *b);
-  cpu_add8(cpu, a, (uint8_t)cpu_check_flag(cpu, flag_c));
+  *a += cpu_check_flag(cpu, flag_c);
 }
 
 /* cpu_add_reg16(): 16-bit adding function for two register pairs 
@@ -241,13 +241,11 @@ void cpu_sub8(struct CPU *cpu, uint8_t *a, uint8_t b) {
  * subtracted
  */
 void cpu_sbc8(struct CPU *cpu, uint8_t *a, uint8_t *b) {
-  if (cpu_check_flag(cpu, flag_c))
-    (*b)++;
-
   cpu_sub8(cpu, a, *b);
+  *a -= cpu_check_flag(cpu, flag_c);
 }
 
-/* cpu_cp8(): Same as cpu_sub8(): except it doesn't modify the accumulator
+/* cpu_cp8(): Same as cpu_sub8() except it doesn't modify the accumulator
  */
 void cpu_cp8(struct CPU *cpu, uint8_t *a, uint8_t *b) {
   uint8_t tmp = *a; // Temporary variable to use instead of accumulator
