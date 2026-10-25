@@ -2607,7 +2607,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs, bool print_memory,
     // CP A, u8
     else if (read_memory8(cpu, cpu->pc) == 0xFE) {
       if (dump)
-        printf("CP A, %020X\n", cpu->pc + 1);
+        printf("CP A, %02X\n", cpu->pc + 1);
 
       cpu_cp8(cpu, &cpu->registers[a], mem_ptr8(cpu, cpu->pc + 1));
 
