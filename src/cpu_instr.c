@@ -40,6 +40,9 @@ void cpu_toggle_flag(struct CPU *cpu, uint8_t flag) {
     cpu_set_flag(cpu, flag, 1);
 }
 
+/* cpu_bit_r(): Test a bit at the CPU register specified and set the
+ * z flag to true if a bit is not set, or false if it is.
+ */
 void cpu_bit_r(struct CPU *cpu, uint8_t r, uint8_t b) {
   if ((cpu->registers[r] & (1 << b)) == 0)
     cpu_set_flag(cpu, flag_z, true);
@@ -50,6 +53,9 @@ void cpu_bit_r(struct CPU *cpu, uint8_t r, uint8_t b) {
   cpu_set_flag(cpu, flag_h, true);
 }
 
+/* cpu_bit_mem8(): Test a bit in memory at an address and set the
+ * z flag to true if a bit is not set, or false if it is.
+ */
 void cpu_bit_mem8(struct CPU *cpu, uint16_t addr, uint8_t b) {
   if ((read_memory8(cpu, addr) & (1 << b)) == 0)
     cpu_set_flag(cpu, flag_z, true);
@@ -60,19 +66,27 @@ void cpu_bit_mem8(struct CPU *cpu, uint16_t addr, uint8_t b) {
   cpu_set_flag(cpu, flag_h, true);
 }
 
+/* cpu_res_r(): Reset a bit at the CPU register specified
+ */
 void cpu_res_r(struct CPU *cpu, uint8_t r, uint8_t b) {
   cpu->registers[r] &= ~((uint8_t)1 << b);
 }
 
+/* cpu_res_mem8(): Reset a bit at the memory address specified
+ */
 void cpu_res_mem8(struct CPU *cpu, uint16_t addr, uint8_t b) {
   uint8_t val = read_memory8(cpu, addr);
   write_memory8(cpu, val & ~((uint8_t)1 << b), addr);
 }
 
+/* cpu_set_mem8(): Set a bit at the memory address specified
+ */
 void cpu_set_r(struct CPU *cpu, uint8_t r, uint8_t b) {
   cpu->registers[r] |= ((uint8_t)1 << b);
 }
 
+/* cpu_set_mem8(): Set a bit at the memory address specified
+ */
 void cpu_set_mem8(struct CPU *cpu, uint16_t addr, uint8_t b) {
   uint8_t val = read_memory8(cpu, addr);
   write_memory8(cpu, val | ((uint8_t)1 << b), addr);
