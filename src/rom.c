@@ -142,6 +142,9 @@ size_t calculate_filesize(FILE *fp) {
   return size;
 }
 
+/* dummy_rom(): Create a dummy rom out of an array of opcodes
+ * to use for unit testing.
+ */
 void dummy_rom(const uint8_t data[], const size_t data_size, struct ROM *rom) {
   rom->size = data_size;
   rom->data = (uint8_t *)malloc(sizeof(uint8_t) * (rom->size + 0x100));
@@ -155,6 +158,9 @@ void dummy_rom(const uint8_t data[], const size_t data_size, struct ROM *rom) {
   printf("dummy_rom(): End\n");
 }
 
+/* load_rom(): Load a rom from a file and populate the rom
+ * struct with rom metadata.
+ */
 int load_rom(FILE *fp, struct ROM *rom) {
   rom->size = calculate_filesize(fp);
   rom->data = (uint8_t *)malloc(sizeof(uint8_t) * rom->size);
@@ -171,7 +177,9 @@ int load_rom(FILE *fp, struct ROM *rom) {
 
   return 0;
 }
-
+ 
+/* rom_cleanup(): Clean up and free the rom struct
+ */
 void rom_cleanup(struct ROM *rom) {
   free(rom->data);
   rom->data = NULL;
