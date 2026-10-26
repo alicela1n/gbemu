@@ -2,6 +2,8 @@
 #include "rom.h"
 #include <stdio.h>
 
+/* main(): Main function
+ */
 int main(int argc, char *argv[]) {
   printf("main(): Initializing CPU\n");
   struct CPU *cpu = calloc(1, sizeof(struct CPU));

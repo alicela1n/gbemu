@@ -2141,7 +2141,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs, bool print_memory,
     // PREFIX CB
     else if (read_memory8(cpu, cpu->pc) == 0xCB) {
       if (dump)
-        printf("PREFIX CB (NOT IMPLEMENTED!!!)\n");
+        printf("PREFIX CB\n");
 
       cpu_cb(cpu, dump);
 
