@@ -183,8 +183,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs, bool print_memory,
     // LD (a16), SP
     else if (read_memory8(cpu, cpu->pc) == 0x08) {
       if (dump)
-        printf("LD %02X%02X\n, SP\n", read_memory8(cpu, cpu->pc + 1),
-               read_memory8(cpu, cpu->pc + 2));
+        printf("LD %04X\n, SP\n", read_memory16(cpu, cpu->pc + 1));
 
       cpu_ld_mem16(cpu, cpu->pc + 1, cpu->sp);
 
@@ -280,7 +279,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs, bool print_memory,
         printf("LD DE, %02X%02X\n", read_memory8(cpu, cpu->pc + 1),
                read_memory8(cpu, cpu->pc + 2));
 
-      cpu_ld_reg16(cpu, de, uint8to16(read_memory16(cpu, cpu->pc + 1), read_memory16(cpu, cpu->pc + 2)));
+      cpu_ld_reg16(cpu, de, read_memory16(cpu, cpu->pc + 1));
       cpu->pc += 3;
     }
 
@@ -372,7 +371,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs, bool print_memory,
 
       cpu_ld_reg8(
           cpu, a,
-          read_memory8(cpu, uint8to16(cpu->registers[d], cpu->registers[e])));
+          read_memory8(cpu, cpu_read_reg16(cpu, hl)));
 
       cpu->pc++;
     }
@@ -446,8 +445,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs, bool print_memory,
         printf("LD HL, %02X%02X\n", read_memory8(cpu, cpu->pc + 1),
                read_memory8(cpu, cpu->pc + 2));
 
-      cpu_ld_reg8(cpu, l, read_memory8(cpu, (cpu->pc + 1)));
-      cpu_ld_reg8(cpu, h, read_memory8(cpu, (cpu->pc + 2)));
+      cpu_ld_reg16(cpu, hl, cpu->pc + 1);
 
       cpu->pc += 3;
     }
@@ -457,7 +455,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs, bool print_memory,
       if (dump)
         printf("LD (HL+), A\n");
 
-      cpu_ld_mem8(cpu, uint8to16(cpu->registers[h], cpu->registers[l] + 1),
+      cpu_ld_mem8(cpu, cpu_read_reg16(cpu, hl) + 1,
                   cpu->registers[a]);
 
       cpu->registers[h]++;
@@ -654,26 +652,27 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs, bool print_memory,
       if (dump)
         printf("INC (HL)\n");
 
-      cpu->registers[h]++;
-      cpu->registers[l]++;
+      
+      cpu_inc_mem8(cpu, cpu_read_reg16(cpu, hl), 1);
       cpu->pc++;
     }
 
-    // DEC H
+    // DEC (HL)
     else if (read_memory8(cpu, cpu->pc) == 0x35) {
       if (dump)
         printf("DEC H\n");
 
-      cpu_dec_reg8(cpu, h, 1);
+      cpu_dec_mem8(cpu, cpu_read_reg16(cpu, hl), 1);
       cpu->pc++;
     }
 
-    // LD H, d8
+    // LD (HL), d8
     else if (read_memory8(cpu, cpu->pc) == 0x36) {
       if (dump)
-        printf("LD H, %02x\n", read_memory8(cpu, cpu->pc + 1));
+        printf("LD (HL), %02x\n", read_memory8(cpu, cpu->pc + 1));
 
-      cpu_ld_reg8(cpu, h, read_memory8(cpu, (cpu->pc + 1)));
+      cpu_ld_mem8(cpu, cpu_read_reg16(cpu, hl),
+                  read_memory8(cpu, cpu->pc + 1));
 
       cpu->pc += 2;
     }
@@ -837,7 +836,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs, bool print_memory,
       if (dump)
         printf("LD B, (HL)\n");
 
-      cpu_ld_reg8(cpu, b,  cpu_read_reg16(cpu, hl));
+      cpu_ld_reg8(cpu, b,  read_memory8(cpu, cpu_read_reg16(cpu, hl)));
 
       cpu->pc++;
     }
@@ -912,7 +911,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs, bool print_memory,
       if (dump)
         printf("LD C, (HL)\n");
 
-      cpu_ld_reg8(cpu, c,  cpu_read_reg16(cpu, hl));
+      cpu_ld_reg8(cpu, c,  read_memory8(cpu, cpu_read_reg16(cpu, hl)));
       cpu->pc++;
     }
 
@@ -984,7 +983,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs, bool print_memory,
       if (dump)
         printf("LD D, (HL)\n");
 
-      cpu_ld_reg8(cpu, d, uint8to16(cpu->registers[h], cpu->registers[l]));
+      cpu_ld_reg8(cpu, d,  read_memory8(cpu, cpu_read_reg16(cpu, hl)));
       cpu->pc++;
     }
 
@@ -1056,7 +1055,9 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs, bool print_memory,
       if (dump)
         printf("LD E, (HL)\n");
 
-      cpu_ld_reg8(cpu, e, uint8to16(cpu->registers[h], cpu->registers[l]));
+      cpu_ld_reg8(
+          cpu, e,
+          read_memory8(cpu,  cpu_read_reg16(cpu, hl)));
       cpu->pc++;
     }
 
@@ -1128,7 +1129,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs, bool print_memory,
       if (dump)
         printf("LD H, (HL)\n");
 
-      cpu_ld_reg8(cpu, h, uint8to16(cpu->registers[h], cpu->registers[l]));
+      cpu_ld_reg8(cpu, h, read_memory8(cpu, cpu_read_reg16(cpu, hl)));
 
       cpu->pc++;
     }
@@ -1201,7 +1202,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs, bool print_memory,
       if (dump)
         printf("LD L, (HL)\n");
 
-      cpu_ld_reg8(cpu, l,  cpu_read_reg16(cpu, hl));
+      cpu_ld_reg8(cpu, l,  read_memory8(cpu, cpu_read_reg16(cpu, hl)));
       cpu->pc++;
     }
 
@@ -1349,10 +1350,10 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs, bool print_memory,
     // LD A, (HL)
     else if (read_memory8(cpu, cpu->pc) == 0x7E) {
       if (dump)
-        printf("LD H, (HL)\n");
+        printf("LD A, (HL)\n");
 
       cpu_ld_reg8(
-          cpu, h,
+          cpu, a,
           read_memory8(cpu,  cpu_read_reg16(cpu, hl)));
       cpu->pc++;
     }

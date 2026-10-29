@@ -21,6 +21,8 @@ void cpu_inc_reg16(struct CPU *cpu, uint16_t r, uint16_t n);
 void cpu_inc_reg8(struct CPU *cpu, uint8_t r, uint8_t n);
 void cpu_dec_reg8(struct CPU *cpu, uint8_t r, uint8_t n);
 void cpu_dec_reg16(struct CPU *cpu, uint16_t r, uint16_t n);
+void cpu_inc_mem8(struct CPU *cpu, uint8_t addr, uint8_t n);
+void cpu_dec_mem8(struct CPU *cpu, uint8_t addr, uint8_t n);
 void cpu_jp(struct CPU *cpu, uint16_t addr);
 void cpu_jr(struct CPU *cpu, uint8_t addr);
 void cpu_add8(struct CPU *cpu, uint8_t *a, uint8_t b);

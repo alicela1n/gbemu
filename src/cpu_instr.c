@@ -133,6 +133,20 @@ void cpu_inc_reg8(struct CPU *cpu, uint8_t r, uint8_t n) {
   cpu->registers[r] += n;
 }
 
+void cpu_inc_mem8(struct CPU *cpu, uint8_t addr, uint8_t n) {
+  uint8_t val = read_memory8(cpu, addr);
+  ++val;
+  write_memory8(cpu, val, addr);
+}
+
+void cpu_dec_mem8(struct CPU *cpu, uint8_t addr, uint8_t n) {
+  uint8_t val = read_memory8(cpu, addr);
+  --val;
+  write_memory8(cpu, val, addr);
+}
+
+
+
 /* cpu_inc_reg16(): Increment 16 bit register or register pair
  */
 void cpu_inc_reg16(struct CPU *cpu, uint16_t r, uint16_t n) {
