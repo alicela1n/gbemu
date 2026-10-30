@@ -1,4 +1,4 @@
-
+#!/usr/bin/env python3
 import sys
 import subprocess
 import os
@@ -18,11 +18,10 @@ def main():
   with open(gb_filename, "rb") as gb_file:
     gb_contents = gb_file.read()
   
-  hex_string = ''.join(f"{b:02x}, " for b in gb_contents)
-  hex_string = hex_string.strip(' 00, ')
+  gb_contents = gb_contents.strip(b'\0')
+  hex_string = ', '.join(f"{b:#02x}" for b in gb_contents)
   print(f'dummy_rom array: {{{hex_string}}}')
-  print(f'dummy_rom size : {hex_string.count(",") + 1}')
-
+  print(f'dummy_rom size : {len(gb_contents)}')
 
 if __name__ == '__main__':
   main()
