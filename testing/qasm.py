@@ -11,6 +11,11 @@ def main():
   object_filename = os.path.splitext(asm_filename)[0]+'.o'
   gb_filename = os.path.splitext(asm_filename)[0]+'.gb'
 
+  with open(asm_filename, "rb") as asm_file:
+      asm_contents = asm_file.read()
+      print(asm_contents.decode('utf-8'))
+
+
   subprocess.run(["rgbasm", asm_filename, "-o", object_filename], capture_output=True)
   subprocess.run(["rgblink", object_filename, "-o", gb_filename], capture_output=True)
   subprocess.run(["rgbfix", gb_filename, "-o", gb_filename], capture_output=True)

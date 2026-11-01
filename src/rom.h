@@ -27,7 +27,6 @@ void get_title(struct ROM *rom);
 bool cgb_flag(struct ROM *rom);
 uint32_t get_cartridge_rom_size(struct ROM *rom);
 uint32_t get_cartridge_ram_size(struct ROM *rom);
-size_t calculate_filesize(FILE *fp);
 int load_rom(FILE *fp, struct ROM *rom);
 void dummy_rom(const uint8_t data[], const size_t data_size, struct ROM *rom);
 void rom_cleanup(struct ROM *rom);

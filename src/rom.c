@@ -1,4 +1,5 @@
 #include "rom.h"
+#include "helper.h"
 
 /* validate_rom(): Validate that the rom is valid, the GameBoy requires that all
  * roms have a nintendo logo at 0x104 to 0x133. If the logo isn't present or was
@@ -131,15 +132,6 @@ uint32_t get_cartridge_ram_size(struct ROM *rom) {
   }
 
   return cartridge_ram_size;
-}
-
-/* calculate_filesize(): Return the size of a FILE object.
- */
-size_t calculate_filesize(FILE *fp) {
-  fseek(fp, 0L, SEEK_END);
-  size_t size = ftell(fp);
-  fseek(fp, 0L, SEEK_SET);
-  return size;
 }
 
 /* dummy_rom(): Create a dummy rom out of an array of opcodes
