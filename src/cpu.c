@@ -109,12 +109,9 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs, bool print_memory,
     // LD BC, d16
     else if (read_memory8(cpu, cpu->pc) == 0x01) {
       if (dump)
-        printf("LD BC, %02X%02X\n", read_memory8(cpu, cpu->pc + 1),
-               read_memory8(cpu, cpu->pc + 2));
+        printf("LD BC, %04X\n", read_memory16(cpu, cpu->pc + 1));
 
-      // C and B are reversed due to endianness
-      cpu_ld_reg8(cpu, c, read_memory8(cpu, (cpu->pc + 1)));
-      cpu_ld_reg8(cpu, b, read_memory8(cpu, (cpu->pc + 2)));
+      cpu_ld_reg16(cpu, bc, read_memory16(cpu, (cpu->pc + 1)));
 
       cpu->pc += 3;
     }
@@ -276,8 +273,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs, bool print_memory,
     // LD DE,u16
     else if (read_memory8(cpu, cpu->pc) == 0x11) {
       if (dump)
-        printf("LD DE, %02X%02X\n", read_memory8(cpu, cpu->pc + 1),
-               read_memory8(cpu, cpu->pc + 2));
+        printf("LD DE, %04X\n", read_memory16(cpu, cpu->pc + 1));
 
       cpu_ld_reg16(cpu, de, read_memory16(cpu, cpu->pc + 1));
       cpu->pc += 3;
@@ -442,8 +438,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs, bool print_memory,
     // LD HL, d16
     else if (read_memory8(cpu, cpu->pc) == 0x21) {
       if (dump)
-        printf("LD HL, %04X\n", read_memory16(cpu, cpu->pc + 1),
-               read_memory8(cpu, cpu->pc + 2));
+        printf("LD HL, %04X\n", read_memory16(cpu, cpu->pc + 1));
 
       cpu_ld_reg16(cpu, hl, read_memory16(cpu, cpu->pc + 1));
 
