@@ -164,11 +164,12 @@ void test_ld4(void) {
 	ld E, B
 	ld H, B
 	ld L, B
+        ld A, B
 	halt
 */
 
-  const size_t dummy_rom_size = 12;
-  const uint8_t dummy_rom_data[dummy_rom_size] = {0xc2, 0x3, 0x1, 0x6, 0xd9, 0x40, 0x48, 0x50, 0x58, 0x60, 0x68, 0x76};
+  const size_t dummy_rom_size = 13;
+  const uint8_t dummy_rom_data[dummy_rom_size] = {0xc2, 0x3, 0x1, 0x6, 0xd9, 0x40, 0x48, 0x50, 0x58, 0x60, 0x68, 0x78, 0x76};
 
   dummy_rom(dummy_rom_data, dummy_rom_size, cpu->rom);
 
@@ -180,6 +181,7 @@ void test_ld4(void) {
   TEST_ASSERT_EQUAL_HEX8(0xD9, cpu->registers[e]);
   TEST_ASSERT_EQUAL_HEX8(0xD9, cpu->registers[h]);
   TEST_ASSERT_EQUAL_HEX8(0xD9, cpu->registers[l]);
+  TEST_ASSERT_EQUAL_HEX8(0xD9, cpu->registers[a]);
 
   cpu_cleanup(cpu);
 }
@@ -195,7 +197,6 @@ void test_ld5(void) {
 	jp nz, Main
 
   Main:
-	;; Write code here
 	ld C, 0xD9
 	ld B, C
 	ld C, C
@@ -203,11 +204,12 @@ void test_ld5(void) {
 	ld E, C
 	ld H, C
 	ld L, C
+	ld A, C
 	halt
 */
 
-  const size_t dummy_rom_size = 12;
-  const uint8_t dummy_rom_data[dummy_rom_size] = {0xc2, 0x3, 0x1, 0xe, 0xd9, 0x41, 0x49, 0x51, 0x59, 0x61, 0x69, 0x76};
+  const size_t dummy_rom_size = 13;
+  const uint8_t dummy_rom_data[dummy_rom_size] = {0xc2, 0x3, 0x1, 0xe, 0xd9, 0x41, 0x49, 0x51, 0x59, 0x61, 0x69, 0x79, 0x76};
 
   dummy_rom(dummy_rom_data, dummy_rom_size, cpu->rom);
 
@@ -219,6 +221,7 @@ void test_ld5(void) {
   TEST_ASSERT_EQUAL_HEX8(0xD9, cpu->registers[e]);
   TEST_ASSERT_EQUAL_HEX8(0xD9, cpu->registers[h]);
   TEST_ASSERT_EQUAL_HEX8(0xD9, cpu->registers[l]);
+  TEST_ASSERT_EQUAL_HEX8(0xD9, cpu->registers[a]);
 
   cpu_cleanup(cpu);
 }
@@ -242,11 +245,12 @@ void test_ld6(void) {
 	ld E, D
 	ld H, D
 	ld L, D
+	ld A, D
 	halt
 */
 
-  const size_t dummy_rom_size = 12;
-  const uint8_t dummy_rom_data[dummy_rom_size] = {0xc2, 0x3, 0x1, 0x16, 0xd9, 0x42, 0x4a, 0x52, 0x5a, 0x62, 0x6a, 0x76};
+  const size_t dummy_rom_size = 13;
+  const uint8_t dummy_rom_data[dummy_rom_size] = {0xc2, 0x3, 0x1, 0x16, 0xd9, 0x42, 0x4a, 0x52, 0x5a, 0x62, 0x6a, 0x7a, 0x76};
 
   dummy_rom(dummy_rom_data, dummy_rom_size, cpu->rom);
 
@@ -258,6 +262,7 @@ void test_ld6(void) {
   TEST_ASSERT_EQUAL_HEX8(0xD9, cpu->registers[e]);
   TEST_ASSERT_EQUAL_HEX8(0xD9, cpu->registers[h]);
   TEST_ASSERT_EQUAL_HEX8(0xD9, cpu->registers[l]);
+  TEST_ASSERT_EQUAL_HEX8(0xD9, cpu->registers[a]);
 
   cpu_cleanup(cpu);
 }
@@ -368,7 +373,7 @@ void test_ld9(void) {
 */
 
   const size_t dummy_rom_size = 13;
-  const uint8_t dummy_rom_data[dummy_rom_size] = {0xc2, 0x3, 0x1, 0x2e, 0xd9, 0x45, 0x4d, 0x55, 0x5d, 0x65, 0x6d, 0x76};
+  const uint8_t dummy_rom_data[dummy_rom_size] = {0xc2, 0x3, 0x1, 0x2e, 0xd9, 0x45, 0x4d, 0x55, 0x5d, 0x65, 0x6d, 0x7d, 0x76};
 
   dummy_rom(dummy_rom_data, dummy_rom_size, cpu->rom);
 
@@ -385,6 +390,48 @@ void test_ld9(void) {
   cpu_cleanup(cpu);
 }
 
+void test_ld10(void) {
+  struct CPU *cpu = calloc(1, sizeof(struct CPU));
+  cpu_init(cpu);
+
+  /*
+  SECTION "header", ROM0[$100]
+	ds $100 - @, 0
+
+	jp nz, Main
+
+  Main:
+	;; Write code here
+	ld A, 0xD9
+	ld B, A
+	ld C, A
+	ld D, A
+	ld E, A
+	ld H, A
+	ld L, A
+	ld A, A
+	halt
+*/
+
+  const size_t dummy_rom_size = 13;
+  const uint8_t dummy_rom_data[dummy_rom_size] = {0xc2, 0x3, 0x1, 0x3e, 0xd9, 0x47, 0x4f, 0x57, 0x5f, 0x67, 0x6f, 0x7f, 0x76};
+
+  dummy_rom(dummy_rom_data, dummy_rom_size, cpu->rom);
+
+  cpu_execute(cpu, true, false, false, true);
+
+  TEST_ASSERT_EQUAL_HEX8(0xD9, cpu->registers[b]);
+  TEST_ASSERT_EQUAL_HEX8(0xD9, cpu->registers[c]);
+  TEST_ASSERT_EQUAL_HEX8(0xD9, cpu->registers[d]);
+  TEST_ASSERT_EQUAL_HEX8(0xD9, cpu->registers[e]);
+  TEST_ASSERT_EQUAL_HEX8(0xD9, cpu->registers[h]);
+  TEST_ASSERT_EQUAL_HEX8(0xD9, cpu->registers[l]);
+  TEST_ASSERT_EQUAL_HEX8(0xD9, cpu->registers[a]);
+
+  cpu_cleanup(cpu);
+}
+
+
 int main(void) {
   UNITY_BEGIN();
 
@@ -398,6 +445,7 @@ int main(void) {
   RUN_TEST(test_ld7);
   RUN_TEST(test_ld8);
   RUN_TEST(test_ld9);
+  RUN_TEST(test_ld10);
 
   return UNITY_END();
 }
