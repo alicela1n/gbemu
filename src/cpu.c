@@ -25,6 +25,9 @@ void cpu_init(struct CPU *cpu) {
   // Stack pointer grows downwards
   cpu->sp = 0xFFFE;
 
+  // Set clock cycles
+  cpu->cycles = 25000;
+
   // Initialize the memory by setting it to all 0s
   memset(cpu->mem, 0, 0x7FFF);
 
@@ -65,6 +68,8 @@ void cpu_halt_loop(struct CPU *cpu, bool dump) {
  */
 void cpu_execute(struct CPU *cpu, bool dump, bool print_regs, bool print_memory, bool stop_on_halt) {
   while (!cpu->halt) {
+    usleep(cpu->cycles);
+
     if (print_regs) {
       printf("cpu_execute(): --Begin--\n");
       printf("cpu_execute(): read_memory8(cpu, cpu->pc): 0x%02X\n",
