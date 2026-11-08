@@ -137,17 +137,19 @@ uint32_t get_cartridge_ram_size(struct ROM *rom) {
 /* dummy_rom(): Create a dummy rom out of an array of opcodes
  * to use for unit testing.
  */
-void dummy_rom(const uint8_t data[], const size_t data_size, struct ROM *rom) {
+void dummy_rom(const uint8_t data[], const size_t data_size, struct ROM *rom, bool verbose) {
   rom->size = data_size;
   rom->data = (uint8_t *)malloc(sizeof(uint8_t) * (rom->size + 0x100));
   memcpy((void *)(rom->data + 0x100), (void *)data, rom->size);
 
-  printf("dummy_rom(): Begin\n");
-  for (int i = 0; i < rom->size + 0x100; i++) {
-    printf("[0x%02X]: 0x%02X ", i, rom->data[i]);
+  if (verbose) {
+    printf("dummy_rom(): Begin\n");
+    for (int i = 0; i < rom->size + 0x100; i++) {
+      printf("[0x%02X]: 0x%02X ", i, rom->data[i]);
+    }
+    printf("\n");
+    printf("dummy_rom(): End\n");
   }
-  printf("\n");
-  printf("dummy_rom(): End\n");
 }
 
 /* load_rom(): Load a rom from a file and populate the rom

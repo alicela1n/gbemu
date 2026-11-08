@@ -28,7 +28,7 @@ void test_sbc(void) {
   const size_t dummy_rom_size = 9;
   const uint8_t dummy_rom_data[dummy_rom_size] = {0xc2, 0x03, 0x01, 0x3e, 0xa4, 0x06, 0xd9, 0x98, 0x76};
 
-  dummy_rom(dummy_rom_data, dummy_rom_size, cpu->rom);
+  dummy_rom(dummy_rom_data, dummy_rom_size, cpu->rom, false);
 
   cpu_execute(cpu, true, false, false, true);
 

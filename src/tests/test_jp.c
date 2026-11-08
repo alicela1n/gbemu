@@ -34,7 +34,7 @@ void test_jp1(void) {
   const uint8_t dummy_rom_data[dummy_rom_size] = {0xc2, 0x03, 0x01, 0xc3, 0x07, 0x01, 0x76, 0x06, 0xa4, 0x3e, 0xa4, 0x90, 0xca, 0x06, 0x01};
 
 
-  dummy_rom(dummy_rom_data, dummy_rom_size, cpu->rom);
+  dummy_rom(dummy_rom_data, dummy_rom_size, cpu->rom, false);
 
   cpu_execute(cpu, true, false, false, true);
 
@@ -71,7 +71,7 @@ void test_jp2(void) {
   const uint8_t dummy_rom_data[dummy_rom_size] = {0xc2, 0x3, 0x1, 0xc3, 0x7, 0x1, 0x76, 0x6, 0xa5, 0x3e, 0xa6, 0x90, 0xc2, 0x6, 0x1};
 
 
-  dummy_rom(dummy_rom_data, dummy_rom_size, cpu->rom);
+  dummy_rom(dummy_rom_data, dummy_rom_size, cpu->rom, false);
 
   cpu_execute(cpu, true, false, false, true);
 
@@ -108,7 +108,7 @@ void test_jp3(void) {
   const uint8_t dummy_rom_data[dummy_rom_size] = {0xc2, 0x3, 0x1, 0xc3, 0x7, 0x1, 0x76, 0x6, 0xa5, 0x3e, 0xa4, 0x90, 0xda, 0x6, 0x1};
 
 
-  dummy_rom(dummy_rom_data, dummy_rom_size, cpu->rom);
+  dummy_rom(dummy_rom_data, dummy_rom_size, cpu->rom, false);
 
   cpu_execute(cpu, true, false, false, true);
 

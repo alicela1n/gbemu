@@ -34,7 +34,7 @@ void test_ld1(void) {
   const size_t dummy_rom_size = 14;
   const uint8_t dummy_rom_data[dummy_rom_size] = {0xc2, 0x3, 0x1, 0x6, 0xd9, 0x48, 0x16, 0xbc, 0x5a, 0x42, 0x1a, 0x6a, 0x61, 0x76};
 
-  dummy_rom(dummy_rom_data, dummy_rom_size, cpu->rom);
+  dummy_rom(dummy_rom_data, dummy_rom_size, cpu->rom, false);
 
   cpu_execute(cpu, true, false, false, true);
 
@@ -78,7 +78,7 @@ void test_ld2(void) {
   const size_t dummy_rom_size = 20;
   const uint8_t dummy_rom_data[dummy_rom_size] = {0xc2, 0x03, 0x01, 0x26, 0xff, 0x2e, 0xaf, 0x36, 0xa9, 0x46, 0x4e, 0x56, 0x5e, 0x7e, 0x66, 0x36, 0xa0, 0x6e, 0x76};
 
-  dummy_rom(dummy_rom_data, dummy_rom_size, cpu->rom);
+  dummy_rom(dummy_rom_data, dummy_rom_size, cpu->rom, false);
 
   cpu_execute(cpu, true, false, false, true);
 
@@ -131,7 +131,7 @@ void test_ld3(void) {
 
   const size_t dummy_rom_size = 30;
   const uint8_t dummy_rom_data[dummy_rom_size] = {0xc2, 0x3, 0x1, 0x21, 0x0, 0xc0, 0x6, 0xca, 0xe, 0xca, 0x16, 0xca, 0x1e, 0xca, 0x3e, 0xca, 0x70, 0x23, 0x71, 0x23, 0x72, 0x23, 0x73, 0x23, 0x77, 0x23, 0x74, 0x23, 0x75, 0x76};
-  dummy_rom(dummy_rom_data, dummy_rom_size, cpu->rom);
+  dummy_rom(dummy_rom_data, dummy_rom_size, cpu->rom, false);
 
   cpu_execute(cpu, true, false, false, true);
   
@@ -171,7 +171,7 @@ void test_ld4(void) {
   const size_t dummy_rom_size = 13;
   const uint8_t dummy_rom_data[dummy_rom_size] = {0xc2, 0x3, 0x1, 0x6, 0xd9, 0x40, 0x48, 0x50, 0x58, 0x60, 0x68, 0x78, 0x76};
 
-  dummy_rom(dummy_rom_data, dummy_rom_size, cpu->rom);
+  dummy_rom(dummy_rom_data, dummy_rom_size, cpu->rom, false);
 
   cpu_execute(cpu, true, false, false, true);
 
@@ -211,7 +211,7 @@ void test_ld5(void) {
   const size_t dummy_rom_size = 13;
   const uint8_t dummy_rom_data[dummy_rom_size] = {0xc2, 0x3, 0x1, 0xe, 0xd9, 0x41, 0x49, 0x51, 0x59, 0x61, 0x69, 0x79, 0x76};
 
-  dummy_rom(dummy_rom_data, dummy_rom_size, cpu->rom);
+  dummy_rom(dummy_rom_data, dummy_rom_size, cpu->rom, false);
 
   cpu_execute(cpu, true, false, false, true);
 
@@ -252,7 +252,7 @@ void test_ld6(void) {
   const size_t dummy_rom_size = 13;
   const uint8_t dummy_rom_data[dummy_rom_size] = {0xc2, 0x3, 0x1, 0x16, 0xd9, 0x42, 0x4a, 0x52, 0x5a, 0x62, 0x6a, 0x7a, 0x76};
 
-  dummy_rom(dummy_rom_data, dummy_rom_size, cpu->rom);
+  dummy_rom(dummy_rom_data, dummy_rom_size, cpu->rom, false);
 
   cpu_execute(cpu, true, false, false, true);
 
@@ -293,7 +293,7 @@ void test_ld7(void) {
   const size_t dummy_rom_size = 13;
   const uint8_t dummy_rom_data[dummy_rom_size] = {0xc2, 0x3, 0x1, 0x1e, 0xd9, 0x43, 0x4b, 0x53, 0x5b, 0x63, 0x6b, 0x7b, 0x76};
 
-  dummy_rom(dummy_rom_data, dummy_rom_size, cpu->rom);
+  dummy_rom(dummy_rom_data, dummy_rom_size, cpu->rom, false);
 
   cpu_execute(cpu, true, false, false, true);
 
@@ -335,7 +335,7 @@ void test_ld8(void) {
   const size_t dummy_rom_size = 13;
   const uint8_t dummy_rom_data[dummy_rom_size] = {0xc2, 0x3, 0x1, 0x26, 0xd9, 0x44, 0x4c, 0x54, 0x5c, 0x64, 0x6c, 0x7c, 0x76};
 
-  dummy_rom(dummy_rom_data, dummy_rom_size, cpu->rom);
+  dummy_rom(dummy_rom_data, dummy_rom_size, cpu->rom, false);
 
   cpu_execute(cpu, true, false, false, true);
 
@@ -375,7 +375,7 @@ void test_ld9(void) {
   const size_t dummy_rom_size = 13;
   const uint8_t dummy_rom_data[dummy_rom_size] = {0xc2, 0x3, 0x1, 0x2e, 0xd9, 0x45, 0x4d, 0x55, 0x5d, 0x65, 0x6d, 0x7d, 0x76};
 
-  dummy_rom(dummy_rom_data, dummy_rom_size, cpu->rom);
+  dummy_rom(dummy_rom_data, dummy_rom_size, cpu->rom, false);
 
   cpu_execute(cpu, true, false, false, true);
 
@@ -416,7 +416,7 @@ void test_ld10(void) {
   const size_t dummy_rom_size = 13;
   const uint8_t dummy_rom_data[dummy_rom_size] = {0xc2, 0x3, 0x1, 0x3e, 0xd9, 0x47, 0x4f, 0x57, 0x5f, 0x67, 0x6f, 0x7f, 0x76};
 
-  dummy_rom(dummy_rom_data, dummy_rom_size, cpu->rom);
+  dummy_rom(dummy_rom_data, dummy_rom_size, cpu->rom, false);
 
   cpu_execute(cpu, true, false, false, true);
 

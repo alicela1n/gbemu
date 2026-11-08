@@ -216,9 +216,14 @@ void cpu_adc8(struct CPU *cpu, uint8_t *a, uint8_t *b) {
 /* cpu_add_reg16(): 16-bit adding function for two register pairs 
  */
 void cpu_add_reg16(struct CPU *cpu, uint16_t rp1, uint16_t rp2) {
-  uint16_t result = cpu_read_reg16(cpu, rp1) + cpu_read_reg16(cpu, rp2);
+  uint16_t r = cpu_read_reg16(cpu, rp1) + cpu_read_reg16(cpu, rp2);
 
-  cpu_ld_reg16(cpu, rp1, result);
+  cpu_set_flag(cpu, flag_h, (rp1 & 0x0FFF) + (rp2 & 0x0FFF) > 0x0FFF);
+  cpu_set_flag(cpu, flag_c, (rp1 & 0xFFFF) + (rp2 & 0xFFFF) > 0xFFFF);
+  cpu_set_flag(cpu, flag_z, (r == 0));
+
+
+  cpu_ld_reg16(cpu, rp1, r);
 }
 
 /* cpu_read_reg16(): Read 16 bit register or register pair
