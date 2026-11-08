@@ -533,9 +533,9 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs, bool print_memory,
     // ADD HL, HL
     else if (read_memory8(cpu, cpu->pc) == 0x29) {
       if (dump)
-        printf("ADD HL, DE\n");
+        printf("ADD HL, HL\n");
 
-      cpu_add_reg16(cpu, hl, de);
+      cpu_add_reg16(cpu, hl, hl);
 
       cpu->pc++;
     }
@@ -707,8 +707,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs, bool print_memory,
       if (dump)
         printf("ADD HL, SP\n");
 
-      cpu->registers[h] += (cpu->sp >> 8);
-      cpu->registers[l] += (cpu->sp << 8);
+      cpu_add_reg16(cpu, hl, sp);
 
       cpu->pc++;
     }

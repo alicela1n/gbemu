@@ -26,7 +26,7 @@ void test_add16(void) {
     */
 
   const size_t dummy_rom_size = 11;
-  const uint8_t dummy_rom_data[dummy_rom_size] = {0xc2, 0x03, 0x01, 0x01, 0xd9, 0xa4, 0x21, 0xa4, 0xd9, 0x09, 0x76};
+  const uint8_t dummy_rom_data[dummy_rom_size] = {0xc2, 0x3, 0x1, 0x1, 0xd9, 0xa4, 0x21, 0xa4, 0xd9, 0x9, 0x76};
 
   dummy_rom(dummy_rom_data, dummy_rom_size, cpu->rom, false);
 
@@ -93,7 +93,7 @@ void test_add16_3(void) {
 
   cpu_execute(cpu, true, false, false, true);
 
-  TEST_ASSERT_EQUAL_HEX16(0x7E7D, cpu_read_reg16(cpu, hl));
+  TEST_ASSERT_EQUAL_HEX16(0xB348, cpu_read_reg16(cpu, hl));
   TEST_ASSERT_EQUAL_HEX8(0xB0, cpu->registers[f]);
 
   cpu_cleanup(cpu);
@@ -110,8 +110,9 @@ void test_add16_4(void) {
 	jp nz, Main
 
   Main:
+	ld SP, 0xA4D9
 	ld HL, 0xD9A4
-	add HL, HL
+	add HL, SP
 	
 	halt
     */
