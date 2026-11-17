@@ -1,6 +1,6 @@
-#include "memory.h"
 #include "helper.h"
 #include "rom.h"
+#include "cpu.h"
 
 /* read_memory8(): Return an 8 bit value at a location in memory 
  * at a specified address.

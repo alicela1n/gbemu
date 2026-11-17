@@ -1,8 +1,4 @@
 #include "cpu.h"
-#include "helper.h"
-#include "memory.h"
-#include <stddef.h>
-#include <stdio.h>
 
 void cpu_cb(struct CPU *cpu, bool dump);
 
@@ -36,6 +32,12 @@ void cpu_init(struct CPU *cpu) {
 
   // Allocate rom struct
   cpu->rom = calloc(1, sizeof(struct ROM));
+
+  // Allocate lp struct
+  cpu->lp = calloc(1, sizeof(struct LINKPORT));
+
+  // Initialize the link port
+  init_link_port(cpu);
 }
 
 void cpu_cleanup(struct CPU *cpu) {
@@ -70,6 +72,8 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs, bool print_memory,
   while (!cpu->halt) {
     usleep(cpu->cycles);
 
+    update_lp_buffer(cpu);
+
     if (print_regs) {
       printf("cpu_execute(): --Begin--\n");
       printf("cpu_execute(): read_memory8(cpu, cpu->pc): 0x%02X\n",
@@ -93,8 +97,8 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs, bool print_memory,
              cpu_check_flag(cpu, flag_h), cpu_check_flag(cpu, flag_c));
 
       printf("\n");
-      printf("cpu_execute(): Link port state: 0x%02X\n", read_memory8(cpu, 0xff02));
-      printf("cpu_execute(): Link port output: %c\n", read_memory8(cpu, 0xff01));
+      printf("cpu_execute(): Link port state: 0x%02X\n", cpu->lp->lp_state);
+      printf("cpu_execute(): Link port output: %s\n", cpu->lp->buffer->ptr);
     }
 
     if (print_memory) {
@@ -348,9 +352,9 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs, bool print_memory,
     // JR i8
     else if (read_memory8(cpu, cpu->pc) == 0x18) {
       if (dump)
-        printf("JR %02X\n", read_memory8(cpu, cpu->pc + 1));
+        printf("JR 0x%02X\n", (int8_t)read_memory8(cpu, cpu->pc + 1));
 
-      uint8_t offset = read_memory8(cpu, cpu->pc + 1);
+      int8_t offset = read_memory8(cpu, cpu->pc + 1);
       cpu->pc += 2;
       cpu_jr(cpu, read_memory8(cpu, offset));
     }
@@ -458,8 +462,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs, bool print_memory,
       cpu_ld_mem8(cpu, cpu_read_reg16(cpu, hl) + 1,
                   cpu->registers[a]);
 
-      cpu->registers[h]++;
-      cpu->registers[l]++;
+      cpu_inc_reg16(cpu, hl, 1);
       cpu->pc++;
     }
 
@@ -519,10 +522,10 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs, bool print_memory,
     // JR Z, i8
     else if (read_memory8(cpu, cpu->pc) == 0x28) {
       if (dump)
-        printf("JP NZ, %02X\n", read_memory8(cpu, cpu->pc + 1));
+        printf("JR Z, 0x%02X\n", (int8_t)read_memory8(cpu, cpu->pc + 1));
 
       if (cpu_check_flag(cpu, flag_z)) {
-        uint8_t offset = read_memory8(cpu, cpu->pc + 1);
+        int8_t offset = read_memory8(cpu, cpu->pc + 1);
         cpu->pc += 2;
         cpu_jr(cpu, read_memory8(cpu, offset));
       } else {
@@ -546,8 +549,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs, bool print_memory,
         printf("LOAD A, (HL+)\n");
 
       cpu_ld_reg8(cpu, a,
-                  read_memory8(cpu, uint8to16(cpu->registers[l],
-                                              cpu->registers[h] + 1)));
+                  read_memory8(cpu, cpu_read_reg16(cpu, hl) + 1));
 
       cpu->pc++;
     }
@@ -603,10 +605,10 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs, bool print_memory,
     // JR NC, i8
     else if (read_memory8(cpu, cpu->pc) == 0x30) {
       if (dump)
-        printf("JR NZ, %02X\n", read_memory8(cpu, cpu->pc + 1));
+        printf("JR NZ, 0x%02X\n", (int8_t)read_memory8(cpu, cpu->pc + 1));
 
       if (!cpu_check_flag(cpu, flag_c)) {
-        uint8_t offset = read_memory8(cpu, cpu->pc + 1);
+        int8_t offset = read_memory8(cpu, cpu->pc + 1);
         cpu->pc += 2;
         cpu_jr(cpu, read_memory8(cpu, offset));
       }
@@ -618,8 +620,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs, bool print_memory,
     // LD SP, d16
     else if (read_memory8(cpu, cpu->pc) == 0x31) {
       if (dump)
-        printf("LD SP, %02X%02X\n", read_memory8(cpu, cpu->pc + 1),
-               read_memory8(cpu, cpu->pc + 2));
+        printf("LD SP, 0x%04X\n", read_memory16(cpu, cpu->pc + 1));
 
       cpu_ld_reg16(cpu, sp, read_memory16(cpu, (cpu->pc + 1)));
       cpu->pc += 3;
@@ -630,10 +631,8 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs, bool print_memory,
       if (dump)
         printf("LD (HL-), A\n");
 
-      cpu_ld_mem8(cpu, (cpu->registers[l] << 8) | cpu->registers[h],
+      cpu_ld_mem8(cpu, cpu_read_reg16(cpu, hl) - 1,
                   cpu->registers[a]);
-      cpu->registers[h]--;
-      cpu->registers[l]--;
       cpu->pc++;
     }
 
@@ -690,10 +689,10 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs, bool print_memory,
     // JR C, i8
     else if (read_memory8(cpu, cpu->pc) == 0x38) {
       if (dump)
-        printf("JR C, %02X\n", read_memory8(cpu, cpu->pc + 1));
+        printf("JR C, 0x%02X\n", (int8_t)read_memory8(cpu, cpu->pc + 1));
 
       if (cpu_check_flag(cpu, flag_c)) {
-        uint8_t offset = read_memory8(cpu, cpu->pc + 1);
+        int8_t offset = read_memory8(cpu, cpu->pc + 1);
         cpu->pc += 2;
         cpu_jr(cpu, read_memory8(cpu, offset));
       }
@@ -719,7 +718,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs, bool print_memory,
 
       cpu_ld_reg8(
           cpu, a,
-          read_memory8(cpu, ((cpu->registers[l] << 8) | cpu->registers[h]--)));
+          read_memory8(cpu, cpu_read_reg16(cpu, hl) - 1));
 
       cpu->pc++;
     }
@@ -2044,7 +2043,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs, bool print_memory,
       if (dump)
         printf("POP BC\n");
 
-      cpu_pop(cpu, &cpu->registers[a], &cpu->registers[b]);
+      cpu_pop(cpu, bc);
       cpu->pc++;
     }
 
@@ -2084,7 +2083,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs, bool print_memory,
       if (dump)
         printf("PUSH BC\n");
 
-      cpu_push(cpu, &cpu->registers[a], &cpu->registers[b]);
+      cpu_push(cpu, cpu_read_reg16(cpu, bc));
       cpu->pc++;
     }
 
@@ -2112,7 +2111,6 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs, bool print_memory,
         printf("RET Z\n");
       if (cpu_check_flag(cpu, flag_z)) {
         cpu_ret(cpu);
-
       } else {
         cpu->pc++;
       }
@@ -2123,7 +2121,6 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs, bool print_memory,
       if (dump)
         printf("RET\n");
       cpu_ret(cpu);
-      cpu->pc++;
     }
 
     // JP Z, u16
@@ -2173,7 +2170,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs, bool print_memory,
         printf("ADC A, %02X\n", cpu->pc + 1);
 
       cpu_adc8(cpu, &cpu->registers[a], (uint8_t *)&cpu->pc + 1);
-      cpu->pc++;
+      cpu->pc += 2;
     }
 
     // RST 08h
@@ -2200,7 +2197,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs, bool print_memory,
       if (dump)
         printf("POP DE\n");
 
-      cpu_pop(cpu, &cpu->registers[d], &cpu->registers[e]);
+      cpu_pop(cpu, de);
       cpu->pc++;
     }
 
@@ -2240,7 +2237,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs, bool print_memory,
       if (dump)
         printf("PUSH DE\n");
 
-      cpu_push(cpu, &cpu->registers[d], &cpu->registers[e]);
+      cpu_push(cpu, cpu_read_reg16(cpu, de));
       cpu->pc++;
     }
 
@@ -2354,17 +2351,17 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs, bool print_memory,
       if (dump)
         printf("POP HL\n");
 
-      cpu_pop(cpu, &cpu->registers[h], &cpu->registers[l]);
+      cpu_pop(cpu, hl);
       cpu->pc++;
     }
 
     // LD (FF00+C), A
     else if (read_memory8(cpu, cpu->pc) == 0xE2) {
       if (dump)
-        printf("LD (FF00+C), A\n");
+        printf("LD (FF00+0x%02X), A\n", cpu->registers[c]);
 
-      cpu_ld_mem8(cpu, 0xFF00 + cpu->pc + 1, cpu->registers[a]);
-      cpu->pc += 2;
+      cpu_ld_mem8(cpu, 0xFF00 + cpu->registers[c], cpu->registers[a]);
+      cpu->pc++;
     }
 
     // Invalid
@@ -2388,7 +2385,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs, bool print_memory,
       if (dump)
         printf("PUSH HL\n");
 
-      cpu_push(cpu, &cpu->registers[h], &cpu->registers[l]);
+      cpu_push(cpu, cpu_read_reg16(cpu, hl));
       cpu->pc++;
     }
 
@@ -2494,17 +2491,17 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs, bool print_memory,
       if (dump)
         printf("POP AF\n");
 
-      cpu_pop(cpu, &cpu->registers[a], &cpu->registers[f]);
+      cpu_pop(cpu, af);
       cpu->pc++;
     }
 
     // LD A, (FF00+C)
     else if (read_memory8(cpu, cpu->pc) == 0xF2) {
       if (dump)
-        printf("LD A, (FF00+C)\n");
+        printf("LD A, (FF00+0x%02X)\n", cpu->registers[c]);
 
       cpu_ld_reg8(cpu, a, 0xFF00 + cpu->registers[c]);
-      cpu->pc += 2;
+      cpu->pc++;
     }
 
     // DI
@@ -2529,7 +2526,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs, bool print_memory,
       if (dump)
         printf("PUSH HL\n");
 
-      cpu_push(cpu, &cpu->registers[a], &cpu->registers[f]);
+      cpu_push(cpu, cpu_read_reg16(cpu, af));
       cpu->pc++;
     }
 

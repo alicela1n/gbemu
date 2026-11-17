@@ -135,17 +135,15 @@ void cpu_inc_reg8(struct CPU *cpu, uint8_t r, uint8_t n) {
 
 void cpu_inc_mem8(struct CPU *cpu, uint8_t addr, uint8_t n) {
   uint8_t val = read_memory8(cpu, addr);
-  ++val;
+  val += n;
   write_memory8(cpu, val, addr);
 }
 
 void cpu_dec_mem8(struct CPU *cpu, uint8_t addr, uint8_t n) {
   uint8_t val = read_memory8(cpu, addr);
-  --val;
+  val -= n;
   write_memory8(cpu, val, addr);
 }
-
-
 
 /* cpu_inc_reg16(): Increment 16 bit register or register pair
  */
@@ -186,11 +184,15 @@ void cpu_ld_mem16(struct CPU *cpu, uint16_t addr, uint16_t b) {
 
 /* cpu_jp(): Jump to a location in memory
  */
-void cpu_jp(struct CPU *cpu, uint16_t addr) { cpu->pc = addr; }
+void cpu_jp(struct CPU *cpu, uint16_t addr) {
+  cpu->pc = addr;
+}
 
 /* cpu_jr(): Jump to a relative location
  */
-void cpu_jr(struct CPU *cpu, uint8_t addr) { cpu->pc += addr; }
+void cpu_jr(struct CPU *cpu, int8_t addr) {
+  cpu->pc = (uint16_t)((int16_t)cpu->pc + addr) & 0xFFFF;
+}
 
 /* cpu_add8(): 8-bit adding function which deals with carries and stuff,
  *             takes in two variables a and b, and stores the result in a.
@@ -320,26 +322,22 @@ void cpu_or(struct CPU *cpu, uint8_t *a, uint8_t *b) {
 
 /* cpu_pop(): Pop from stack to register a
  */
-void cpu_pop(struct CPU *cpu, uint8_t *a, uint8_t *b) {
-  *a = read_memory8(cpu, cpu->sp + 1);
-  *b = read_memory8(cpu, cpu->sp);
+void cpu_pop(struct CPU *cpu, uint16_t r) {
+  cpu_ld_reg16(cpu, r, read_memory16(cpu, cpu->sp - 1));
   cpu->sp += 2;
 }
 
 /* cpu_push(): Push from register a onto stack
  */
-void cpu_push(struct CPU *cpu, uint8_t *a, uint8_t *b) {
-  write_memory8(cpu, *a, cpu->sp - 1);
-  write_memory8(cpu, *b, cpu->sp);
+void cpu_push(struct CPU *cpu, uint16_t a) {
+  write_memory16(cpu, a, cpu->sp - 1);
   cpu->sp -= 2;
 }
 
 /* cpu_call(): Calls from an address
  */
 void cpu_call(struct CPU *cpu, uint16_t addr) {
-  uint8_t high = (cpu->pc >> 8) & 0xFF;
-  uint8_t low = cpu->pc & 0xFF;
-  cpu_push(cpu, &high, &low);
+  cpu_push(cpu, cpu->pc);
   cpu->pc = addr;
 }
 
@@ -355,7 +353,9 @@ void cpu_rst(struct CPU *cpu, uint16_t n) {
 
 /* cpu_ret(): Return
  */
-void cpu_ret(struct CPU *cpu) { cpu->pc = read_memory8(cpu, cpu->sp++); }
+void cpu_ret(struct CPU *cpu) {
+  cpu->pc = read_memory8(cpu, cpu->sp++);
+}
 
 /* cpu_rl_r(): Rotate register left
  */
