@@ -469,10 +469,11 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs, bool print_memory,
       if (dump)
         printf("LD (HL+), A\n");
 
-      cpu_ld_mem8(cpu, cpu_read_reg16(cpu, hl) + 1,
-                  cpu->registers[a]);
 
       cpu_inc_reg16(cpu, hl, 1);
+      cpu_ld_mem8(cpu, cpu_read_reg16(cpu, hl),
+                  cpu->registers[a]);
+
       cpu->pc++;
     }
 
@@ -558,8 +559,9 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs, bool print_memory,
       if (dump)
         printf("LD A, (HL+)\n");
 
+      cpu_inc_reg16(cpu, hl, 1);
       cpu_ld_reg8(cpu, a,
-                  read_memory8(cpu, cpu_read_reg16(cpu, hl) + 1));
+                  read_memory8(cpu, cpu_read_reg16(cpu, hl)));
 
       cpu->pc++;
     }
@@ -641,7 +643,8 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs, bool print_memory,
       if (dump)
         printf("LD (HL-), A\n");
 
-      cpu_ld_mem8(cpu, cpu_read_reg16(cpu, hl) - 1,
+      cpu_dec_reg16(cpu, hl, 1);
+      cpu_ld_mem8(cpu, cpu_read_reg16(cpu, hl),
                   cpu->registers[a]);
       cpu->pc++;
     }
@@ -726,9 +729,10 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs, bool print_memory,
       if (dump)
         printf("LD A, (HL-)\n");
 
+      cpu_dec_reg16(cpu, hl, 1);
       cpu_ld_reg8(
           cpu, a,
-          read_memory8(cpu, cpu_read_reg16(cpu, hl) - 1));
+          read_memory8(cpu, cpu_read_reg16(cpu, hl)));
 
       cpu->pc++;
     }
