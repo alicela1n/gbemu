@@ -6,6 +6,7 @@
 #include "cpu_instr.h"
 #include "linkport.h"
 #include "memory.h"
+#include "log.h"
 
 /* The GameBoy has 8 8-bit registers
  * A -> Accumulator
@@ -60,6 +61,9 @@ struct CPU {
 
   /* Keep track of link port struct */
   struct LINKPORT *lp;
+
+  /* Keep track of log file and its state */
+  struct LOG *log;
 };
 
 struct ROM;

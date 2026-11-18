@@ -38,9 +38,15 @@ void cpu_init(struct CPU *cpu) {
 
   // Initialize the link port
   init_link_port(cpu);
+
+  if (!cpu->log) {
+    // Initialize logs to NULL by default
+    init_logs(cpu, NULL);
+  }
 }
 
 void cpu_cleanup(struct CPU *cpu) {
+  log_cleanup(cpu);
   rom_cleanup(cpu->rom);
 }
 
@@ -73,6 +79,10 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs, bool print_memory,
     usleep(cpu->cycles);
 
     update_lp_buffer(cpu);
+
+    if (cpu->log) {
+      write_log_entry(cpu);
+    }
 
     if (print_regs) {
       printf("cpu_execute(): --Begin--\n");

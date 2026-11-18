@@ -10,6 +10,7 @@ executable('gbemu',
            'src/rom.c',
            'src/memory.c',
            'src/linkport.c',
+           'src/log.c',
            install : true)
 
 test_add = executable('test_add',
@@ -20,6 +21,7 @@ test_add = executable('test_add',
                   'src/rom.c',
                   'src/memory.c',
                   'src/linkport.c',
+                  'src/log.c',
                   'src/tests/unity.c')
 
 test_adc = executable('test_adc',
@@ -30,6 +32,7 @@ test_adc = executable('test_adc',
                   'src/rom.c',
                   'src/memory.c',
                   'src/linkport.c',
+                  'src/log.c',
                   'src/tests/unity.c')
 
 test_add16 = executable('test_add16',
@@ -40,6 +43,7 @@ test_add16 = executable('test_add16',
                   'src/rom.c',
                   'src/memory.c',
                   'src/linkport.c',
+                  'src/log.c',
                   'src/tests/unity.c')
 
 test_sub = executable('test_sub',
@@ -50,6 +54,7 @@ test_sub = executable('test_sub',
                   'src/rom.c',
                   'src/memory.c',
                   'src/linkport.c',
+                  'src/log.c',
                   'src/tests/unity.c')
 
 test_sbc = executable('test_sbc',
@@ -60,6 +65,7 @@ test_sbc = executable('test_sbc',
                   'src/rom.c',
                   'src/memory.c',
                   'src/linkport.c',
+                  'src/log.c',
                   'src/tests/unity.c')
 
 test_ld = executable('test_ld',
@@ -70,6 +76,7 @@ test_ld = executable('test_ld',
                   'src/rom.c',
                   'src/memory.c',
                   'src/linkport.c',
+                  'src/log.c',
                   'src/tests/unity.c')
 
 test_jp = executable('test_jp',
@@ -80,6 +87,7 @@ test_jp = executable('test_jp',
                   'src/rom.c',
                   'src/memory.c',
                   'src/linkport.c',
+                  'src/log.c',
                   'src/tests/unity.c')
 
 test_memory = executable('test_memory',
@@ -90,6 +98,7 @@ test_memory = executable('test_memory',
                   'src/rom.c',
                   'src/memory.c',
                   'src/linkport.c',
+                  'src/log.c',
                   'src/tests/unity.c')
 
 test_flags = executable('test_flags',
@@ -100,6 +109,7 @@ test_flags = executable('test_flags',
                   'src/rom.c',
                   'src/memory.c',
                   'src/linkport.c',
+                  'src/log.c',
                   'src/tests/unity.c')
 
 test('test_add', test_add)
