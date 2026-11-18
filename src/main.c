@@ -2,7 +2,6 @@
 #include "rom.h"
 #include "log.h"
 #include <stdio.h>
-#include <signal.h>
 
 /* main(): Main function
  */
@@ -39,7 +38,6 @@ int main(int argc, char *argv[]) {
 
   load_rom(rom_file, cpu->rom);
 
-  if (
   cpu_execute(cpu, true, true, false, false);
   cpu_cleanup(cpu);
 
