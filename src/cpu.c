@@ -2640,12 +2640,6 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs, bool print_memory,
       cpu->halt = true;
     }
 
-    if (read_memory8(cpu, 0xFF02) == 0x81) {
-      char c = read_memory8(cpu, 0xFF01);
-      printf("%c", c);
-      write_memory8(cpu, 0x0, 0xFF02);
-    }
-
     if (print_regs) {
       printf("cpu_execute(): --End--\n\n");
       sleep(1);
