@@ -15,7 +15,7 @@ void test_sub(void) {
    SECTION "header", ROM0[$100]
 	ds $100 - @, 0
 
-	jp nz, Main
+	jp Main
 
     Main:
 	ld A, 0xA4
@@ -26,7 +26,7 @@ void test_sub(void) {
    */
 
   const size_t dummy_rom_size = 9;
-  const uint8_t dummy_rom_data[dummy_rom_size] = {0xc2, 0x03, 0x01, 0x3e, 0xa4, 0x06, 0xd9, 0x90, 0x76};
+  const uint8_t dummy_rom_data[dummy_rom_size] = {0xc3, 0x03, 0x01, 0x3e, 0xa4, 0x06, 0xd9, 0x90, 0x76};
 
   dummy_rom(dummy_rom_data, dummy_rom_size, cpu->rom, false);
 

@@ -15,7 +15,7 @@ void test_add(void) {
   SECTION "header", ROM0[$100]
 	ds $100 - @, 0
 
-	jp nz, Main
+	jp Main
 
   Main:
 	ld B, 0xA4
@@ -26,7 +26,7 @@ void test_add(void) {
   */
 
   const size_t dummy_rom_size = 9;
-  const uint8_t dummy_rom_data[dummy_rom_size] = {0xc2, 0x03, 0x01, 0x06, 0xa4, 0x3e, 0xd9, 0x80, 0x76};
+  const uint8_t dummy_rom_data[dummy_rom_size] = {0xc3, 0x03, 0x01, 0x06, 0xa4, 0x3e, 0xd9, 0x80, 0x76};
 
   dummy_rom(dummy_rom_data, dummy_rom_size, cpu->rom, false);
 
@@ -46,7 +46,7 @@ void test_add2(void) {
   SECTION "header", ROM0[$100]
 	ds $100 - @, 0
 
-	jp nz, Main
+	jp Main
 
   Main:
 	ld C, 0xA4
@@ -57,7 +57,7 @@ void test_add2(void) {
   */
 
   const size_t dummy_rom_size = 9;
-  const uint8_t dummy_rom_data[dummy_rom_size] = {0xc2, 0x3, 0x1, 0xe, 0xa4, 0x3e, 0xd9, 0x81, 0x76};
+  const uint8_t dummy_rom_data[dummy_rom_size] = {0xc3, 0x3, 0x1, 0xe, 0xa4, 0x3e, 0xd9, 0x81, 0x76};
 
   dummy_rom(dummy_rom_data, dummy_rom_size, cpu->rom, false);
 
@@ -77,7 +77,7 @@ void test_add3(void) {
   SECTION "header", ROM0[$100]
 	ds $100 - @, 0
 
-	jp nz, Main
+	jp Main
 
   Main:
 	ld D, 0xA4
@@ -88,7 +88,7 @@ void test_add3(void) {
   */
 
   const size_t dummy_rom_size = 9;
-  const uint8_t dummy_rom_data[dummy_rom_size] = {0xc2, 0x3, 0x1, 0x16, 0xa4, 0x3e, 0xd9, 0x82, 0x76};
+  const uint8_t dummy_rom_data[dummy_rom_size] = {0xc3, 0x3, 0x1, 0x16, 0xa4, 0x3e, 0xd9, 0x82, 0x76};
 
   dummy_rom(dummy_rom_data, dummy_rom_size, cpu->rom, false);
 
@@ -108,7 +108,7 @@ void test_add4(void) {
   SECTION "header", ROM0[$100]
 	ds $100 - @, 0
 
-	jp nz, Main
+	jp Main
 
   Main:
 	ld E, 0xA4
@@ -119,7 +119,7 @@ void test_add4(void) {
   */
 
   const size_t dummy_rom_size = 9;
-  const uint8_t dummy_rom_data[dummy_rom_size] = {0xc2, 0x3, 0x1, 0x1e, 0xa4, 0x3e, 0xd9, 0x83, 0x76};
+  const uint8_t dummy_rom_data[dummy_rom_size] = {0xc3, 0x3, 0x1, 0x1e, 0xa4, 0x3e, 0xd9, 0x83, 0x76};
 
   dummy_rom(dummy_rom_data, dummy_rom_size, cpu->rom, false);
 
@@ -139,7 +139,7 @@ void test_add5(void) {
   SECTION "header", ROM0[$100]
 	ds $100 - @, 0
 
-	jp nz, Main
+	jp Main
 
   Main:
 	ld H, 0xA4
@@ -150,7 +150,7 @@ void test_add5(void) {
   */
 
   const size_t dummy_rom_size = 9;
-  const uint8_t dummy_rom_data[dummy_rom_size] = {0xc2, 0x3, 0x1, 0x26, 0xa4, 0x3e, 0xd9, 0x84, 0x76};
+  const uint8_t dummy_rom_data[dummy_rom_size] = {0xc3, 0x3, 0x1, 0x26, 0xa4, 0x3e, 0xd9, 0x84, 0x76};
 
   dummy_rom(dummy_rom_data, dummy_rom_size, cpu->rom, false);
 
@@ -170,7 +170,7 @@ void test_add6(void) {
   SECTION "header", ROM0[$100]
 	ds $100 - @, 0
 
-	jp nz, Main
+	jp Main
 
   Main:
 	ld L, 0xA4
@@ -181,7 +181,7 @@ void test_add6(void) {
   */
 
   const size_t dummy_rom_size = 9;
-  const uint8_t dummy_rom_data[dummy_rom_size] = {0xc2, 0x3, 0x1, 0x2e, 0xa4, 0x3e, 0xd9, 0x85, 0x76};
+  const uint8_t dummy_rom_data[dummy_rom_size] = {0xc3, 0x3, 0x1, 0x2e, 0xa4, 0x3e, 0xd9, 0x85, 0x76};
 
   dummy_rom(dummy_rom_data, dummy_rom_size, cpu->rom, false);
 
@@ -201,7 +201,7 @@ void test_add7(void) {
   SECTION "header", ROM0[$100]
 	ds $100 - @, 0
 
-	jp nz, Main
+	jp Main
 
   Main:
 	ld A, 0xD9
@@ -211,7 +211,7 @@ void test_add7(void) {
   */
 
   const size_t dummy_rom_size = 8;
-  const uint8_t dummy_rom_data[dummy_rom_size] = {0xc2, 0x3, 0x1, 0x3e, 0xd9, 0xc6, 0xa4, 0x76};
+  const uint8_t dummy_rom_data[dummy_rom_size] = {0xc3, 0x3, 0x1, 0x3e, 0xd9, 0xc6, 0xa4, 0x76};
 
   dummy_rom(dummy_rom_data, dummy_rom_size, cpu->rom, false);
 
@@ -231,7 +231,7 @@ void test_add8(void) {
   SECTION "header", ROM0[$100]
 	ds $100 - @, 0
 
-	jp nz, Main
+	jp Main
 
   Main:
 	ld HL, 0xC004
@@ -244,7 +244,7 @@ void test_add8(void) {
   */
 
   const size_t dummy_rom_size = 12;
-  const uint8_t dummy_rom_data[dummy_rom_size] = {0xc2, 0x3, 0x1, 0x21, 0x4, 0xc0, 0x36, 0xa4, 0x3e, 0xd9, 0x86, 0x76};
+  const uint8_t dummy_rom_data[dummy_rom_size] = {0xc3, 0x3, 0x1, 0x21, 0x4, 0xc0, 0x36, 0xa4, 0x3e, 0xd9, 0x86, 0x76};
 
   dummy_rom(dummy_rom_data, dummy_rom_size, cpu->rom, false);
 

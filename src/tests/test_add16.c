@@ -15,7 +15,7 @@ void test_add16(void) {
   SECTION "header", ROM0[$100]
 	ds $100 - @, 0
 
-	jp nz, Main
+	jp Main
 
   Main:
 	ld BC, 0xA4D9
@@ -26,7 +26,7 @@ void test_add16(void) {
     */
 
   const size_t dummy_rom_size = 11;
-  const uint8_t dummy_rom_data[dummy_rom_size] = {0xc2, 0x3, 0x1, 0x1, 0xd9, 0xa4, 0x21, 0xa4, 0xd9, 0x9, 0x76};
+  const uint8_t dummy_rom_data[dummy_rom_size] = {0xc3, 0x3, 0x1, 0x1, 0xd9, 0xa4, 0x21, 0xa4, 0xd9, 0x9, 0x76};
 
   dummy_rom(dummy_rom_data, dummy_rom_size, cpu->rom, false);
 
@@ -46,7 +46,7 @@ void test_add16_2(void) {
   SECTION "header", ROM0[$100]
 	ds $100 - @, 0
 
-	jp nz, Main
+	jp Main
 
   Main:
 	ld DE, 0xA4D9
@@ -57,7 +57,7 @@ void test_add16_2(void) {
     */
 
   const size_t dummy_rom_size = 11;
-  const uint8_t dummy_rom_data[dummy_rom_size] = {0xc2, 0x3, 0x1, 0x11, 0xd9, 0xa4, 0x21, 0xa4, 0xd9, 0x19, 0x76};
+  const uint8_t dummy_rom_data[dummy_rom_size] = {0xc3, 0x3, 0x1, 0x11, 0xd9, 0xa4, 0x21, 0xa4, 0xd9, 0x19, 0x76};
 
   dummy_rom(dummy_rom_data, dummy_rom_size, cpu->rom, false);
 
@@ -77,7 +77,7 @@ void test_add16_3(void) {
   SECTION "header", ROM0[$100]
 	ds $100 - @, 0
 
-	jp nz, Main
+	jp Main
 
   Main:
 	ld HL, 0xD9A4
@@ -87,7 +87,7 @@ void test_add16_3(void) {
     */
 
   const size_t dummy_rom_size = 8;
-  const uint8_t dummy_rom_data[dummy_rom_size] = {0xc2, 0x3, 0x1, 0x21, 0xa4, 0xd9, 0x29, 0x76};
+  const uint8_t dummy_rom_data[dummy_rom_size] = {0xc3, 0x3, 0x1, 0x21, 0xa4, 0xd9, 0x29, 0x76};
 
   dummy_rom(dummy_rom_data, dummy_rom_size, cpu->rom, false);
 
@@ -107,7 +107,7 @@ void test_add16_4(void) {
   SECTION "header", ROM0[$100]
 	ds $100 - @, 0
 
-	jp nz, Main
+	jp Main
 
   Main:
 	ld SP, 0xA4D9
@@ -118,7 +118,7 @@ void test_add16_4(void) {
     */
 
   const size_t dummy_rom_size = 11;
-  const uint8_t dummy_rom_data[dummy_rom_size] = {0xc2, 0x3, 0x1, 0x31, 0xd9, 0xa4, 0x21, 0xa4, 0xd9, 0x39, 0x76};
+  const uint8_t dummy_rom_data[dummy_rom_size] = {0xc3, 0x3, 0x1, 0x31, 0xd9, 0xa4, 0x21, 0xa4, 0xd9, 0x39, 0x76};
 
   dummy_rom(dummy_rom_data, dummy_rom_size, cpu->rom, false);
 
