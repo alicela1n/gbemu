@@ -7,14 +7,14 @@ void cpu_cb(struct CPU *cpu, bool dump);
 void cpu_init(struct CPU *cpu) {
   // Initialize CPU registers
   cpu->registers[a] = 0x01;
-  cpu->registers[b] = 0xff;
+  cpu->registers[b] = 0x00;
   cpu->registers[c] = 0x13;
   cpu->registers[d] = 0x00;
-  cpu->registers[e] = 0xC1;
-  cpu->registers[f] = 0x00;
+  cpu->registers[e] = 0xD8;
+  cpu->registers[f] = 0xB0;
   cpu->registers[d] = 0x00;
-  cpu->registers[h] = 0x84;
-  cpu->registers[l] = 0x03;
+  cpu->registers[h] = 0x01;
+  cpu->registers[l] = 0x4D;
 
   // On the GameBoy the program starts executing at 0x0100
   cpu->pc = 0x0100;
@@ -556,7 +556,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs, bool print_memory,
     // LD A, (HL+)
     else if (read_memory8(cpu, cpu->pc) == 0x2A) {
       if (dump)
-        printf("LOAD A, (HL+)\n");
+        printf("LD A, (HL+)\n");
 
       cpu_ld_reg8(cpu, a,
                   read_memory8(cpu, cpu_read_reg16(cpu, hl) + 1));
