@@ -20,7 +20,7 @@ int main(int argc, char *argv[]) {
   FILE *rom_file = fopen(argv[1], "rb");
 
   if (argc == 3) {
-    FILE *log_file = fopen(argv[2], "a+");
+    FILE *log_file = fopen(argv[2], "w+");
 
     if (!log_file) {
       perror("Error opening log file!");
@@ -38,6 +38,8 @@ int main(int argc, char *argv[]) {
   }
 
   load_rom(rom_file, cpu->rom);
+
+  if (
   cpu_execute(cpu, true, true, false, false);
   cpu_cleanup(cpu);
 

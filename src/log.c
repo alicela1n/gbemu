@@ -42,7 +42,7 @@ void log_cleanup(struct CPU *cpu) {
 void write_log_entry(struct CPU *cpu) {
   struct LOG *log = cpu->log;
   if (log->logging) {
-    fprintf(log->file, "A:%02X F:%02X B:%02X C:%02X D:%02X E:%02X H:%02X L:%02X SP:%04X PC:%04X PCMEM:%02X,%02X,%02X,%02X\n", cpu->registers[a], cpu->registers[f], cpu->registers[b], cpu->registers[c], cpu->registers[d], cpu->registers[e], cpu->registers[h], cpu->registers[l], cpu_read_reg16(cpu, sp), cpu_read_reg16(cpu, pc), cpu_read_reg16(cpu, pc), cpu_read_reg16(cpu, pc) + 1, cpu_read_reg16(cpu, pc) + 2, cpu_read_reg16(cpu, pc) + 3);
+    fprintf(log->file, "A:%02X F:%02X B:%02X C:%02X D:%02X E:%02X H:%02X L:%02X SP:%04X PC:%04X PCMEM:%02X,%02X,%02X,%02X\n", cpu->registers[a], cpu->registers[f], cpu->registers[b], cpu->registers[c], cpu->registers[d], cpu->registers[e], cpu->registers[h], cpu->registers[l], cpu_read_reg16(cpu, sp), cpu_read_reg16(cpu, pc), read_memory8(cpu, cpu_read_reg16(cpu, pc)), read_memory8(cpu, cpu_read_reg16(cpu, pc) + 1), read_memory8(cpu, cpu_read_reg16(cpu, pc) + 2), read_memory8(cpu, cpu_read_reg16(cpu, pc) + 3));
     fflush(log->file);
   }
 }
