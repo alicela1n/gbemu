@@ -5,6 +5,7 @@
 #include "rom.h"
 #include "cpu_instr.h"
 #include "linkport.h"
+#include "interrupts.h"
 #include "memory.h"
 #include "log.h"
 
@@ -45,9 +46,9 @@ struct CPU {
    * IF -> Interrupt status and acknowledge
    * IME -> Interurpt master enable
    */
-  uint16_t ie_r;
-  uint16_t if_r;
-  uint32_t ime_r;
+  uint8_t ie_r;
+  uint8_t if_r;
+  bool ime;
 
   uint8_t mem[0x7FFF];
 

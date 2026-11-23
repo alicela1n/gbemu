@@ -11,7 +11,7 @@ uint8_t read_memory8(struct CPU *cpu, uint16_t addr) {
     data = cpu->rom->data[addr];
   } else if (addr > 0x3FFF && addr <= 0x7FFF) {
     // TODO: Implement bank switching
-    return 0;
+    data = cpu->rom->data[addr];
   } else {
     data = cpu->mem[addr - 0x8000];
   }

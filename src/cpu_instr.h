@@ -13,6 +13,7 @@ void cpu_toggle_halt(struct CPU *cpu);
 bool cpu_check_flag(struct CPU *cpu, uint8_t flag);
 void cpu_set_flag(struct CPU *cpu, uint8_t flag, bool set);
 void cpu_toggle_flag(struct CPU *cpu, uint8_t flag);
+
 void cpu_ld_reg8(struct CPU *cpu, uint8_t r, uint8_t n);
 void cpu_ld_reg16(struct CPU *cpu, uint16_t r, uint16_t n);
 void cpu_ld_mem8(struct CPU *cpu, uint16_t addr, uint8_t a);
@@ -40,6 +41,7 @@ void cpu_push(struct CPU *cpu, uint16_t a);
 void cpu_call(struct CPU *cpu, uint16_t addr);
 void cpu_rst(struct CPU *cpu, uint16_t n);
 void cpu_ret(struct CPU *cpu);
+void cpu_cb(struct CPU *cpu, bool dump);
 
 void cpu_bit_r(struct CPU *cpu, uint8_t r, uint8_t b);
 void cpu_bit_mem8(struct CPU *cpu, uint16_t addr, uint8_t b);

@@ -18,6 +18,8 @@ struct ROM {
   bool cgb_flag;
   bool cgb_only;
 
+  bool active_bank;
+
   uint8_t cartridge_rom_size;
   uint8_t cartridge_ram_size;
 };

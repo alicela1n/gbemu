@@ -168,6 +168,7 @@ int load_rom(FILE *fp, struct ROM *rom) {
   rom->cgb_flag = cgb_flag(rom);
   rom->cartridge_ram_size = get_cartridge_ram_size(rom);
   rom->cartridge_rom_size = get_cartridge_rom_size(rom);
+  rom->active_bank = 0;
 
   return 0;
 }

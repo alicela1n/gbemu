@@ -1,7 +1,5 @@
 #include "cpu.h"
 
-void cpu_cb(struct CPU *cpu, bool dump);
-
 /* cpu_init(): Initialize CPU
  */
 void cpu_init(struct CPU *cpu) {
@@ -77,12 +75,12 @@ void cpu_halt_loop(struct CPU *cpu, bool dump) {
 void cpu_execute(struct CPU *cpu, bool dump, bool print_regs, bool print_memory, bool stop_on_halt) {
   while (!cpu->halt) {
     usleep(cpu->cycles);
-
-    update_lp_buffer(cpu);
-
+    
     if (cpu->log) {
       write_log_entry(cpu);
     }
+
+    update_lp_out_buffer(cpu);
 
     if (print_regs) {
       printf("cpu_execute(): --Begin--\n");
@@ -107,8 +105,8 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs, bool print_memory,
              cpu_check_flag(cpu, flag_h), cpu_check_flag(cpu, flag_c));
 
       printf("\n");
-      printf("cpu_execute(): Link port state: 0x%02X\n", cpu->lp->lp_state);
-      printf("cpu_execute(): Link port output: %s\n", cpu->lp->buffer->ptr);
+      printf("cpu_execute(): Link port state: 0x%02X\n", cpu->lp->lp_ctr);
+      printf("cpu_execute(): Link port output: %s\n", cpu->lp->out_buffer->ptr);
     }
 
     if (print_memory) {
@@ -2290,7 +2288,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs, bool print_memory,
         printf("RETI\n");
 
       cpu_ret(cpu);
-      cpu->ime_r = true;
+      cpu->ime = true;
 
       cpu->pc++;
     }
@@ -2523,7 +2521,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs, bool print_memory,
       if (dump)
         printf("DI\n");
 
-      cpu->ime_r = false;
+      cpu->ime = false;
       cpu->pc++;
     }
 
@@ -2595,7 +2593,7 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs, bool print_memory,
       if (dump)
         printf("EI\n");
 
-      cpu->ime_r = true;
+      cpu->ime = true;
       cpu->pc++;
     }
 
@@ -2646,6 +2644,8 @@ void cpu_execute(struct CPU *cpu, bool dump, bool print_regs, bool print_memory,
     }
 
   } 
+
+  handle_interrupts(cpu);
 
   if (cpu->halt) {
     if (!stop_on_halt)
